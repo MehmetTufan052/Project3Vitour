@@ -1,6 +1,6 @@
 ﻿namespace Project3Vitour.Dtos.TourDtos
 {
-    public class GetTourById
+    public class GetTourByIdDto
     {
         public string TourId { get; set; }
         public string Title { get; set; }
