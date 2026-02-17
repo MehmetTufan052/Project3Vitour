@@ -1,40 +1,51 @@
 ﻿using AutoMapper;
+using MongoDB.Driver;
 using Project3Vitour.Dtos.TourDtos;
+using Project3Vitour.Entities;
+using Project3Vitour.Settings;
 
 namespace Project3Vitour.Services.TourServices.ITourService
 {
     public class TourService : ITourService
     {
         private readonly IMapper _mapper;
+        private readonly IMongoCollection<Tour> _toursCollection;
 
-        public TourService(IMapper mapper)
+        public TourService(IMapper mapper,IDatabaseSettings _databaseSettings)
         {
+            var client =new MongoClient(_databaseSettings.ConnectionString);
+            var database= client.GetDatabase(_databaseSettings.DatabaseName);
+            _toursCollection = database.GetCollection<Tour>(_databaseSettings.TourCollectionName);
             _mapper = mapper;
         }
 
-        public Task CreateTourAsync(CreateTourDto createTourDto)
+        public async Task CreateTourAsync(CreateTourDto createTourDto)
         {
-            throw new NotImplementedException();
+            var value=_mapper.Map<Tour>(createTourDto);
+            await _toursCollection.InsertOneAsync(value);
         }
 
-        public Task DeleteTourAsync(string id)
+        public async Task DeleteTourAsync(string id)
         {
-            throw new NotImplementedException();
+            await _toursCollection.DeleteOneAsync(x => x.TourId == id);
         }
 
-        public Task<List<ResultTourDto>> GetAllTourAsync()
+        public async Task<List<ResultTourDto>> GetAllTourAsync()
         {
-            throw new NotImplementedException();
+           var values= await _toursCollection.Find(x => true).ToListAsync();
+            return _mapper.Map<List<ResultTourDto>>(values);
         }
 
-        public Task<GetTourByIdDto> GetTourByIdAsync(string id)
+        public async Task<GetTourByIdDto> GetTourByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            var value=await _toursCollection.Find(x => x.TourId == id).FirstOrDefaultAsync();
+            return _mapper.Map<GetTourByIdDto>(value);
         }
 
-        public Task UpdateTourAsync(UpdateTourDto updateTourDto)
+        public async Task UpdateTourAsync(UpdateTourDto updateTourDto)
         {
-            throw new NotImplementedException();
+            var values=_mapper.Map<Tour>(updateTourDto);
+            await _toursCollection.FindOneAndReplaceAsync(x => x.TourId == updateTourDto.TourId, values);
         }
     }
 }
