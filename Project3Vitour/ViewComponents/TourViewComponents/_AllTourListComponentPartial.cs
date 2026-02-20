@@ -1,0 +1,22 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Project3Vitour.Services.TourServices.ITourService;
+using System.Threading.Tasks;
+
+namespace Project3Vitour.ViewComponents.TourViewComponents
+{
+    public class _AllTourListComponentPartial : ViewComponent
+    {
+        private readonly ITourService _tourService;
+
+        public _AllTourListComponentPartial(ITourService tourService)
+        {
+            _tourService = tourService;
+        }
+
+        public async Task<IViewComponentResult> InvokeAsync()
+        {
+            var tours = await _tourService.GetAllTourAsync();
+            return View(tours);
+        }
+    }
+}

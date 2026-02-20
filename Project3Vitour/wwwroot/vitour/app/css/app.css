@@ -1358,12 +1358,12 @@
 
 /*----------------------breadcumb--------------------*/
 .breadcumb-section {
-  padding: 137px 0px 135px 0px;
-  background-image: url(../../assets/images/page/breakcrumb.jpg);
-  position: relative;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+    padding: 137px 0px 135px 0px;
+    background-image: url(https://vitourwp.themesflat.co/wp-content/uploads/2024/05/page-title-e1715311291465.webp);
+    position: relative;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 .breadcumb-section::before {
   position: absolute;
