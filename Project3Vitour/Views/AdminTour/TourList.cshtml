@@ -1,0 +1,896 @@
+﻿@model List<ResultTourDto>
+
+@{
+    ViewData["Title"] = "Tours";
+    Layout = "~/Views/Shared/_TourLayout.cshtml";
+}
+
+@section Styles {
+    <style>
+        /* ─── Page Header ───────────────────────────────────── */
+        .section-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        .page-eyebrow {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+
+        .page-title {
+            margin: 0;
+        }
+
+        .btn-add-tour {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 11px 22px;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .2s, box-shadow .2s, transform .15s;
+            white-space: nowrap;
+            box-shadow: 0 2px 10px rgba(45,156,219,.35);
+        }
+
+            .btn-add-tour:hover {
+                background: var(--accent-dk);
+                box-shadow: 0 4px 18px rgba(45,156,219,.45);
+                transform: translateY(-1px);
+            }
+
+        /* ─── Filter Bar ─────────────────────────────────────── */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .filter-search {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+            max-width: 360px;
+        }
+
+            .filter-search i {
+                position: absolute;
+                left: 13px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-muted);
+                font-size: 14px;
+                pointer-events: none;
+            }
+
+            .filter-search input {
+                width: 100%;
+                padding: 10px 14px 10px 38px;
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                background: #fff;
+                font-family: 'DM Sans', sans-serif;
+                font-size: 13.5px;
+                color: var(--text-main);
+                outline: none;
+                transition: border-color .15s, box-shadow .15s;
+            }
+
+                .filter-search input:focus {
+                    border-color: var(--accent);
+                    box-shadow: 0 0 0 3px rgba(45,156,219,.14);
+                }
+
+        .filter-select {
+            padding: 10px 36px 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13.5px;
+            color: var(--text-main);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2364748b'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            outline: none;
+            cursor: pointer;
+            transition: border-color .15s, box-shadow .15s;
+            min-width: 160px;
+        }
+
+            .filter-select:focus {
+                border-color: var(--accent);
+                box-shadow: 0 0 0 3px rgba(45,156,219,.14);
+            }
+
+        .filter-count {
+            margin-left: auto;
+            font-size: 13px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        /* ─── Table Card ─────────────────────────────────────── */
+        .table-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .tours-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .tours-table thead th {
+                background: #f8fafc;
+                padding: 13px 16px;
+                font-size: 11px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 1.2px;
+                color: var(--text-muted);
+                border-bottom: 1px solid var(--border);
+                white-space: nowrap;
+                position: sticky;
+                top: 0;
+            }
+
+            .tours-table tbody tr {
+                border-bottom: 1px solid #f1f5f9;
+                transition: background .14s;
+            }
+
+                .tours-table tbody tr:last-child {
+                    border-bottom: none;
+                }
+
+                .tours-table tbody tr:hover {
+                    background: #f8fbff;
+                }
+
+            .tours-table td {
+                padding: 14px 16px;
+                vertical-align: middle;
+                font-size: 13.5px;
+                color: var(--text-main);
+            }
+
+        /* ─── Tour Cell ──────────────────────────────────────── */
+        .tour-cell {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            min-width: 220px;
+        }
+
+        .tour-thumb {
+            width: 52px;
+            height: 52px;
+            border-radius: 10px;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+        }
+
+        .tour-thumb-placeholder {
+            width: 52px;
+            height: 52px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .tour-info-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--navy);
+            margin-bottom: 3px;
+            display: block;
+        }
+
+        .tour-info-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: block;
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* ─── Badges ─────────────────────────────────────────── */
+        .badge-tour {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+        }
+
+        .badge-popular {
+            background: #fff3cd;
+            color: #92610a;
+        }
+
+        .badge-new {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-limited {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-default {
+            background: #e0f2fe;
+            color: #075985;
+        }
+
+        .badge-status-active {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 4px 11px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+            .badge-status-active::before {
+                content: '';
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: #16a34a;
+                display: inline-block;
+            }
+
+        .badge-status-passive {
+            background: #f1f5f9;
+            color: var(--text-muted);
+            padding: 4px 11px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+            .badge-status-passive::before {
+                content: '';
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: #94a3b8;
+                display: inline-block;
+            }
+
+        /* ─── Stats ──────────────────────────────────────────── */
+        .stat-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+            .stat-pill i {
+                font-size: 13px;
+                color: var(--accent);
+            }
+
+        .price-cell {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--navy);
+        }
+
+        /* ─── Action Buttons ─────────────────────────────────── */
+        .action-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-action {
+            width: 34px;
+            height: 34px;
+            border: none;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background .15s, transform .12s;
+            text-decoration: none;
+        }
+
+            .btn-action:hover {
+                transform: scale(1.1);
+            }
+
+        .btn-view {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .btn-edit {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .btn-delete {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .btn-view:hover {
+            background: #bae6fd;
+        }
+
+        .btn-edit:hover {
+            background: #fef08a;
+        }
+
+        .btn-delete:hover {
+            background: #fecaca;
+        }
+
+        /* ─── Empty State ────────────────────────────────────── */
+        .empty-state {
+            text-align: center;
+            padding: 64px 24px;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            color: #cbd5e1;
+            margin-bottom: 14px;
+        }
+
+        .empty-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .empty-sub {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* ─── Summary Stats Cards ────────────────────────────── */
+        .stats-row {
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px 22px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow .2s, transform .18s;
+        }
+
+            .stat-card:hover {
+                box-shadow: var(--shadow-md);
+                transform: translateY(-2px);
+            }
+
+        .stat-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .si-blue {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .si-green {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .si-yellow {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .si-red {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .stat-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            color: var(--navy);
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+
+        .stat-lbl {
+            font-size: 12.5px;
+            color: var(--text-muted);
+        }
+
+        /* ─── Delete Modal ───────────────────────────────────── */
+        .delete-modal-icon {
+            width: 64px;
+            height: 64px;
+            background: #fee2e2;
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--danger);
+        }
+
+        /* ─── Scrollable table on small screens ──────────────── */
+        .table-responsive-scroll {
+            overflow-x: auto;
+        }
+
+        /* ─── Table row entrance animation ──────────────────── */
+        @@keyframes rowSlide {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tours-table tbody tr {
+            animation: rowSlide .3s ease both;
+        }
+
+            .tours-table tbody tr:nth-child(1) {
+                animation-delay: .04s;
+            }
+
+            .tours-table tbody tr:nth-child(2) {
+                animation-delay: .08s;
+            }
+
+            .tours-table tbody tr:nth-child(3) {
+                animation-delay: .12s;
+            }
+
+            .tours-table tbody tr:nth-child(4) {
+                animation-delay: .16s;
+            }
+
+            .tours-table tbody tr:nth-child(5) {
+                animation-delay: .20s;
+            }
+
+            .tours-table tbody tr:nth-child(6) {
+                animation-delay: .24s;
+            }
+
+            .tours-table tbody tr:nth-child(7) {
+                animation-delay: .28s;
+            }
+
+            .tours-table tbody tr:nth-child(8) {
+                animation-delay: .32s;
+            }
+
+            .tours-table tbody tr:nth-child(9) {
+                animation-delay: .36s;
+            }
+
+            .tours-table tbody tr:nth-child(10) {
+                animation-delay: .40s;
+            }
+    </style>
+}
+
+<!-- ═══ PAGE HEADER ═══════════════════════════════════════════════════ -->
+<div class="section-header">
+    <div>
+        <p class="page-eyebrow">Management</p>
+        <h1 class="page-title">Tours</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin" class="text-muted">Dashboard</a></li>
+                <li class="breadcrumb-item active text-muted">Tours</li>
+            </ol>
+        </nav>
+    </div>
+    <a href="/admin/tours/create" class="btn-add-tour">
+        <i class="bi bi-plus-lg"></i>
+        Add New Tour
+    </a>
+</div>
+
+<!-- ═══ SUMMARY STATS ════════════════════════════════════════════════ -->
+@if (Model != null)
+{
+    int totalTours = Model.Count;
+    int activeTours = Model.Count(t => t.IsStatus);
+    int passiveTours = Model.Count(t => !t.IsStatus);
+    decimal avgPrice = totalTours > 0 ? Model.Average(t => t.Price) : 0;
+
+    <div class="row stats-row g-3">
+        <div class="col-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-icon si-blue"><i class="bi bi-map-fill"></i></div>
+                <div>
+                    <div class="stat-num">@totalTours</div>
+                    <div class="stat-lbl">Total Tours</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-icon si-green"><i class="bi bi-check-circle-fill"></i></div>
+                <div>
+                    <div class="stat-num">@activeTours</div>
+                    <div class="stat-lbl">Active Tours</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-icon si-yellow"><i class="bi bi-pause-circle-fill"></i></div>
+                <div>
+                    <div class="stat-num">@passiveTours</div>
+                    <div class="stat-lbl">Passive Tours</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-icon si-red"><i class="bi bi-currency-dollar"></i></div>
+                <div>
+                    <div class="stat-num">$@avgPrice.ToString("N0")</div>
+                    <div class="stat-lbl">Avg. Price</div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- ═══ FILTER BAR ═══════════════════════════════════════════════════ -->
+<div class="filter-bar">
+    <div class="filter-search">
+        <i class="bi bi-search"></i>
+        <input type="text" id="tableSearch" placeholder="Search tours…" autocomplete="off" />
+    </div>
+
+    <select class="filter-select" id="statusFilter">
+        <option value="">All Status</option>
+        <option value="active">Active</option>
+        <option value="passive">Passive</option>
+    </select>
+
+    <select class="filter-select" id="badgeFilter" style="min-width:140px;">
+        <option value="">All Badges</option>
+        <option value="popular">Popular</option>
+        <option value="new">New</option>
+        <option value="limited">Limited</option>
+    </select>
+
+    <span class="filter-count" id="filterCount">
+        Showing <strong id="visibleCount">@(Model?.Count ?? 0)</strong> of <strong>@(Model?.Count ?? 0)</strong> tours
+    </span>
+</div>
+
+<!-- ═══ TABLE CARD ════════════════════════════════════════════════════ -->
+<div class="table-card">
+    <div class="table-responsive-scroll">
+        <table class="tours-table" id="toursTable">
+            <thead>
+                <tr>
+                    <th style="width:280px;">Tour</th>
+                    <th>Badge</th>
+                    <th>Duration</th>
+                    <th>Capacity</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th style="text-align:center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="toursTableBody">
+                @if (Model == null || !Model.Any())
+                {
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <div class="empty-icon"><i class="bi bi-map"></i></div>
+                                <div class="empty-title">No tours found</div>
+                                <p class="empty-sub">Get started by adding your first tour.</p>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var tour in Model)
+                    {
+                        string statusClass = tour.IsStatus ? "active" : "passive";
+                        string statusLabel = tour.IsStatus ? "Active" : "Passive";
+
+                        string badgeCss = (tour.Badge?.ToLower()) switch
+                        {
+                            "popular" => "badge-popular",
+                            "new" => "badge-new",
+                            "limited" => "badge-limited",
+                            _ => "badge-default"
+                        };
+
+                        <tr data-status="@statusClass"
+                            data-badge="@(tour.Badge?.ToLower())"
+                            data-title="@tour.Title?.ToLower()"
+                            data-tour-id="@tour.TourId">
+
+                            <!-- Tour Info -->
+                            <td>
+                                <div class="tour-cell">
+                                    @if (!string.IsNullOrWhiteSpace(tour.CoverImageUrl))
+                                    {
+                                        <img src="@tour.CoverImageUrl"
+                                             alt="@tour.Title"
+                                             class="tour-thumb"
+                                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                        <div class="tour-thumb-placeholder" style="display:none;">
+                                            <i class="bi bi-image"></i>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="tour-thumb-placeholder">
+                                            <i class="bi bi-image"></i>
+                                        </div>
+                                    }
+                                    <div>
+                                        <span class="tour-info-title">@tour.Title</span>
+                                        <span class="tour-info-desc">@tour.Description</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Badge -->
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(tour.Badge))
+                                {
+                                    <span class="badge-tour @badgeCss">@tour.Badge</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted" style="font-size:12px;">—</span>
+                                }
+                            </td>
+
+                            <!-- Duration -->
+                            <td>
+                                <span class="stat-pill">
+                                    <i class="bi bi-calendar3"></i>
+                                    @tour.DayCount Day@(tour.DayCount != 1 ? "s" : "")
+                                </span>
+                            </td>
+
+                            <!-- Capacity -->
+                            <td>
+                                <span class="stat-pill">
+                                    <i class="bi bi-people-fill"></i>
+                                    @tour.Capacity
+                                </span>
+                            </td>
+
+                            <!-- Price -->
+                            <td>
+                                <span class="price-cell">$@tour.Price.ToString("N2")</span>
+                            </td>
+
+                            <!-- Status -->
+                            <td>
+                                @if (tour.IsStatus)
+                                {
+                                    <span class="badge-status-active">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-status-passive">Passive</span>
+                                }
+                            </td>
+
+                            <!-- Actions -->
+                            <td>
+                                <div class="action-group" style="justify-content:center;">
+                                    <a href="/admin/tours/details/@tour.TourId"
+                                       class="btn-action btn-view"
+                                       title="View Details"
+                                       data-bs-toggle="tooltip">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                    <a href="/admintour/updatetour/@tour.TourId"
+                                       class="btn-action btn-edit"
+                                       title="Edit Tour"
+                                       data-bs-toggle="tooltip">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <button class="btn-action btn-delete"
+                                            title="Delete Tour"
+                                            data-bs-toggle="tooltip"
+                                            onclick="openDeleteModal('@tour.TourId', '@Html.Raw(tour.Title?.Replace("'", "\\'"))')">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ═══ DELETE CONFIRMATION MODAL ════════════════════════════════════ -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content" style="border-radius:16px; border:none; box-shadow:var(--shadow-lg);">
+            <div class="modal-body text-center p-4">
+                <div class="delete-modal-icon">
+                    <i class="bi bi-trash3-fill"></i>
+                </div>
+                <h5 style="font-weight:700; color:var(--navy); margin-bottom:8px;">Delete Tour?</h5>
+                <p style="font-size:14px; color:var(--text-muted); margin-bottom:6px;">
+                    You are about to permanently delete:
+                </p>
+                <p style="font-size:14px; font-weight:600; color:var(--navy); margin-bottom:20px;" id="deleteTourName">—</p>
+                <p style="font-size:12.5px; color:#ef4444; margin-bottom:24px;">
+                    This action cannot be undone.
+                </p>
+                <div class="d-flex gap-2">
+                    <button type="button"
+                            class="btn btn-light flex-fill"
+                            style="border-radius:10px; font-weight:600; font-family:'DM Sans',sans-serif;"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <a href="#" id="deleteConfirmBtn"
+                       class="btn btn-danger flex-fill"
+                       style="border-radius:10px; font-weight:600; font-family:'DM Sans',sans-serif;">
+                        Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // ── Init tooltips ──────────────────────────────────────────────────
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+            new bootstrap.Tooltip(el, { trigger: 'hover' });
+        });
+
+        // ── Delete Modal ───────────────────────────────────────────────────
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+
+        function openDeleteModal(tourId, tourName) {
+            document.getElementById('deleteTourName').textContent = tourName;
+            document.getElementById('deleteConfirmBtn').href = '/admintour/deletetour/' + tourId;
+            deleteModal.show();
+        }
+
+        // ── Live Filtering ─────────────────────────────────────────────────
+        const searchInput    = document.getElementById('tableSearch');
+        const statusFilter   = document.getElementById('statusFilter');
+        const badgeFilter    = document.getElementById('badgeFilter');
+        const visibleCount   = document.getElementById('visibleCount');
+        const tableBody      = document.getElementById('toursTableBody');
+
+        function applyFilters() {
+            const query  = searchInput.value.toLowerCase().trim();
+            const status = statusFilter.value;
+            const badge  = badgeFilter.value;
+
+            const rows = tableBody.querySelectorAll('tr[data-tour-id]');
+            let visible = 0;
+
+            rows.forEach(row => {
+                const title      = row.dataset.title  || '';
+                const rowStatus  = row.dataset.status || '';
+                const rowBadge   = row.dataset.badge  || '';
+
+                const matchSearch = !query  || title.includes(query);
+                const matchStatus = !status || rowStatus === status;
+                const matchBadge  = !badge  || rowBadge  === badge;
+
+                if (matchSearch && matchStatus && matchBadge) {
+                    row.style.display = '';
+                    visible++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            visibleCount.textContent = visible;
+
+            // Empty state
+            let emptyRow = tableBody.querySelector('tr.no-results');
+            if (visible === 0 && rows.length > 0) {
+                if (!emptyRow) {
+                    emptyRow = document.createElement('tr');
+                    emptyRow.className = 'no-results';
+                    emptyRow.innerHTML = `
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <div class="empty-icon"><i class="bi bi-funnel"></i></div>
+                                <div class="empty-title">No results match your filters</div>
+                                <p class="empty-sub">Try adjusting your search or filters.</p>
+                            </div>
+                        </td>`;
+                    tableBody.appendChild(emptyRow);
+                }
+            } else if (emptyRow) {
+                emptyRow.remove();
+            }
+        }
+
+        searchInput.addEventListener('input', applyFilters);
+        statusFilter.addEventListener('change', applyFilters);
+        badgeFilter.addEventListener('change', applyFilters);
+    </script>
+}
+
+
+
+

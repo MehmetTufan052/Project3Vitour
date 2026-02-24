@@ -1,0 +1,1243 @@
+﻿@model GetTourByIdDto
+@{
+    ViewData["Title"] = "UpdateTour";
+    Layout = "~/Views/Shared/_TourLayout.cshtml";
+}
+
+@section Styles {
+<style>
+    /* ─── Page Header ───────────────────────────────────── */
+    .section-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 28px;
+    }
+
+    .page-eyebrow {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #f59e0b;
+        margin-bottom: 4px;
+    }
+
+    .page-title { margin: 0; }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #fff;
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        padding: 10px 18px;
+        border-radius: 10px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 13.5px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background .15s, color .15s, border-color .15s;
+        text-decoration: none;
+    }
+
+    .btn-back:hover {
+        background: var(--surface);
+        color: var(--navy);
+        border-color: #c4cdd9;
+    }
+
+    /* ─── Edit Mode Banner ───────────────────────────────── */
+    .edit-banner {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: linear-gradient(135deg, #fffbeb, #fef3c7);
+        border: 1px solid #fde68a;
+        border-radius: 14px;
+        padding: 14px 20px;
+        margin-bottom: 24px;
+    }
+
+    .edit-banner-icon {
+        width: 40px; height: 40px;
+        background: #f59e0b;
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 18px;
+        color: #fff;
+        flex-shrink: 0;
+        box-shadow: 0 2px 8px rgba(245,158,11,.35);
+    }
+
+    .edit-banner-text { flex: 1; }
+    .edit-banner-title {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #92400e;
+        margin-bottom: 2px;
+    }
+    .edit-banner-sub { font-size: 12px; color: #b45309; }
+
+    .edit-banner-id {
+        font-size: 11px;
+        font-weight: 600;
+        color: #92400e;
+        background: rgba(245,158,11,.15);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-family: monospace;
+        letter-spacing: .5px;
+        white-space: nowrap;
+    }
+
+    /* ─── Form Grid ──────────────────────────────────────── */
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 24px;
+        align-items: start;
+    }
+
+    @@media (max-width: 1100px) {
+        .form-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ─── Form Cards ─────────────────────────────────────── */
+    .form-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .form-card:last-child { margin-bottom: 0; }
+
+    .form-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--border);
+        background: #fafbfd;
+    }
+
+    .form-card-icon {
+        width: 36px; height: 36px;
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 17px;
+        flex-shrink: 0;
+    }
+
+    .fci-blue   { background: #e0f2fe; color: #0369a1; }
+    .fci-green  { background: #dcfce7; color: #15803d; }
+    .fci-purple { background: #ede9fe; color: #6d28d9; }
+    .fci-yellow { background: #fef9c3; color: #854d0e; }
+    .fci-orange { background: #ffedd5; color: #c2410c; }
+
+    .form-card-title {
+        font-size: 14.5px;
+        font-weight: 700;
+        color: var(--navy);
+        margin: 0;
+        line-height: 1.3;
+    }
+
+    .form-card-subtitle {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    .form-card-body { padding: 24px; }
+
+    /* ─── Form Controls ──────────────────────────────────── */
+    .form-label-custom {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--navy);
+        margin-bottom: 7px;
+    }
+
+    .form-label-custom .required {
+        color: var(--danger);
+        margin-left: 3px;
+    }
+
+    .form-label-hint {
+        font-size: 11.5px;
+        font-weight: 400;
+        color: var(--text-muted);
+        margin-left: 6px;
+    }
+
+    .input-wrapper { position: relative; }
+
+    .input-icon {
+        position: absolute;
+        left: 13px; top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 15px;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        padding: 11px 14px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: #fff;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 13.5px;
+        color: var(--text-main);
+        outline: none;
+        transition: border-color .18s, box-shadow .18s, background .18s;
+        appearance: none;
+    }
+
+    .form-control-custom.with-icon { padding-left: 38px; }
+
+    .form-control-custom:focus {
+        border-color: #f59e0b;
+        box-shadow: 0 0 0 3px rgba(245,158,11,.14);
+        background: #fffdf5;
+    }
+
+    .form-control-custom.is-invalid {
+        border-color: var(--danger);
+        box-shadow: 0 0 0 3px rgba(239,68,68,.12);
+    }
+
+    .form-control-custom.is-modified {
+        border-color: #f59e0b;
+        background: #fffdf5;
+    }
+
+    textarea.form-control-custom {
+        resize: vertical;
+        min-height: 110px;
+        line-height: 1.6;
+    }
+
+    .char-counter {
+        text-align: right;
+        font-size: 11.5px;
+        color: var(--text-muted);
+        margin-top: 5px;
+    }
+
+    .char-counter.warn  { color: var(--warning); }
+    .char-counter.limit { color: var(--danger); }
+
+    .field-hint {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 6px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .field-hint i { font-size: 12px; color: #f59e0b; }
+
+    .validation-msg {
+        font-size: 12px;
+        color: var(--danger);
+        margin-top: 5px;
+        display: none;
+    }
+
+    /* ─── Number Stepper ─────────────────────────────────── */
+    .number-stepper {
+        display: flex;
+        align-items: center;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+        background: #fff;
+        transition: border-color .18s, box-shadow .18s;
+    }
+
+    .number-stepper:focus-within {
+        border-color: #f59e0b;
+        box-shadow: 0 0 0 3px rgba(245,158,11,.14);
+    }
+
+    .stepper-btn {
+        width: 40px; height: 44px;
+        border: none;
+        background: #f8fafc;
+        color: var(--text-muted);
+        font-size: 16px;
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: background .15s, color .15s;
+        flex-shrink: 0;
+        user-select: none;
+    }
+
+    .stepper-btn:hover { background: var(--surface); color: var(--navy); }
+    .stepper-btn:active { background: #e2e8f0; }
+    .stepper-btn:first-child { border-right: 1px solid var(--border); }
+    .stepper-btn:last-child  { border-left:  1px solid var(--border); }
+
+    .stepper-input {
+        flex: 1;
+        border: none;
+        outline: none;
+        text-align: center;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--navy);
+        background: transparent;
+        padding: 0 8px;
+        height: 44px;
+        -moz-appearance: textfield;
+    }
+
+    .stepper-input::-webkit-inner-spin-button,
+    .stepper-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    /* ─── Price Input ────────────────────────────────────── */
+    .price-wrapper { position: relative; }
+
+    .price-prefix {
+        position: absolute;
+        left: 0; top: 0; bottom: 0;
+        width: 44px;
+        display: flex; align-items: center; justify-content: center;
+        background: #f8fafc;
+        border-right: 1px solid var(--border);
+        border-radius: 10px 0 0 10px;
+        font-weight: 700;
+        font-size: 14px;
+        color: var(--text-muted);
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .price-input { padding-left: 54px !important; }
+
+    /* ─── Badge Selector ─────────────────────────────────── */
+    .badge-selector {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .badge-option { position: relative; }
+
+    .badge-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 0; height: 0;
+    }
+
+    .badge-option label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 14px;
+        border: 2px solid var(--border);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: border-color .18s, background .18s, box-shadow .18s;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-main);
+        user-select: none;
+    }
+
+    .badge-option label:hover {
+        border-color: #c4cdd9;
+        background: var(--surface);
+    }
+
+    .badge-option input:checked + label {
+        border-color: #f59e0b;
+        background: #fffbeb;
+        box-shadow: 0 0 0 2px rgba(245,158,11,.2);
+    }
+
+    .badge-dot {
+        width: 10px; height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .bd-popular { background: #f59e0b; }
+    .bd-new     { background: #10b981; }
+    .bd-limited { background: #ef4444; }
+    .bd-none    { background: #94a3b8; }
+
+    /* ─── Status Toggle ──────────────────────────────────── */
+    .status-toggle-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 18px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: #fff;
+        transition: border-color .18s, background .18s;
+        cursor: pointer;
+    }
+
+    .status-toggle-wrap:has(input:checked) {
+        border-color: var(--success);
+        background: #f0fdf4;
+    }
+
+    .status-toggle-info { display: flex; align-items: center; gap: 12px; }
+
+    .status-icon {
+        width: 38px; height: 38px;
+        border-radius: 10px;
+        background: #f1f5f9;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 17px;
+        color: var(--text-muted);
+        transition: background .2s, color .2s;
+    }
+
+    .status-toggle-wrap:has(input:checked) .status-icon {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .status-label-title { font-size: 13.5px; font-weight: 600; color: var(--navy); }
+    .status-label-sub   { font-size: 12px; color: var(--text-muted); }
+
+    .toggle-switch {
+        position: relative;
+        width: 48px; height: 26px;
+        flex-shrink: 0;
+    }
+
+    .toggle-switch input { display: none; }
+
+    .toggle-track {
+        position: absolute;
+        inset: 0;
+        background: #cbd5e1;
+        border-radius: 13px;
+        cursor: pointer;
+        transition: background .25s;
+    }
+
+    .toggle-track::after {
+        content: '';
+        position: absolute;
+        left: 3px; top: 3px;
+        width: 20px; height: 20px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 4px rgba(0,0,0,.18);
+        transition: transform .25s cubic-bezier(.4,0,.2,1);
+    }
+
+    .toggle-switch input:checked + .toggle-track { background: var(--success); }
+    .toggle-switch input:checked + .toggle-track::after { transform: translateX(22px); }
+
+    /* ─── Image Preview ──────────────────────────────────── */
+    .image-preview-box {
+        width: 100%;
+        height: 180px;
+        border: 2px dashed var(--border);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        background: #fafbfd;
+        font-size: 13px;
+        gap: 6px;
+        transition: border-color .2s, background .2s;
+        overflow: hidden;
+        position: relative;
+        margin-bottom: 12px;
+    }
+
+    .image-preview-box.has-image {
+        border-style: solid;
+        border-color: #f59e0b;
+        background: #000;
+    }
+
+    .image-preview-box img {
+        position: absolute;
+        inset: 0;
+        width: 100%; height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        transition: opacity .3s;
+    }
+
+    .image-preview-box img.loaded { opacity: 1; }
+
+    .preview-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        transition: opacity .2s;
+    }
+
+    .preview-placeholder i { font-size: 32px; color: #cbd5e1; }
+    .image-preview-box.has-image .preview-placeholder { opacity: 0; }
+
+    /* ─── Changes tracker ────────────────────────────────── */
+    .changes-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px 20px;
+        margin-bottom: 20px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .changes-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .changes-title i { color: #f59e0b; font-size: 13px; }
+
+    .change-list { list-style: none; padding: 0; margin: 0; }
+
+    .change-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12.5px;
+        color: var(--text-muted);
+        padding: 5px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .change-item:last-child { border-bottom: none; }
+
+    .change-dot {
+        width: 7px; height: 7px;
+        border-radius: 50%;
+        background: #cbd5e1;
+        flex-shrink: 0;
+        transition: background .2s;
+    }
+
+    .change-item.modified .change-dot  { background: #f59e0b; }
+    .change-item.modified .change-name { color: var(--navy); font-weight: 600; }
+
+    .no-changes-msg {
+        font-size: 12.5px;
+        color: var(--text-muted);
+        text-align: center;
+        padding: 6px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    /* ─── Submit buttons ─────────────────────────────────── */
+    .submit-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: var(--shadow-md);
+        padding: 22px 24px;
+    }
+
+    .btn-submit-update {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: #fff;
+        border: none;
+        border-radius: 11px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: opacity .2s, box-shadow .2s, transform .15s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        box-shadow: 0 2px 12px rgba(245,158,11,.4);
+        margin-bottom: 10px;
+    }
+
+    .btn-submit-update:hover {
+        opacity: .92;
+        box-shadow: 0 4px 20px rgba(245,158,11,.5);
+        transform: translateY(-1px);
+    }
+
+    .btn-submit-update:active { transform: translateY(0); }
+
+    .btn-cancel-submit {
+        width: 100%;
+        padding: 12px;
+        background: none;
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        border-radius: 11px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background .15s, color .15s;
+        text-align: center;
+        display: block;
+        text-decoration: none;
+    }
+
+    .btn-cancel-submit:hover { background: var(--surface); color: var(--navy); }
+
+    /* ─── Tips card ──────────────────────────────────────── */
+    .tips-card {
+        background: linear-gradient(135deg, #0d1b2a 0%, #1a3358 100%);
+        border-radius: 16px;
+        padding: 22px;
+        color: #fff;
+    }
+
+    .tips-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 15px;
+        color: #fff;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .tips-title i { color: #f59e0b; font-size: 16px; }
+
+    .tip-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        margin-bottom: 10px;
+        font-size: 12.5px;
+        color: rgba(255,255,255,.75);
+        line-height: 1.5;
+    }
+
+    .tip-item:last-child { margin-bottom: 0; }
+    .tip-item i { font-size: 13px; color: #f59e0b; flex-shrink: 0; margin-top: 1px; }
+
+    @@media (max-width: 576px) {
+        .badge-selector { grid-template-columns: 1fr 1fr; }
+        .form-card-body { padding: 16px; }
+        .edit-banner { flex-wrap: wrap; }
+    }
+</style>
+}
+
+<!-- ═══ PAGE HEADER ═══════════════════════════════════════════════════ -->
+<div class="section-header">
+    <div>
+        <p class="page-eyebrow">Tur Yönetimi</p>
+        <h1 class="page-title">Turu Güncelle</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin" class="text-muted">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="/admin/tours" class="text-muted">Turlar</a></li>
+                <li class="breadcrumb-item active text-muted">Güncelle</li>
+            </ol>
+        </nav>
+    </div>
+    <a href="/admin/tours" class="btn-back">
+        <i class="bi bi-arrow-left"></i>
+        Listeye Dön
+    </a>
+</div>
+
+<!-- ═══ EDIT MODE BANNER ══════════════════════════════════════════════ -->
+<div class="edit-banner">
+    <div class="edit-banner-icon">
+        <i class="bi bi-pencil-fill"></i>
+    </div>
+    <div class="edit-banner-text">
+        <div class="edit-banner-title">Düzenleme Modu — @Model.Title</div>
+        <div class="edit-banner-sub">Değişiklikleriniz kaydedilene kadar uygulanmaz.</div>
+    </div>
+    <span class="edit-banner-id d-none d-sm-block">ID: @Model.TourId</span>
+</div>
+
+<!-- ═══ FORM ══════════════════════════════════════════════════════════ -->
+<form method="post" id="updateTourForm" novalidate>
+    @Html.AntiForgeryToken()
+
+    <!-- Hidden TourId -->
+    <input asp-for="TourId" type="hidden" />
+
+    <div class="form-grid">
+
+        <!-- ══ LEFT COLUMN ════════════════════════════════════════════ -->
+        <div>
+
+            <!-- ── Temel Bilgiler ─────────────────────────────────── -->
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="form-card-icon fci-blue">
+                        <i class="bi bi-info-circle-fill"></i>
+                    </div>
+                    <div>
+                        <p class="form-card-title">Temel Bilgiler</p>
+                        <p class="form-card-subtitle">Turun adı ve açıklaması</p>
+                    </div>
+                </div>
+                <div class="form-card-body">
+
+                    <!-- Tur Adı -->
+                    <div class="mb-4">
+                        <label class="form-label-custom" for="Title">
+                            Tur Adı <span class="required">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <i class="bi bi-type input-icon"></i>
+                            <input asp-for="Title"
+                                   id="Title"
+                                   class="form-control-custom with-icon"
+                                   placeholder="Örn: Kapadokya Balon Turu"
+                                   maxlength="100"
+                                   autocomplete="off"
+                                   data-original="@Model.Title" />
+                        </div>
+                        <div class="char-counter" id="titleCounter">0 / 100</div>
+                        <span asp-validation-for="Title" class="validation-msg" style="display:block;"></span>
+                    </div>
+
+                    <!-- Açıklama -->
+                    <div class="mb-0">
+                        <label class="form-label-custom" for="Description">
+                            Tur Açıklaması <span class="required">*</span>
+                            <span class="form-label-hint">Kısa ve öz tutun</span>
+                        </label>
+                        <textarea asp-for="Description"
+                                  id="Description"
+                                  class="form-control-custom"
+                                  placeholder="Tur hakkında kısa bir açıklama yazın…"
+                                  maxlength="500"
+                                  rows="4"
+                                  data-original="@Model.Description"></textarea>
+                        <div class="char-counter" id="descCounter">0 / 500</div>
+                        <span asp-validation-for="Description" class="validation-msg" style="display:block;"></span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ── Tur Detayları ───────────────────────────────────── -->
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="form-card-icon fci-purple">
+                        <i class="bi bi-sliders2-vertical"></i>
+                    </div>
+                    <div>
+                        <p class="form-card-title">Tur Detayları</p>
+                        <p class="form-card-subtitle">Süre, kapasite ve fiyat bilgileri</p>
+                    </div>
+                </div>
+                <div class="form-card-body">
+                    <div class="row g-4">
+
+                        <!-- Gün Sayısı -->
+                        <div class="col-sm-6">
+                            <label class="form-label-custom" for="DayCount">
+                                Tur Süresi <span class="required">*</span>
+                            </label>
+                            <div class="number-stepper">
+                                <button type="button" class="stepper-btn" onclick="stepValue('DayCount', -1, 1, 365)">
+                                    <i class="bi bi-dash"></i>
+                                </button>
+                                <input asp-for="DayCount"
+                                       id="DayCount"
+                                       class="stepper-input"
+                                       type="number"
+                                       min="1" max="365"
+                                       data-original="@Model.DayCount" />
+                                <button type="button" class="stepper-btn" onclick="stepValue('DayCount', 1, 1, 365)">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            </div>
+                            <p class="field-hint"><i class="bi bi-info-circle"></i> Gün cinsinden süre (1–365)</p>
+                            <span asp-validation-for="DayCount" class="validation-msg" style="display:block;"></span>
+                        </div>
+
+                        <!-- Kapasite -->
+                        <div class="col-sm-6">
+                            <label class="form-label-custom" for="Capacity">
+                                Kapasite <span class="required">*</span>
+                            </label>
+                            <div class="number-stepper">
+                                <button type="button" class="stepper-btn" onclick="stepValue('Capacity', -1, 1, 999)">
+                                    <i class="bi bi-dash"></i>
+                                </button>
+                                <input asp-for="Capacity"
+                                       id="Capacity"
+                                       class="stepper-input"
+                                       type="number"
+                                       min="1" max="999"
+                                       data-original="@Model.Capacity" />
+                                <button type="button" class="stepper-btn" onclick="stepValue('Capacity', 1, 1, 999)">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            </div>
+                            <p class="field-hint"><i class="bi bi-info-circle"></i> Maksimum katılımcı sayısı</p>
+                            <span asp-validation-for="Capacity" class="validation-msg" style="display:block;"></span>
+                        </div>
+
+                        <!-- Fiyat -->
+                        <div class="col-12">
+                            <label class="form-label-custom" for="Price">
+                                Fiyat (USD) <span class="required">*</span>
+                            </label>
+                            <div class="price-wrapper">
+                                <span class="price-prefix">$</span>
+                                <input asp-for="Price"
+                                       id="Price"
+                                       class="form-control-custom price-input"
+                                       type="number"
+                                       min="0" step="0.01"
+                                       placeholder="0.00"
+                                       data-original="@Model.Price" />
+                            </div>
+                            <p class="field-hint"><i class="bi bi-info-circle"></i> Kişi başı tur ücreti</p>
+                            <span asp-validation-for="Price" class="validation-msg" style="display:block;"></span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Kapak Görseli ───────────────────────────────────── -->
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="form-card-icon fci-yellow">
+                        <i class="bi bi-image-fill"></i>
+                    </div>
+                    <div>
+                        <p class="form-card-title">Kapak Görseli</p>
+                        <p class="form-card-subtitle">Turun vitrin fotoğrafı</p>
+                    </div>
+                </div>
+                <div class="form-card-body">
+
+                    <div class="image-preview-box" id="imagePreviewBox">
+                        <img id="imagePreview" src="" alt="Görsel önizleme" />
+                        <div class="preview-placeholder">
+                            <i class="bi bi-image"></i>
+                            <span>Görsel önizlemesi burada görünecek</span>
+                        </div>
+                    </div>
+
+                    <label class="form-label-custom" for="CoverImageUrl">
+                        Görsel URL <span class="required">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-link-45deg input-icon"></i>
+                        <input asp-for="CoverImageUrl"
+                               id="CoverImageUrl"
+                               class="form-control-custom with-icon"
+                               placeholder="https://example.com/image.jpg"
+                               autocomplete="off"
+                               data-original="@Model.CoverImageUrl" />
+                    </div>
+                    <p class="field-hint">
+                        <i class="bi bi-info-circle"></i>
+                        Geçerli bir görsel URL'i girin. Önerilen boyut: 1200×800px
+                    </p>
+                    <span asp-validation-for="CoverImageUrl" class="validation-msg" style="display:block;"></span>
+
+                </div>
+            </div>
+
+        </div><!-- /left column -->
+
+        <!-- ══ RIGHT COLUMN ═══════════════════════════════════════════ -->
+        <div>
+
+            <!-- ── Değişiklik Takibi ───────────────────────────────── -->
+            <div class="changes-card">
+                <div class="changes-title">
+                    <i class="bi bi-pencil-square"></i>
+                    Değiştirilen Alanlar
+                </div>
+                <ul class="change-list" id="changeList">
+                    <li class="change-item" data-field="Title">
+                        <span class="change-dot"></span>
+                        <span class="change-name">Tur Adı</span>
+                    </li>
+                    <li class="change-item" data-field="Description">
+                        <span class="change-dot"></span>
+                        <span class="change-name">Açıklama</span>
+                    </li>
+                    <li class="change-item" data-field="CoverImageUrl">
+                        <span class="change-dot"></span>
+                        <span class="change-name">Kapak Görseli</span>
+                    </li>
+                    <li class="change-item" data-field="DayCount">
+                        <span class="change-dot"></span>
+                        <span class="change-name">Tur Süresi</span>
+                    </li>
+                    <li class="change-item" data-field="Capacity">
+                        <span class="change-dot"></span>
+                        <span class="change-name">Kapasite</span>
+                    </li>
+                    <li class="change-item" data-field="Price">
+                        <span class="change-dot"></span>
+                        <span class="change-name">Fiyat</span>
+                    </li>
+                    <li class="change-item" data-field="Badge">
+                        <span class="change-dot"></span>
+                        <span class="change-name">Rozet</span>
+                    </li>
+                    <li class="change-item" data-field="IsStatus">
+                        <span class="change-dot"></span>
+                        <span class="change-name">Yayın Durumu</span>
+                    </li>
+                </ul>
+                <p class="no-changes-msg" id="noChangesMsg" style="display:none;">
+                    <i class="bi bi-check-circle text-success"></i>
+                    Henüz değişiklik yapılmadı
+                </p>
+            </div>
+
+            <!-- ── Rozet ──────────────────────────────────────────── -->
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="form-card-icon fci-orange">
+                        <i class="bi bi-award-fill"></i>
+                    </div>
+                    <div>
+                        <p class="form-card-title">Tur Rozeti</p>
+                        <p class="form-card-subtitle">Öne çıkarma etiketi</p>
+                    </div>
+                </div>
+                <div class="form-card-body">
+                    <div class="badge-selector">
+
+                        <div class="badge-option">
+                            <input type="radio" asp-for="Badge" value="" id="badge-none"
+                                   @@(string.IsNullOrEmpty(Model.Badge) ? "checked" : "") />
+                            <label for="badge-none">
+                                <span class="badge-dot bd-none"></span>
+                                Yok
+                            </label>
+                        </div>
+
+                        <div class="badge-option">
+                            <input type="radio" asp-for="Badge" value="Popular" id="badge-popular"
+                                   @@(Model.Badge == "Popular" ? "checked" : "") />
+                            <label for="badge-popular">
+                                <span class="badge-dot bd-popular"></span>
+                                Popüler
+                            </label>
+                        </div>
+
+                        <div class="badge-option">
+                            <input type="radio" asp-for="Badge" value="New" id="badge-new"
+                                   @@(Model.Badge == "New" ? "checked" : "") />
+                            <label for="badge-new">
+                                <span class="badge-dot bd-new"></span>
+                                Yeni
+                            </label>
+                        </div>
+
+                        <div class="badge-option">
+                            <input type="radio" asp-for="Badge" value="Limited" id="badge-limited"
+                                   @@(Model.Badge == "Limited" ? "checked" : "") />
+                            <label for="badge-limited">
+                                <span class="badge-dot bd-limited"></span>
+                                Sınırlı
+                            </label>
+                        </div>
+
+                    </div>
+                    <span asp-validation-for="Badge" class="validation-msg" style="display:block; margin-top:8px;"></span>
+                </div>
+            </div>
+
+            <!-- ── Yayın Durumu ────────────────────────────────────── -->
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="form-card-icon fci-green">
+                        <i class="bi bi-toggle2-on"></i>
+                    </div>
+                    <div>
+                        <p class="form-card-title">Yayın Durumu</p>
+                        <p class="form-card-subtitle">Tur aktif / pasif ayarı</p>
+                    </div>
+                </div>
+                <div class="form-card-body">
+                    <label class="status-toggle-wrap" for="IsStatus">
+                        <div class="status-toggle-info">
+                            <div class="status-icon">
+                                <i class="bi @(Model.IsStatus ? "bi-eye-fill" : "bi-eye-slash-fill")" id="statusIconInner"></i>
+                            </div>
+                            <div>
+                                <div class="status-label-title" id="statusLabelTitle">
+                                    @(Model.IsStatus ? "Aktif" : "Pasif")
+                                </div>
+                                <div class="status-label-sub" id="statusLabelSub">
+                                    @(Model.IsStatus ? "Tur listede görünecek" : "Tur listede görünmeyecek")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="toggle-switch">
+                            <input asp-for="IsStatus"
+                                   id="IsStatus"
+                                   type="checkbox"
+                                   onchange="updateStatusLabel(this)"
+                                   data-original="@Model.IsStatus.ToString().ToLower()" />
+                            <div class="toggle-track"></div>
+                        </div>
+                    </label>
+                    <span asp-validation-for="IsStatus" class="validation-msg" style="display:block; margin-top:8px;"></span>
+                </div>
+            </div>
+
+            <!-- ── Güncelle / İptal ───────────────────────────────── -->
+            <div class="submit-card">
+                <button type="submit" class="btn-submit-update" id="submitBtn">
+                    <i class="bi bi-arrow-clockwise"></i>
+                    Değişiklikleri Kaydet
+                </button>
+                <a href="/admin/tours" class="btn-cancel-submit">
+                    <i class="bi bi-x-circle me-1"></i> İptal Et
+                </a>
+            </div>
+
+            <!-- ── İpuçları ───────────────────────────────────────── -->
+            <div class="tips-card">
+                <div class="tips-title">
+                    <i class="bi bi-lightbulb-fill"></i>
+                    Güncelleme İpuçları
+                </div>
+                <div class="tip-item">
+                    <i class="bi bi-check2-circle"></i>
+                    <span>Yalnızca değiştirmeniz gereken alanları güncelleyin.</span>
+                </div>
+                <div class="tip-item">
+                    <i class="bi bi-check2-circle"></i>
+                    <span>Fiyat değişikliği mevcut rezervasyonları etkilemez.</span>
+                </div>
+                <div class="tip-item">
+                    <i class="bi bi-check2-circle"></i>
+                    <span>Turu pasife çekmek yeni rezervasyonları durdurur.</span>
+                </div>
+                <div class="tip-item">
+                    <i class="bi bi-check2-circle"></i>
+                    <span>Kapasite düşürülürken mevcut rezervasyon sayısını kontrol edin.</span>
+                </div>
+            </div>
+
+        </div><!-- /right column -->
+    </div>
+</form>
+
+@section Scripts {
+@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script>
+    // ── Original values for change tracking ───────────────────────────
+    const originals = {
+        Title:        document.getElementById('Title')?.dataset.original        ?? '',
+        Description:  document.getElementById('Description')?.dataset.original  ?? '',
+        CoverImageUrl:document.getElementById('CoverImageUrl')?.dataset.original ?? '',
+        DayCount:     document.getElementById('DayCount')?.dataset.original      ?? '',
+        Capacity:     document.getElementById('Capacity')?.dataset.original      ?? '',
+        Price:        document.getElementById('Price')?.dataset.original         ?? '',
+        Badge:        '@Model.Badge',
+        IsStatus:     '@Model.IsStatus.ToString().ToLower()'
+    };
+
+    // ── Character counters ─────────────────────────────────────────────
+    function setupCounter(inputId, counterId, max) {
+        const input   = document.getElementById(inputId);
+        const counter = document.getElementById(counterId);
+        if (!input || !counter) return;
+        function update() {
+            const len = input.value.length;
+            counter.textContent = len + ' / ' + max;
+            counter.className = 'char-counter';
+            if (len > max * 0.9) counter.classList.add('warn');
+            if (len >= max)      counter.classList.add('limit');
+        }
+        input.addEventListener('input', update);
+        update();
+    }
+
+    setupCounter('Title',       'titleCounter', 100);
+    setupCounter('Description', 'descCounter',  500);
+
+    // ── Number stepper ─────────────────────────────────────────────────
+    function stepValue(id, delta, min, max) {
+        const input = document.getElementById(id);
+        let val = parseInt(input.value) || 0;
+        val = Math.min(max, Math.max(min, val + delta));
+        input.value = val;
+        trackChange(id);
+    }
+
+    // ── Image preview ──────────────────────────────────────────────────
+    const coverInput = document.getElementById('CoverImageUrl');
+    const previewBox = document.getElementById('imagePreviewBox');
+    const previewImg = document.getElementById('imagePreview');
+
+    function loadPreview(url) {
+        if (!url) { previewBox.classList.remove('has-image'); previewImg.classList.remove('loaded'); return; }
+        previewImg.onload  = () => { previewBox.classList.add('has-image'); previewImg.classList.add('loaded'); };
+        previewImg.onerror = () => { previewBox.classList.remove('has-image'); previewImg.classList.remove('loaded'); };
+        previewImg.src = url;
+    }
+
+    // Load existing image on page load
+    loadPreview(coverInput.value.trim());
+
+    let previewTimeout;
+    coverInput.addEventListener('input', () => {
+        clearTimeout(previewTimeout);
+        previewTimeout = setTimeout(() => loadPreview(coverInput.value.trim()), 600);
+    });
+
+    // ── Status label ───────────────────────────────────────────────────
+    function updateStatusLabel(cb) {
+        document.getElementById('statusLabelTitle').textContent = cb.checked ? 'Aktif'  : 'Pasif';
+        document.getElementById('statusLabelSub').textContent   = cb.checked
+            ? 'Tur listede görünecek'
+            : 'Tur listede görünmeyecek';
+        document.getElementById('statusIconInner').className = cb.checked
+            ? 'bi bi-eye-fill'
+            : 'bi bi-eye-slash-fill';
+    }
+
+    // ── Change tracker ─────────────────────────────────────────────────
+    function trackChange(fieldId) {
+        const el  = document.getElementById(fieldId);
+        const row = document.querySelector(`.change-item[data-field="${fieldId}"]`);
+        if (!el || !row) return;
+
+        const current  = el.value.trim();
+        const original = (originals[fieldId] ?? '').toString().trim();
+        const changed  = current !== original;
+
+        row.classList.toggle('modified', changed);
+        if (changed) el.classList.add('is-modified');
+        else         el.classList.remove('is-modified');
+
+        updateNoChangesMsg();
+    }
+
+    function trackRadioChange() {
+        const selected = document.querySelector('input[name="Badge"]:checked')?.value ?? '';
+        const row = document.querySelector('.change-item[data-field="Badge"]');
+        if (!row) return;
+        const changed = selected !== originals.Badge;
+        row.classList.toggle('modified', changed);
+        updateNoChangesMsg();
+    }
+
+    function trackToggleChange(cb) {
+        const row = document.querySelector('.change-item[data-field="IsStatus"]');
+        if (!row) return;
+        const changed = cb.checked.toString() !== originals.IsStatus;
+        row.classList.toggle('modified', changed);
+        updateNoChangesMsg();
+    }
+
+    function updateNoChangesMsg() {
+        const anyModified = document.querySelectorAll('.change-item.modified').length > 0;
+        document.getElementById('noChangesMsg').style.display = anyModified ? 'none' : 'flex';
+        document.querySelectorAll('.change-item').forEach(item => {
+            item.style.display = 'flex';
+        });
+    }
+
+    // Attach listeners
+    ['Title', 'Description', 'CoverImageUrl', 'Price'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', () => trackChange(id));
+    });
+
+    ['DayCount', 'Capacity'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', () => trackChange(id));
+    });
+
+    document.querySelectorAll('input[name="Badge"]').forEach(r => {
+        r.addEventListener('change', trackRadioChange);
+    });
+
+    const toggleEl = document.getElementById('IsStatus');
+    if (toggleEl) {
+        toggleEl.addEventListener('change', function () {
+            updateStatusLabel(this);
+            trackToggleChange(this);
+        });
+    }
+
+    // Initial check
+    updateNoChangesMsg();
+
+    // ── Client-side validation ─────────────────────────────────────────
+    const requiredFields = ['Title', 'Description', 'CoverImageUrl'];
+
+    document.getElementById('updateTourForm').addEventListener('submit', function (e) {
+        let valid = true;
+
+        requiredFields.forEach(id => {
+            const el = document.getElementById(id);
+            if (el && !el.value.trim()) {
+                el.classList.add('is-invalid');
+                valid = false;
+            } else if (el) {
+                el.classList.remove('is-invalid');
+            }
+        });
+
+        const price = parseFloat(document.getElementById('Price').value);
+        if (isNaN(price) || price <= 0) {
+            document.getElementById('Price').classList.add('is-invalid');
+            valid = false;
+        }
+
+        if (!valid) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Güncelleniyor…';
+        }
+    });
+
+    document.querySelectorAll('.form-control-custom').forEach(el => {
+        el.addEventListener('input', () => el.classList.remove('is-invalid'));
+    });
+</script>
+}
+
+
+

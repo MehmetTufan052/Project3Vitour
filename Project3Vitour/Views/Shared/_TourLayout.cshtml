@@ -1,0 +1,679 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] – Horizon Tours Admin</title>
+
+    <!-- Bootstrap 5 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ─── CSS Variables ─────────────────────────────────────────── */
+        :root {
+            --sidebar-w: 260px;
+            --sidebar-collapsed-w: 72px;
+            --navy: #0d1b2a;
+            --navy-mid: #112240;
+            --navy-lite: #1a3358;
+            --accent: #2d9cdb;
+            --accent-dk: #1a7ab5;
+            --surface: #f4f6fb;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --sidebar-transition: 0.28s cubic-bezier(.4,0,.2,1);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,.07), 0 1px 2px rgba(0,0,0,.05);
+            --shadow-md: 0 4px 16px rgba(13,27,42,.10);
+            --shadow-lg: 0 10px 40px rgba(13,27,42,.14);
+        }
+
+        /* ─── Reset / Base ──────────────────────────────────────────── */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--surface);
+            color: var(--text-main);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* ─── Sidebar ───────────────────────────────────────────────── */
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-w);
+            background: var(--navy);
+            display: flex;
+            flex-direction: column;
+            z-index: 1050;
+            transition: width var(--sidebar-transition);
+            overflow: hidden;
+        }
+
+            #sidebar.collapsed {
+                width: var(--sidebar-collapsed-w);
+            }
+
+        /* Brand */
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 20px 20px 18px;
+            border-bottom: 1px solid rgba(255,255,255,.07);
+            min-height: 70px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .brand-icon {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            background: var(--accent);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(45,156,219,.4);
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            opacity: 1;
+            transition: opacity .2s;
+        }
+
+        .brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 17px;
+            color: #fff;
+            line-height: 1.2;
+        }
+
+        .brand-sub {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255,255,255,.4);
+        }
+
+        #sidebar.collapsed .brand-text {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Nav */
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+            .sidebar-nav::-webkit-scrollbar {
+                width: 4px;
+            }
+
+            .sidebar-nav::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            .sidebar-nav::-webkit-scrollbar-thumb {
+                background: rgba(255,255,255,.12);
+                border-radius: 4px;
+            }
+
+        .nav-section-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.6px;
+            color: rgba(255,255,255,.3);
+            padding: 14px 22px 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            transition: opacity .2s;
+        }
+
+        #sidebar.collapsed .nav-section-label {
+            opacity: 0;
+        }
+
+        .nav-item-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 11px 22px;
+            color: rgba(255,255,255,.65);
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            border-radius: 0;
+            transition: background .18s, color .18s, padding .28s;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .nav-item-link i {
+                flex-shrink: 0;
+                font-size: 17px;
+                width: 22px;
+                text-align: center;
+                transition: transform .2s;
+            }
+
+            .nav-item-link:hover {
+                background: rgba(255,255,255,.07);
+                color: #fff;
+            }
+
+                .nav-item-link:hover i {
+                    transform: translateX(2px);
+                }
+
+            .nav-item-link.active {
+                background: var(--accent);
+                color: #fff;
+                box-shadow: inset 4px 0 0 rgba(255,255,255,.3);
+            }
+
+                .nav-item-link.active::before {
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 3px;
+                    height: 100%;
+                    background: #fff;
+                    border-radius: 0 3px 3px 0;
+                }
+
+        .nav-label {
+            transition: opacity .2s, width .28s;
+        }
+
+        #sidebar.collapsed .nav-label {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        /* Sidebar footer */
+        .sidebar-footer {
+            padding: 14px 0;
+            border-top: 1px solid rgba(255,255,255,.07);
+        }
+
+        /* Tooltip for collapsed */
+        [data-bs-toggle="tooltip"] {
+            position: relative;
+        }
+
+        /* ─── Main Wrapper ───────────────────────────────────────────── */
+        #main-wrapper {
+            margin-left: var(--sidebar-w);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: margin-left var(--sidebar-transition);
+        }
+
+            #main-wrapper.expanded {
+                margin-left: var(--sidebar-collapsed-w);
+            }
+
+        /* ─── Top Navbar ─────────────────────────────────────────────── */
+        #topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1040;
+            height: 70px;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            gap: 16px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-toggle-sidebar {
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: background .15s, color .15s;
+            flex-shrink: 0;
+        }
+
+            .btn-toggle-sidebar:hover {
+                background: var(--surface);
+                color: var(--navy);
+            }
+
+        .topbar-search {
+            flex: 1;
+            max-width: 380px;
+            position: relative;
+        }
+
+            .topbar-search input {
+                width: 100%;
+                padding: 9px 16px 9px 40px;
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                background: var(--surface);
+                font-family: 'DM Sans', sans-serif;
+                font-size: 13.5px;
+                color: var(--text-main);
+                transition: border-color .15s, box-shadow .15s;
+                outline: none;
+            }
+
+                .topbar-search input:focus {
+                    border-color: var(--accent);
+                    box-shadow: 0 0 0 3px rgba(45,156,219,.15);
+                    background: #fff;
+                }
+
+            .topbar-search .search-icon {
+                position: absolute;
+                left: 13px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-muted);
+                font-size: 15px;
+                pointer-events: none;
+            }
+
+        .topbar-actions {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .topbar-icon-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 10px;
+            background: none;
+            color: var(--text-muted);
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: background .15s, color .15s;
+        }
+
+            .topbar-icon-btn:hover {
+                background: var(--surface);
+                color: var(--navy);
+            }
+
+        .notif-badge {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            width: 8px;
+            height: 8px;
+            background: var(--danger);
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+
+        .topbar-divider {
+            width: 1px;
+            height: 28px;
+            background: var(--border);
+            margin: 0 6px;
+        }
+
+        .admin-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 10px 6px 6px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: none;
+            cursor: pointer;
+            transition: background .15s;
+        }
+
+            .admin-profile-btn:hover {
+                background: var(--surface);
+            }
+
+        .admin-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent), var(--navy-lite));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .admin-info {
+            text-align: left;
+        }
+
+        .admin-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.2;
+        }
+
+        .admin-role {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* ─── Content Area ───────────────────────────────────────────── */
+        #content-area {
+            flex: 1;
+            padding: 28px 28px 40px;
+        }
+
+        /* ─── Breadcrumb / Page Header ───────────────────────────────── */
+        .page-header {
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: var(--navy);
+            margin: 0 0 4px;
+        }
+
+        .breadcrumb {
+            font-size: 12.5px;
+            margin: 0;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            color: var(--text-muted);
+        }
+
+        /* ─── Responsive ─────────────────────────────────────────────── */
+        @@media (max-width: 991.98px) {
+            #sidebar
+
+        {
+            transform: translateX(-100%);
+            transition: transform var(--sidebar-transition), width var(--sidebar-transition);
+        }
+
+        #sidebar.mobile-open {
+            transform: translateX(0);
+            width: var(--sidebar-w) !important;
+        }
+
+        #main-wrapper {
+            margin-left: 0 !important;
+        }
+
+        #sidebar-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.45);
+            z-index: 1049;
+        }
+
+            #sidebar-backdrop.show {
+                display: block;
+            }
+
+        }
+    </style>
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+
+    <!-- ═══ SIDEBAR ════════════════════════════════════════════════════ -->
+    <aside id="sidebar">
+        <!-- Brand -->
+        <div class="sidebar-brand">
+            <div class="brand-icon"><i class="bi bi-compass"></i></div>
+            <div class="brand-text">
+                <span class="brand-name">Horizon Tours</span>
+                <span class="brand-sub">Admin Panel</span>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Main</div>
+
+            <a href="/admin" class="nav-item-link" data-bs-toggle="tooltip" data-bs-placement="right" title="Dashboard">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span class="nav-label">Dashboard</span>
+            </a>
+
+            <a href="/admin/tours" class="nav-item-link active" data-bs-toggle="tooltip" data-bs-placement="right" title="Tours">
+                <i class="bi bi-map-fill"></i>
+                <span class="nav-label">Tours</span>
+            </a>
+
+            <a href="/admin/reservations" class="nav-item-link" data-bs-toggle="tooltip" data-bs-placement="right" title="Reservations">
+                <i class="bi bi-calendar2-check-fill"></i>
+                <span class="nav-label">Reservations</span>
+            </a>
+
+            <a href="/admin/customers" class="nav-item-link" data-bs-toggle="tooltip" data-bs-placement="right" title="Customers">
+                <i class="bi bi-people-fill"></i>
+                <span class="nav-label">Customers</span>
+            </a>
+
+            <a href="/admin/guides" class="nav-item-link" data-bs-toggle="tooltip" data-bs-placement="right" title="Guides">
+                <i class="bi bi-person-badge-fill"></i>
+                <span class="nav-label">Guides</span>
+            </a>
+
+            <a href="/admin/destinations" class="nav-item-link" data-bs-toggle="tooltip" data-bs-placement="right" title="Destinations">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span class="nav-label">Destinations</span>
+            </a>
+
+            <div class="nav-section-label">Analytics</div>
+
+            <a href="/admin/reports" class="nav-item-link" data-bs-toggle="tooltip" data-bs-placement="right" title="Reports">
+                <i class="bi bi-bar-chart-line-fill"></i>
+                <span class="nav-label">Reports</span>
+            </a>
+
+            <div class="nav-section-label">System</div>
+
+            <a href="/admin/settings" class="nav-item-link" data-bs-toggle="tooltip" data-bs-placement="right" title="Settings">
+                <i class="bi bi-gear-fill"></i>
+                <span class="nav-label">Settings</span>
+            </a>
+        </nav>
+
+        <!-- Sidebar Footer / Logout -->
+        <div class="sidebar-footer">
+            <a href="/account/logout" class="nav-item-link" data-bs-toggle="tooltip" data-bs-placement="right" title="Logout">
+                <i class="bi bi-box-arrow-left" style="color:var(--danger);"></i>
+                <span class="nav-label" style="color:rgba(255,255,255,.55);">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Backdrop (mobile) -->
+    <div id="sidebar-backdrop"></div>
+
+    <!-- ═══ MAIN WRAPPER ════════════════════════════════════════════════ -->
+    <div id="main-wrapper">
+
+        <!-- ── TOPBAR ─────────────────────────────────────────────── -->
+        <header id="topbar">
+            <!-- Toggle sidebar -->
+            <button class="btn-toggle-sidebar" id="btnToggleSidebar" aria-label="Toggle sidebar">
+                <i class="bi bi-layout-sidebar-inset"></i>
+            </button>
+
+            <!-- Search -->
+            <div class="topbar-search d-none d-md-block">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" placeholder="Search anything…" />
+            </div>
+
+            <!-- Right actions -->
+            <div class="topbar-actions">
+                <!-- Search (mobile) -->
+                <button class="topbar-icon-btn d-md-none" aria-label="Search">
+                    <i class="bi bi-search"></i>
+                </button>
+
+                <!-- Notifications -->
+                <button class="topbar-icon-btn" aria-label="Notifications">
+                    <i class="bi bi-bell-fill"></i>
+                    <span class="notif-badge"></span>
+                </button>
+
+                <!-- Messages -->
+                <button class="topbar-icon-btn d-none d-sm-flex" aria-label="Messages">
+                    <i class="bi bi-chat-dots-fill"></i>
+                </button>
+
+                <div class="topbar-divider d-none d-sm-block"></div>
+
+                <!-- Admin Profile Dropdown -->
+                <div class="dropdown">
+                    <button class="admin-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="admin-avatar">A</div>
+                        <div class="admin-info d-none d-sm-block">
+                            <div class="admin-name">Admin User</div>
+                            <div class="admin-role">Super Admin</div>
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end mt-1" style="min-width:190px; border-radius:12px; border-color:var(--border); box-shadow:var(--shadow-md);">
+                        <li>
+                            <a class="dropdown-item" href="/admin/profile">
+                                <i class="bi bi-person-circle me-2 text-muted"></i> My Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/admin/settings">
+                                <i class="bi bi-gear me-2 text-muted"></i> Settings
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="/account/logout">
+                                <i class="bi bi-box-arrow-right me-2"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <!-- ── CONTENT ─────────────────────────────────────────────── -->
+        <main id="content-area">
+            @RenderBody()
+        </main>
+
+    </div><!-- /main-wrapper -->
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // ── Sidebar Toggle ─────────────────────────────────────────────
+        const sidebar   = document.getElementById('sidebar');
+        const wrapper   = document.getElementById('main-wrapper');
+        const backdrop  = document.getElementById('sidebar-backdrop');
+        const btnToggle = document.getElementById('btnToggleSidebar');
+
+        function isMobile() { return window.innerWidth < 992; }
+
+        btnToggle.addEventListener('click', () => {
+            if (isMobile()) {
+                sidebar.classList.toggle('mobile-open');
+                backdrop.classList.toggle('show');
+            } else {
+                sidebar.classList.toggle('collapsed');
+                wrapper.classList.toggle('expanded');
+                // Disable/enable tooltips based on state
+                updateTooltips();
+            }
+        });
+
+        backdrop.addEventListener('click', () => {
+            sidebar.classList.remove('mobile-open');
+            backdrop.classList.remove('show');
+        });
+
+        // ── Bootstrap Tooltips (collapsed mode) ───────────────────────
+        let tooltipInstances = [];
+
+        function updateTooltips() {
+            tooltipInstances.forEach(t => t.dispose());
+            tooltipInstances = [];
+            if (sidebar.classList.contains('collapsed')) {
+                document.querySelectorAll('#sidebar [data-bs-toggle="tooltip"]').forEach(el => {
+                    tooltipInstances.push(new bootstrap.Tooltip(el, { trigger: 'hover' }));
+                });
+            }
+        }
+
+        // Disable tooltips on large screens by default (sidebar expanded)
+        document.querySelectorAll('#sidebar [data-bs-toggle="tooltip"]').forEach(el => {
+            el.removeAttribute('data-bs-toggle');
+            el.dataset.bsToggleTooltip = 'tooltip'; // stash
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+
