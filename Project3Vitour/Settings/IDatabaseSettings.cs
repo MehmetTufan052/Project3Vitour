@@ -6,5 +6,6 @@
         public string DatabaseName { get; set; }
         public string TourCollectionName { get; set; }
         public string CategoryCollectionName { get; set; }
+        public string ReviewCollectionName { get; set; }
     }
 }

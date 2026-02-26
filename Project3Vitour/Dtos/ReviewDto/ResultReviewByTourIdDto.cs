@@ -1,12 +1,7 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-
-namespace Project3Vitour.Entities
+﻿namespace Project3Vitour.Dtos.ReviewDto
 {
-    public class Review
+    public class ResultReviewByTourIdDto
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
         public string ReviewId { get; set; }
         public string NameSurname { get; set; }
         public string Detail { get; set; }

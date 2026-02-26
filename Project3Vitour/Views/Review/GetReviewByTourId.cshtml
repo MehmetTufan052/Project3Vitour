@@ -1,0 +1,514 @@
+﻿@model List<ResultReviewByTourIdDto>
+@{
+    Layout = null;
+}
+
+
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tur Yorumları</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary: #1a6b4a;
+            --primary-dark: #134d36;
+            --primary-light: #e8f5ef;
+            --accent: #f4a623;
+            --accent-light: #fff8ec;
+            --card-radius: 18px;
+            --transition: 0.25s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(160deg, #edf7f2 0%, #dff0e8 50%, #d6ecf8 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: #1e2d26;
+            padding: 2.5rem 1rem 4rem;
+        }
+
+        /* ── Page Header ── */
+        .page-header {
+            text-align: center;
+            max-width: 680px;
+            margin: 0 auto 2.8rem;
+        }
+
+            .page-header .icon-wrap {
+                width: 68px;
+                height: 68px;
+                background: linear-gradient(135deg, var(--primary), #2dae72);
+                border-radius: 20px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 1.1rem;
+                box-shadow: 0 10px 28px rgba(26,107,74,0.28);
+            }
+
+                .page-header .icon-wrap i {
+                    font-size: 1.9rem;
+                    color: #fff;
+                }
+
+            .page-header h1 {
+                font-size: 2rem;
+                font-weight: 800;
+                color: #122919;
+                letter-spacing: -0.5px;
+                margin-bottom: 0.35rem;
+            }
+
+            .page-header p {
+                color: #5a7a66;
+                font-size: 0.97rem;
+            }
+
+        /* ── Stats Bar ── */
+        .stats-bar {
+            background: #fff;
+            border-radius: 16px;
+            padding: 1.1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+            max-width: 780px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+            .stat-icon.green {
+                background: var(--primary-light);
+                color: var(--primary);
+            }
+
+            .stat-icon.yellow {
+                background: var(--accent-light);
+                color: var(--accent);
+            }
+
+        .stat-text .num {
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .stat-text .lbl {
+            font-size: 0.75rem;
+            color: #7a9485;
+        }
+
+        .stars-display {
+            display: flex;
+            gap: 2px;
+        }
+
+            .stars-display i {
+                color: var(--accent);
+                font-size: 1rem;
+            }
+
+                .stars-display i.empty {
+                    color: #dde3df;
+                }
+
+        /* ── Review Grid ── */
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* ── Review Card ── */
+        .review-card {
+            background: #fff;
+            border-radius: var(--card-radius);
+            padding: 1.6rem;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+            border: 1px solid #eaf2ed;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            transition: transform var(--transition), box-shadow var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .review-card::before {
+                content: '\201C';
+                position: absolute;
+                top: -8px;
+                right: 18px;
+                font-size: 7rem;
+                color: #e8f5ef;
+                font-family: Georgia, serif;
+                line-height: 1;
+                pointer-events: none;
+            }
+
+            .review-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 36px rgba(26,107,74,0.12);
+            }
+
+        /* Score badge */
+        .score-badge {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+            background: var(--accent-light);
+            border: 1.5px solid #f4d08a;
+            border-radius: 10px;
+            padding: 0.25rem 0.55rem;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #b87d0d;
+        }
+
+            .score-badge i {
+                font-size: 0.78rem;
+                color: var(--accent);
+            }
+
+        /* Avatar + Name */
+        .card-top {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            margin-bottom: 0.9rem;
+            padding-right: 3.5rem;
+        }
+
+        .avatar {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+            text-transform: uppercase;
+        }
+
+        .reviewer-name {
+            font-weight: 700;
+            font-size: 0.97rem;
+            color: #1a2e22;
+            line-height: 1.2;
+        }
+
+        .reviewer-date {
+            font-size: 0.78rem;
+            color: #8fa898;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        /* Star row */
+        .card-stars {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 0.85rem;
+        }
+
+            .card-stars i {
+                font-size: 0.95rem;
+                color: var(--accent);
+            }
+
+                .card-stars i.empty {
+                    color: #dde3df;
+                }
+
+        /* Detail text */
+        .card-detail {
+            font-size: 0.91rem;
+            color: #3a5044;
+            line-height: 1.7;
+            flex-grow: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 5;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Card footer */
+        .card-footer-custom {
+            margin-top: 1.1rem;
+            padding-top: 0.85rem;
+            border-top: 1px dashed #e4ede8;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .verified-badge {
+            font-size: 0.75rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-weight: 600;
+        }
+
+        .tour-id-chip {
+            font-size: 0.72rem;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 6px;
+            padding: 0.2rem 0.55rem;
+            font-weight: 600;
+        }
+
+        /* ── Empty State ── */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 1rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+            .empty-state .empty-icon {
+                width: 80px;
+                height: 80px;
+                background: var(--primary-light);
+                border-radius: 24px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 1.2rem;
+            }
+
+                .empty-state .empty-icon i {
+                    font-size: 2.2rem;
+                    color: var(--primary);
+                }
+
+            .empty-state h3 {
+                font-weight: 700;
+                color: #2a4a35;
+                margin-bottom: 0.5rem;
+            }
+
+            .empty-state p {
+                color: #7a9485;
+                font-size: 0.9rem;
+            }
+
+        /* Avatar color palette */
+        .av-0 {
+            background: linear-gradient(135deg,#1a6b4a,#2dae72);
+        }
+
+        .av-1 {
+            background: linear-gradient(135deg,#2563eb,#60a5fa);
+        }
+
+        .av-2 {
+            background: linear-gradient(135deg,#d97706,#fbbf24);
+        }
+
+        .av-3 {
+            background: linear-gradient(135deg,#7c3aed,#a78bfa);
+        }
+
+        .av-4 {
+            background: linear-gradient(135deg,#db2777,#f9a8d4);
+        }
+
+        .av-5 {
+            background: linear-gradient(135deg,#0891b2,#67e8f9);
+        }
+
+        @@media (max-width: 576px) {
+            .reviews-grid
+
+        {
+            grid-template-columns: 1fr;
+        }
+
+        .page-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .stats-bar {
+            gap: 1rem;
+            padding: 1rem 1.2rem;
+        }
+
+        }
+    </style>
+</head>
+<body>
+
+    @{
+        var reviews = Model?.Where(r => r.Status).ToList() ?? new List<ResultReviewByTourIdDto>();
+        var totalCount = reviews.Count;
+        var avgScore = totalCount > 0 ? reviews.Average(r => r.Score) : 0;
+        var tourId = reviews.FirstOrDefault()?.TourId ?? "—";
+
+        string[] avatarClasses = { "av-0", "av-1", "av-2", "av-3", "av-4", "av-5" };
+
+        string AvatarInitials(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) return "?";
+            var parts = name.Trim().Split(' ');
+            return parts.Length >= 2
+            ? $"{parts[0][0]}{parts[^1][0]}"
+            : $"{parts[0][0]}";
+        }
+
+        string RenderStars(int score, string filledClass = "bi-star-fill", string emptyClass = "bi-star empty")
+        {
+            var sb = new System.Text.StringBuilder();
+            for (int i = 1; i <= 5; i++)
+            {
+                sb.Append(i <= score
+                ? $"<i class=\"bi {filledClass}\"></i>"
+                : $"<i class=\"bi {emptyClass}\"></i>");
+            }
+            return sb.ToString();
+        }
+    }
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="icon-wrap">
+            <i class="bi bi-chat-heart-fill"></i>
+        </div>
+        <h1>Tur Yorumları</h1>
+        <p>Gezginlerin deneyimleri ve değerlendirmeleri</p>
+    </div>
+
+    <!-- Stats Bar -->
+    @if (totalCount > 0)
+    {
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-icon green"><i class="bi bi-people-fill"></i></div>
+                <div class="stat-text">
+                    <div class="num">@totalCount</div>
+                    <div class="lbl">Toplam Yorum</div>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-icon yellow"><i class="bi bi-star-fill"></i></div>
+                <div class="stat-text">
+                    <div class="num">@avgScore.ToString("F1")</div>
+                    <div class="lbl">Ortalama Puan</div>
+                </div>
+            </div>
+
+            <div class="stat-item ms-auto">
+                <div class="stars-display">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <i class="bi @(i <= Math.Round(avgScore) ? "bi-star-fill" : "bi-star empty")"></i>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Reviews Grid -->
+    @if (totalCount == 0)
+    {
+        <div class="empty-state">
+            <div class="empty-icon"><i class="bi bi-chat-square-dots"></i></div>
+            <h3>Henüz Yorum Yok</h3>
+            <p>Bu tura ait hiçbir yorum bulunmuyor. İlk yorumu siz ekleyin!</p>
+        </div>
+    }
+    else
+    {
+        <div class="reviews-grid">
+            @foreach (var (review, index) in reviews.Select((r, i) => (r, i)))
+            {
+                var avatarClass = avatarClasses[index % avatarClasses.Length];
+                var initials = AvatarInitials(review.NameSurname);
+
+                <div class="review-card">
+
+                    <!-- Score badge -->
+                    <div class="score-badge">
+                        <i class="bi bi-star-fill"></i>
+                        @review.Score / 5
+                    </div>
+
+                    <!-- Top: Avatar + Name -->
+                    <div class="card-top">
+                        <div class="avatar @avatarClass">@initials</div>
+                        <div>
+                            <div class="reviewer-name">@review.NameSurname</div>
+                            <div class="reviewer-date">
+                                <i class="bi bi-calendar3"></i>
+                                @review.ReviewDate.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("tr-TR"))
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stars -->
+                    <div class="card-stars">
+                        @Html.Raw(RenderStars(review.Score))
+                    </div>
+
+                    <!-- Detail -->
+                    <p class="card-detail">@review.Detail</p>
+
+                    <!-- Footer -->
+                    <div class="card-footer-custom">
+                        <span class="verified-badge">
+                            <i class="bi bi-patch-check-fill"></i> Doğrulanmış Yorum
+                        </span>
+                        <span class="tour-id-chip">
+                            <i class="bi bi-geo-alt-fill"></i> @review.TourId
+                        </span>
+                    </div>
+
+                </div>
+            }
+        </div>
+    }
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
+
+

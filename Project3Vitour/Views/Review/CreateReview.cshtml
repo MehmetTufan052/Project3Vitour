@@ -1,0 +1,431 @@
+﻿@model ResultReviewDto
+@{
+    Layout = null;
+}
+
+
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tur Yorumu Ekle</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary: #1a6b4a;
+            --primary-dark: #134d36;
+            --primary-light: #e8f5ef;
+            --accent: #f4a623;
+            --accent-hover: #e09418;
+            --text-muted-custom: #6c757d;
+            --card-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+
+        body {
+            background: linear-gradient(135deg, #e8f5ef 0%, #d4edda 40%, #c8e6f5 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .page-wrapper {
+            width: 100%;
+            max-width: 680px;
+        }
+
+        .brand-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .brand-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary), #2d9e6e);
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            box-shadow: 0 8px 24px rgba(26,107,74,0.3);
+        }
+
+        .brand-icon i {
+            font-size: 1.8rem;
+            color: #fff;
+        }
+
+        .brand-header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1a2e22;
+            margin-bottom: 0.3rem;
+        }
+
+        .brand-header p {
+            color: var(--text-muted-custom);
+            font-size: 0.95rem;
+        }
+
+        .review-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        /* Form Labels */
+        .form-label {
+            font-weight: 600;
+            color: #2c3e35;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .form-label i {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        /* Inputs */
+        .form-control, .form-select {
+            border: 1.5px solid #dee2e6;
+            border-radius: 10px;
+            padding: 0.65rem 1rem;
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: #fafafa;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26,107,74,0.12);
+            background-color: #fff;
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: #adb5bd;
+            font-size: 0.88rem;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 130px;
+        }
+
+        /* Star Rating */
+        .star-rating-label {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 600;
+            color: #2c3e35;
+            font-size: 0.9rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .star-rating-label i {
+            color: var(--primary);
+        }
+
+        .star-rating-wrapper {
+            background: #fafafa;
+            border: 1.5px solid #dee2e6;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: border-color 0.2s;
+        }
+
+        .star-rating-wrapper:hover {
+            border-color: var(--primary);
+        }
+
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            gap: 4px;
+        }
+
+        .star-rating input[type="radio"] {
+            display: none;
+        }
+
+        .star-rating label {
+            cursor: pointer;
+            font-size: 2rem;
+            color: #dee2e6;
+            transition: color 0.15s, transform 0.15s;
+            line-height: 1;
+        }
+
+        .star-rating label:hover,
+        .star-rating label:hover ~ label,
+        .star-rating input:checked ~ label {
+            color: var(--accent);
+        }
+
+        .star-rating label:hover {
+            transform: scale(1.2);
+        }
+
+        .star-rating input:checked + label {
+            transform: scale(1.1);
+        }
+
+        .star-hint {
+            font-size: 0.8rem;
+            color: var(--text-muted-custom);
+            margin-left: 0.5rem;
+        }
+
+        #starScoreText {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent);
+            min-width: 80px;
+        }
+
+        /* Divider */
+        .section-divider {
+            border: none;
+            border-top: 1.5px dashed #e9ecef;
+            margin: 1.5rem 0;
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            background: linear-gradient(135deg, var(--primary) 0%, #2d9e6e 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 0.85rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            width: 100%;
+            letter-spacing: 0.3px;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+            box-shadow: 0 6px 20px rgba(26,107,74,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transition: left 0.4s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(26,107,74,0.4);
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            color: #fff;
+        }
+
+        .btn-submit:hover::before {
+            left: 100%;
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-submit i {
+            font-size: 1.1rem;
+        }
+
+        /* Validation */
+        .invalid-feedback {
+            font-size: 0.82rem;
+        }
+
+        .is-invalid {
+            border-color: #dc3545 !important;
+        }
+
+        /* Info badge */
+        .tour-info-badge {
+            background: var(--primary-light);
+            border: 1px solid #a8d5bc;
+            border-radius: 8px;
+            padding: 0.5rem 0.9rem;
+            font-size: 0.82rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @@media (max-width: 576px) {
+            .review-card {
+                padding: 1.5rem;
+            }
+
+            .star-rating label {
+                font-size: 1.7rem;
+            }
+
+            .brand-header h1 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-wrapper">
+
+        <!-- Header -->
+        <div class="brand-header">
+            <div class="brand-icon">
+                <i class="bi bi-airplane-engines-fill"></i>
+            </div>
+            <h1>Tur Yorumu Ekle</h1>
+            <p>Deneyiminizi bizimle paylaşın</p>
+        </div>
+
+        <!-- Card -->
+        <div class="review-card">
+
+            @if (Model?.TourId != null)
+            {
+                <div class="tour-info-badge">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    Tur ID: <strong>@Model.TourId</strong>
+                </div>
+            }
+
+            <form asp-action="CreateReview" method="post" novalidate id="reviewForm">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
+
+                <!-- Hidden Fields -->
+                <input type="text" asp-for="TourId" value="@Model?.TourId" placeholder="Tur Id Değeri" />
+
+                <!-- Ad Soyad -->
+                <div class="mb-4">
+                    <label asp-for="NameSurname" class="form-label">
+                        <i class="bi bi-person-fill"></i> Ad Soyad
+                    </label>
+                    <input asp-for="NameSurname"
+                           class="form-control"
+                           placeholder="Adınızı ve soyadınızı girin"
+                           maxlength="100" />
+                    <span asp-validation-for="NameSurname" class="invalid-feedback d-block"></span>
+                </div>
+
+                <!-- Yorum Detayı -->
+                <div class="mb-4">
+                    <label asp-for="Detail" class="form-label">
+                        <i class="bi bi-chat-quote-fill"></i> Yorum Detayı
+                    </label>
+                    <textarea asp-for="Detail"
+                              class="form-control"
+                              placeholder="Tur deneyiminizi detaylı olarak anlatın..."></textarea>
+                    <span asp-validation-for="Detail" class="invalid-feedback d-block"></span>
+                </div>
+
+                <!-- Puan (Yıldız) -->
+                <div class="mb-4">
+                    <div class="star-rating-label">
+                        <i class="bi bi-star-fill"></i> Puanınız
+                    </div>
+                    <div class="star-rating-wrapper">
+                        <div class="star-rating" id="starRating">
+                            <input type="radio" asp-for="Score" id="star5" value="5" />
+                            <label for="star5" title="Mükemmel">&#9733;</label>
+                            <input type="radio" asp-for="Score" id="star4" value="4" />
+                            <label for="star4" title="Çok İyi">&#9733;</label>
+                            <input type="radio" asp-for="Score" id="star3" value="3" />
+                            <label for="star3" title="İyi">&#9733;</label>
+                            <input type="radio" asp-for="Score" id="star2" value="2" />
+                            <label for="star2" title="Orta">&#9733;</label>
+                            <input type="radio" asp-for="Score" id="star1" value="1" />
+                            <label for="star1" title="Kötü">&#9733;</label>
+                        </div>
+                        <span id="starScoreText" class="ms-2"></span>
+                    </div>
+                    <span asp-validation-for="Score" class="invalid-feedback d-block"></span>
+                </div>
+
+                <hr class="section-divider" />
+
+                <!-- Yorum Tarihi -->
+                <div class="mb-4">
+                    <label asp-for="ReviewDate" class="form-label">
+                        <i class="bi bi-calendar3"></i> Yorum Tarihi
+                    </label>
+                    <input asp-for="ReviewDate"
+                           type="date"
+                           class="form-control"
+                           id="reviewDateInput" />
+                    <span asp-validation-for="ReviewDate" class="invalid-feedback d-block"></span>
+                </div>
+
+                <!-- Submit -->
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-submit">
+                        <i class="bi bi-send-fill me-2"></i> Yorumu Gönder
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        // Set today's date as default
+        (function () {
+            const dateInput = document.getElementById('reviewDateInput');
+            if (dateInput && !dateInput.value) {
+                const today = new Date();
+                const yyyy = today.getFullYear();
+                const mm = String(today.getMonth() + 1).padStart(2, '0');
+                const dd = String(today.getDate()).padStart(2, '0');
+                dateInput.value = `${yyyy}-${mm}-${dd}`;
+            }
+        })();
+
+        // Star rating text
+        const scoreLabels = {
+            1: '⭐ Kötü',
+            2: '⭐⭐ Orta',
+            3: '⭐⭐⭐ İyi',
+            4: '⭐⭐⭐⭐ Çok İyi',
+            5: '⭐⭐⭐⭐⭐ Mükemmel'
+        };
+
+        document.querySelectorAll('#starRating input[type="radio"]').forEach(function (radio) {
+            radio.addEventListener('change', function () {
+                const scoreText = document.getElementById('starScoreText');
+                scoreText.textContent = scoreLabels[this.value] || '';
+            });
+        });
+    </script>
+
+</body>
+</html>
+
+
