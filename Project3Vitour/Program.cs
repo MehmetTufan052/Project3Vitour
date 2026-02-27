@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using Project3Vitour.Services.CatregoryService;
+using Project3Vitour.Services.HuggingFaceService;
 using Project3Vitour.Services.ReviewService;
 using Project3Vitour.Services.TourServices.ITourService;
 using Project3Vitour.Settings;
@@ -12,6 +13,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ITourService, TourService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+builder.Services.AddHttpClient<HuggingFaceService>();
 
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettingsKey"));
 

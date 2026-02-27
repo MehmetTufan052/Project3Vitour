@@ -14,5 +14,8 @@ namespace Project3Vitour.Entities
         public DateTime ReviewDate { get; set; }
         public bool Status { get; set; }
         public string TourId { get; set; }
+
+        public string SentimentLabel { get; set; }  
+        public double SentimentScore { get; set; }
     }
 }

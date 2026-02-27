@@ -10,5 +10,8 @@ namespace Project3Vitour.Services.ReviewService
         Task DeleteReviewAsync(string id);
         Task<GetReviewByIdDto> GetReviewByIdAsync(string id);
         Task<List<ResultReviewByTourIdDto>> GetAllReviewsByTourIdAsync(string id);
+
+        Task<SentimentSummaryDto> GetSentimentSummaryAsync(string tourId);
+        Task<List<SentimentTrendDto>> GetMonthlyTrendAsync(string tourId);
     }
 }
