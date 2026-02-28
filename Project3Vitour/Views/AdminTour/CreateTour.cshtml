@@ -1,1105 +1,1341 @@
 ﻿@model CreateTourDto
-
 @{
     ViewData["Title"] = "CreateTour";
-    Layout = "~/Views/Shared/_TourLayout.cshtml";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-@section Styles {
-    <style>
-        /* ─── Page Header ───────────────────────────────────── */
-        .section-header {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin-bottom: 28px;
+<style>
+    /* ═══════════════════════════════════════════════════════════
+       CREATE TOUR — PREMIUM GLASSMORPHISM FORM
+    ═══════════════════════════════════════════════════════════ */
+
+    /* Page layout: two-column sticky */
+    .ct-layout {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 20px;
+        align-items: start;
+    }
+    @@media (max-width: 1024px) {
+        .ct-layout
+
+    {
+        grid-template-columns: 1fr;
+    }
+
+    }
+
+    /* ── LEFT: Steps ─────────────────────────────────────────── */
+    .ct-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    /* Step block */
+    .step-block {
+        border-radius: 16px;
+        overflow: hidden;
+        transition: box-shadow 300ms;
+        position: relative;
+    }
+
+    /* Glass step header */
+    .step-head {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 18px 22px;
+        cursor: pointer;
+        user-select: none;
+        position: relative;
+        background: rgba(255,255,255,0.88);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.9);
+        border-radius: 16px;
+        transition: all 250ms cubic-bezier(.4,0,.2,1);
+        box-shadow: 0 1px 4px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.95);
+    }
+
+    .step-block.open .step-head {
+        border-radius: 16px 16px 0 0;
+        border-bottom-color: transparent;
+        background: #fff;
+        box-shadow: 0 2px 0 rgba(0,0,0,0.03);
+    }
+
+    .step-head:hover:not(.step-block.open .step-head) {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.95);
+        transform: translateY(-1px);
+    }
+
+    /* Step number badge */
+    .step-num {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 800;
+        flex-shrink: 0;
+        transition: all 300ms;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .step-num.idle {
+            background: #f1f5f9;
+            color: #94a3b8;
         }
 
-        .page-eyebrow {
+        .step-num.active {
+            background: linear-gradient(135deg,#3b82f6,#6366f1);
+            color: #fff;
+            box-shadow: 0 0 16px rgba(99,102,241,.4);
+        }
+
+        .step-num.done {
+            background: linear-gradient(135deg,#10b981,#06b6d4);
+            color: #fff;
+            box-shadow: 0 0 14px rgba(16,185,129,.3);
+        }
+
+        .step-num.active::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg,rgba(255,255,255,.18) 0%,transparent 60%);
+        }
+
+    .step-info {
+        flex: 1;
+    }
+
+    .step-title {
+        font-size: 14px;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1;
+    }
+
+    .step-sub {
+        font-size: 11.5px;
+        color: #94a3b8;
+        margin-top: 3px;
+    }
+
+    .step-chevron {
+        font-size: 11px;
+        color: #cbd5e1;
+        transition: transform 250ms cubic-bezier(.4,0,.2,1), color 250ms;
+    }
+
+    .step-block.open .step-chevron {
+        transform: rotate(180deg);
+        color: #6366f1;
+    }
+
+    .step-done-mark {
+        width: 20px;
+        height: 20px;
+        background: linear-gradient(135deg,#10b981,#06b6d4);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        color: #fff;
+        opacity: 0;
+        transform: scale(.5);
+        transition: all 250ms cubic-bezier(.34,1.56,.64,1);
+    }
+
+    .step-block.done .step-done-mark {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    /* Step body */
+    .step-body {
+        background: #fff;
+        border: 1px solid rgba(226,232,240,0.9);
+        border-top: none;
+        border-radius: 0 0 16px 16px;
+        padding: 24px 22px;
+        display: none;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    }
+
+    .step-block.open .step-body {
+        display: block;
+    }
+
+    /* Step connector line */
+    .step-connector {
+        width: 2px;
+        height: 8px;
+        background: linear-gradient(180deg,#e2e8f0,transparent);
+        margin: 0 auto;
+    }
+
+    /* ── FORM FIELDS ─────────────────────────────────────────── */
+    .fg {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 18px;
+    }
+
+        .fg:last-child {
+            margin-bottom: 0;
+        }
+
+    .fg-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 18px;
+    }
+
+        .fg-row:last-child {
+            margin-bottom: 0;
+        }
+    @@media (max-width:640px) {
+        .fg-row
+
+    {
+        grid-template-columns: 1fr;
+    }
+
+    }
+
+    .fl {
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #475569;
+        letter-spacing: .3px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 6px;
+    }
+
+        .fl i {
+            color: #94a3b8;
             font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--accent);
-            margin-bottom: 4px;
+            width: 14px;
+            text-align: center;
         }
 
-        .page-title {
-            margin: 0;
+        .fl .req {
+            color: #f43f5e;
+            font-size: 13px;
+            line-height: 1;
         }
 
-        .btn-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+    /* Input */
+    .fi-ctrl {
+        width: 100%;
+        height: 44px;
+        border: 1px solid #e2e8f0;
+        border-radius: 11px;
+        background: #fafbfc;
+        padding: 0 14px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 13px;
+        color: #0f172a;
+        outline: none;
+        transition: all 200ms cubic-bezier(.4,0,.2,1);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,.8);
+    }
+
+        .fi-ctrl:focus {
+            border-color: #6366f1;
             background: #fff;
-            color: var(--text-muted);
-            border: 1px solid var(--border);
-            padding: 10px 18px;
-            border-radius: 10px;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 13.5px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background .15s, color .15s, border-color .15s;
-            text-decoration: none;
+            box-shadow: 0 0 0 3px rgba(99,102,241,.10), 0 1px 3px rgba(0,0,0,.04);
         }
 
-            .btn-back:hover {
-                background: var(--surface);
-                color: var(--navy);
-                border-color: #c4cdd9;
-            }
-
-        /* ─── Form Grid ──────────────────────────────────────── */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 340px;
-            gap: 24px;
-            align-items: start;
-        }
-
-        @@media (max-width: 1100px) {
-            .form-grid
-
-        {
-            grid-template-columns: 1fr;
-        }
-
-        }
-
-        /* ─── Form Cards ─────────────────────────────────────── */
-        .form-card {
+        .fi-ctrl:hover:not(:focus) {
+            border-color: #cbd5e1;
             background: #fff;
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: var(--shadow-md);
-            overflow: hidden;
-            margin-bottom: 20px;
         }
 
-            .form-card:last-child {
-                margin-bottom: 0;
-            }
-
-        .form-card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 18px 24px;
-            border-bottom: 1px solid var(--border);
-            background: #fafbfd;
+        .fi-ctrl::placeholder {
+            color: #c4cdd9;
         }
 
-        .form-card-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 17px;
-            flex-shrink: 0;
+    textarea.fi-ctrl {
+        height: 110px;
+        padding: 13px 14px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+
+    select.fi-ctrl {
+        appearance: none;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394a3b8'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        background-color: #fafbfc;
+        padding-right: 38px;
+    }
+
+    .fi-ctrl.has-error {
+        border-color: #fca5a5;
+        background: #fff5f5;
+        box-shadow: 0 0 0 3px rgba(244,63,94,.08);
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+    }
+
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+
+    /* Helper text */
+    .fi-help {
+        font-size: 11px;
+        color: #94a3b8;
+        margin-top: 4px;
+        font-weight: 500;
+    }
+
+    .fi-error {
+        font-size: 11px;
+        color: #f43f5e;
+        font-weight: 600;
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .char-count {
+        font-size: 10.5px;
+        color: #cbd5e1;
+        text-align: right;
+        font-family: 'DM Mono',monospace;
+        margin-top: 3px;
+        transition: color 200ms;
+    }
+
+        .char-count.warn {
+            color: #f59e0b;
         }
 
-        .fci-blue {
-            background: #e0f2fe;
-            color: #0369a1;
+        .char-count.over {
+            color: #f43f5e;
         }
 
-        .fci-green {
-            background: #dcfce7;
-            color: #15803d;
-        }
+    /* Prefix input */
+    .prefix-wrap {
+        position: relative;
+    }
 
-        .fci-purple {
-            background: #ede9fe;
-            color: #6d28d9;
-        }
-
-        .fci-yellow {
-            background: #fef9c3;
-            color: #854d0e;
-        }
-
-        .form-card-title {
-            font-size: 14.5px;
+        .prefix-wrap .pfx {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 13px;
             font-weight: 700;
-            color: var(--navy);
-            margin: 0;
-            line-height: 1.3;
-        }
-
-        .form-card-subtitle {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin: 0;
-        }
-
-        .form-card-body {
-            padding: 24px;
-        }
-
-        /* ─── Form Controls ──────────────────────────────────── */
-        .form-label-custom {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--navy);
-            margin-bottom: 7px;
-        }
-
-            .form-label-custom .required {
-                color: var(--danger);
-                margin-left: 3px;
-            }
-
-        .form-label-hint {
-            font-size: 11.5px;
-            font-weight: 400;
-            color: var(--text-muted);
-            margin-left: 6px;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 13px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 15px;
+            color: #94a3b8;
             pointer-events: none;
-            z-index: 1;
         }
 
-        .input-icon-right {
-            position: absolute;
-            right: 13px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 13px;
-            pointer-events: none;
-            z-index: 1;
+        .prefix-wrap .fi-ctrl {
+            padding-left: 28px;
         }
 
-        .form-control-custom {
-            width: 100%;
-            padding: 11px 14px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
+    /* Number stepper */
+    .stepper {
+        display: flex;
+        align-items: center;
+        border: 1px solid #e2e8f0;
+        border-radius: 11px;
+        background: #fafbfc;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        transition: border-color 200ms, box-shadow 200ms;
+        height: 44px;
+    }
+
+        .stepper:focus-within {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,.10);
             background: #fff;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 13.5px;
-            color: var(--text-main);
-            outline: none;
-            transition: border-color .18s, box-shadow .18s, background .18s;
-            appearance: none;
         }
 
-            .form-control-custom.with-icon {
-                padding-left: 38px;
-            }
-
-            .form-control-custom.with-icon-right {
-                padding-right: 38px;
-            }
-
-            .form-control-custom:focus {
-                border-color: var(--accent);
-                box-shadow: 0 0 0 3px rgba(45,156,219,.14);
-                background: #fafdff;
-            }
-
-            .form-control-custom.is-invalid {
-                border-color: var(--danger);
-                box-shadow: 0 0 0 3px rgba(239,68,68,.12);
-            }
-
-            .form-control-custom.is-valid {
-                border-color: var(--success);
-            }
-
-        textarea.form-control-custom {
-            resize: vertical;
-            min-height: 110px;
-            line-height: 1.6;
-        }
-
-        .char-counter {
-            text-align: right;
-            font-size: 11.5px;
-            color: var(--text-muted);
-            margin-top: 5px;
-        }
-
-            .char-counter.warn {
-                color: var(--warning);
-            }
-
-            .char-counter.limit {
-                color: var(--danger);
-            }
-
-        select.form-control-custom {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2364748b'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-            padding-right: 36px;
-            cursor: pointer;
-        }
-
-        .field-hint {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 6px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-            .field-hint i {
-                font-size: 12px;
-                color: var(--accent);
-            }
-
-        .validation-msg {
-            font-size: 12px;
-            color: var(--danger);
-            margin-top: 5px;
-            display: none;
-        }
-
-        /* ─── Number Stepper ─────────────────────────────────── */
-        .number-stepper {
-            display: flex;
-            align-items: center;
-            gap: 0;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            overflow: hidden;
-            background: #fff;
-            transition: border-color .18s, box-shadow .18s;
-        }
-
-            .number-stepper:focus-within {
-                border-color: var(--accent);
-                box-shadow: 0 0 0 3px rgba(45,156,219,.14);
-            }
-
-        .stepper-btn {
+        .stepper button {
             width: 40px;
-            height: 44px;
+            height: 100%;
+            background: transparent;
             border: none;
-            background: #f8fafc;
-            color: var(--text-muted);
-            font-size: 16px;
-            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background .15s, color .15s;
+            font-size: 16px;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 180ms;
             flex-shrink: 0;
-            user-select: none;
         }
 
-            .stepper-btn:hover {
-                background: var(--surface);
-                color: var(--navy);
+            .stepper button:hover {
+                background: rgba(99,102,241,.07);
+                color: #6366f1;
             }
 
-            .stepper-btn:active {
-                background: #e2e8f0;
+            .stepper button:active {
+                transform: scale(.92);
             }
 
-            .stepper-btn:first-child {
-                border-right: 1px solid var(--border);
-            }
-
-            .stepper-btn:last-child {
-                border-left: 1px solid var(--border);
-            }
-
-        .stepper-input {
+        .stepper input {
             flex: 1;
             border: none;
-            outline: none;
-            text-align: center;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--navy);
             background: transparent;
-            padding: 0 8px;
-            height: 44px;
+            text-align: center;
+            font-family: 'Plus Jakarta Sans',sans-serif;
+            font-size: 15px;
+            font-weight: 800;
+            color: #0f172a;
+            outline: none;
+            padding: 0;
             -moz-appearance: textfield;
         }
 
-            .stepper-input::-webkit-inner-spin-button,
-            .stepper-input::-webkit-outer-spin-button {
+            .stepper input::-webkit-inner-spin-button {
                 -webkit-appearance: none;
             }
 
-        /* ─── Price Input ────────────────────────────────────── */
-        .price-wrapper {
-            position: relative;
+    .stepper-label {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+        color: #94a3b8;
+        font-family: 'DM Mono',monospace;
+        margin-top: 5px;
+        text-align: center;
+    }
+
+    /* Cover image area */
+    .img-drop {
+        border: 2px dashed #e2e8f0;
+        border-radius: 14px;
+        background: #fafbfc;
+        min-height: 180px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 24px;
+        transition: all 250ms;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+        .img-drop:hover {
+            border-color: #a5b4fc;
+            background: #f5f3ff;
         }
 
-        .price-prefix {
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f8fafc;
-            border-right: 1px solid var(--border);
-            border-radius: 10px 0 0 10px;
-            font-weight: 700;
-            font-size: 14px;
-            color: var(--text-muted);
-            pointer-events: none;
-            z-index: 1;
+        .img-drop.has-img {
+            border-style: solid;
+            border-color: #e2e8f0;
+            padding: 0;
         }
 
-        .price-input {
-            padding-left: 54px !important;
-        }
-
-        /* ─── Badge Selector ─────────────────────────────────── */
-        .badge-selector {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-
-        .badge-option {
-            position: relative;
-        }
-
-            .badge-option input[type="radio"] {
-                position: absolute;
-                opacity: 0;
-                width: 0;
-                height: 0;
-            }
-
-            .badge-option label {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                padding: 11px 14px;
-                border: 2px solid var(--border);
-                border-radius: 10px;
-                cursor: pointer;
-                transition: border-color .18s, background .18s, box-shadow .18s;
-                font-size: 13px;
-                font-weight: 600;
-                color: var(--text-main);
-                user-select: none;
-            }
-
-                .badge-option label:hover {
-                    border-color: #c4cdd9;
-                    background: var(--surface);
-                }
-
-            .badge-option input:checked + label {
-                border-color: var(--accent);
-                background: #f0f9ff;
-                box-shadow: 0 0 0 2px rgba(45,156,219,.15);
-            }
-
-        .badge-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-
-        .bd-popular {
-            background: #f59e0b;
-        }
-
-        .bd-new {
-            background: #10b981;
-        }
-
-        .bd-limited {
-            background: #ef4444;
-        }
-
-        .bd-none {
-            background: #94a3b8;
-        }
-
-        /* ─── Status Toggle ──────────────────────────────────── */
-        .status-toggle-wrap {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 18px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            background: #fff;
-            transition: border-color .18s, background .18s;
-            cursor: pointer;
-        }
-
-            .status-toggle-wrap:has(input:checked) {
-                border-color: var(--success);
-                background: #f0fdf4;
-            }
-
-        .status-toggle-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .status-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            background: #f1f5f9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 17px;
-            color: var(--text-muted);
-            transition: background .2s, color .2s;
-        }
-
-        .status-toggle-wrap:has(input:checked) .status-icon {
-            background: #dcfce7;
-            color: #15803d;
-        }
-
-        .status-label-title {
-            font-size: 13.5px;
-            font-weight: 600;
-            color: var(--navy);
-        }
-
-        .status-label-sub {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        /* Custom toggle switch */
-        .toggle-switch {
-            position: relative;
-            width: 48px;
-            height: 26px;
-            flex-shrink: 0;
-        }
-
-            .toggle-switch input {
+            .img-drop.has-img .drop-placeholder {
                 display: none;
             }
 
-        .toggle-track {
+        .img-drop img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .img-drop.has-img img {
+            display: block;
+        }
+
+    .img-drop-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg,transparent 50%,rgba(0,0,0,.4) 100%);
+        border-radius: 12px;
+        opacity: 0;
+        transition: opacity 250ms;
+        display: flex;
+        align-items: flex-end;
+        padding: 14px;
+    }
+
+    .img-drop.has-img:hover .img-drop-overlay {
+        opacity: 1;
+    }
+
+    .img-drop-overlay span {
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .drop-placeholder {
+        pointer-events: none;
+    }
+
+    .drop-icon {
+        font-size: 28px;
+        color: #c4cdd9;
+        margin-bottom: 10px;
+    }
+
+    .drop-text {
+        font-size: 13px;
+        font-weight: 600;
+        color: #94a3b8;
+    }
+
+    .drop-sub {
+        font-size: 11px;
+        color: #c4cdd9;
+        margin-top: 4px;
+    }
+
+    /* URL input below */
+    .img-url-wrap {
+        position: relative;
+        margin-top: 10px;
+    }
+
+        .img-url-wrap i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 11px;
+            pointer-events: none;
+        }
+
+        .img-url-wrap .fi-ctrl {
+            padding-left: 30px;
+            font-size: 12.5px;
+        }
+
+    /* ── RIGHT: Sticky Panel ─────────────────────────────────── */
+    .ct-panel {
+        position: sticky;
+        top: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    /* Progress card */
+    .panel-card {
+        background: #fff;
+        border: 1px solid rgba(226,232,240,0.9);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,.95);
+    }
+
+    .panel-card-head {
+        padding: 14px 18px 10px;
+        border-bottom: 1px solid #f0f4f8;
+    }
+
+    .panel-card-title {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #94a3b8;
+        font-family: 'DM Mono',monospace;
+    }
+
+    .panel-card-body {
+        padding: 16px 18px;
+    }
+
+    /* Progress bar */
+    .prog-bar-wrap {
+        height: 6px;
+        background: #f1f5f9;
+        border-radius: 20px;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+
+    .prog-bar-fill {
+        height: 100%;
+        border-radius: 20px;
+        background: linear-gradient(90deg,#3b82f6,#6366f1,#8b5cf6);
+        background-size: 200% 100%;
+        animation: progShimmer 2s linear infinite;
+        transition: width 400ms cubic-bezier(.4,0,.2,1);
+        width: 0%;
+    }
+    @@keyframes progShimmer {
+        0%
+
+    {
+        background-position: 100%
+    }
+
+    100% {
+        background-position: -100%
+    }
+
+    }
+
+    .prog-pct {
+        font-size: 22px;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -1px;
+    }
+
+    .prog-label {
+        font-size: 11px;
+        color: #94a3b8;
+        font-weight: 600;
+        margin-top: 1px;
+    }
+
+    /* Step checklist */
+    .step-checks {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 4px;
+    }
+
+    .step-check {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #94a3b8;
+        transition: color 250ms;
+    }
+
+        .step-check.done {
+            color: #0f172a;
+        }
+
+    .step-check-ic {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        flex-shrink: 0;
+        transition: all 300ms cubic-bezier(.34,1.56,.64,1);
+        background: #f1f5f9;
+        color: #c4cdd9;
+    }
+
+    .step-check.done .step-check-ic {
+        background: linear-gradient(135deg,#10b981,#06b6d4);
+        color: #fff;
+        box-shadow: 0 0 10px rgba(16,185,129,.3);
+    }
+
+    /* Badge picker */
+    .badge-picker {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .badge-opt {
+        border: 2px solid #f1f5f9;
+        border-radius: 10px;
+        padding: 10px 12px;
+        cursor: pointer;
+        transition: all 200ms;
+        position: relative;
+        background: #fafbfc;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .badge-opt:hover {
+            border-color: #a5b4fc;
+            background: #f5f3ff;
+        }
+
+        .badge-opt.selected {
+            border-color: #6366f1;
+            background: #f5f3ff;
+            box-shadow: 0 0 0 3px rgba(99,102,241,.1);
+        }
+
+    .badge-dot-pick {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .badge-opt-name {
+        font-size: 12px;
+        font-weight: 700;
+        color: #475569;
+    }
+
+    .badge-opt-sub {
+        font-size: 10px;
+        color: #94a3b8;
+    }
+
+    .badge-opt .check-mark {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#6366f1,#8b5cf6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+        color: #fff;
+        opacity: 0;
+        transform: scale(.5);
+        transition: all 250ms cubic-bezier(.34,1.56,.64,1);
+    }
+
+    .badge-opt.selected .check-mark {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    /* Toggle */
+    .toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: #fafbfc;
+        border: 1px solid #f1f5f9;
+        transition: all 200ms;
+    }
+
+        .toggle-row:hover {
+            background: #f5f3ff;
+            border-color: #e0e7ff;
+        }
+
+    .toggle-row-info .trn {
+        font-size: 13px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .toggle-row-info .trs {
+        font-size: 11px;
+        color: #94a3b8;
+        margin-top: 1px;
+    }
+
+    .sw {
+        position: relative;
+        width: 44px;
+        height: 24px;
+        flex-shrink: 0;
+    }
+
+        .sw input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+    .sw-track {
+        position: absolute;
+        inset: 0;
+        border-radius: 24px;
+        background: #e2e8f0;
+        cursor: pointer;
+        transition: background 200ms;
+        border: 1px solid #d1d5db;
+    }
+
+        .sw-track::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,.18);
+            transition: transform 200ms cubic-bezier(.34,1.56,.64,1);
+        }
+
+    .sw input:checked ~ .sw-track {
+        background: linear-gradient(135deg,#10b981,#06b6d4);
+        border-color: transparent;
+        box-shadow: 0 0 12px rgba(16,185,129,.35);
+    }
+
+        .sw input:checked ~ .sw-track::after {
+            transform: translateX(20px);
+        }
+
+    /* Tips card */
+    .tips-card {
+        border-radius: 16px;
+        overflow: hidden;
+        background: linear-gradient(145deg,#0f172a 0%,#1e1b4b 100%);
+        border: 1px solid rgba(99,102,241,.25);
+        box-shadow: 0 4px 20px rgba(0,0,0,.15), 0 0 0 1px rgba(255,255,255,.04) inset;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .tips-card::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle,rgba(99,102,241,.25) 0%,transparent 70%);
+            pointer-events: none;
+        }
+
+    .tips-head {
+        padding: 14px 18px 10px;
+    }
+
+    .tips-title {
+        font-size: 12px;
+        font-weight: 800;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+        .tips-title i {
+            color: #fbbf24;
+        }
+
+    .tips-body {
+        padding: 0 18px 16px;
+    }
+
+    .tip-item {
+        display: flex;
+        gap: 9px;
+        margin-top: 10px;
+        font-size: 11.5px;
+        line-height: 1.5;
+        color: rgba(226,232,240,.75);
+    }
+
+    .tip-ic {
+        color: #6366f1;
+        font-size: 12px;
+        margin-top: 1px;
+        flex-shrink: 0;
+    }
+
+    /* Submit */
+    .submit-area {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 18px 22px;
+        background: #fafbfc;
+        border-top: 1px solid #f0f4f8;
+        border-radius: 0 0 16px 16px;
+    }
+
+    .btn-submit {
+        flex: 1;
+        height: 46px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(135deg,#3b82f6,#6366f1);
+        color: #fff;
+        font-family: 'Plus Jakarta Sans',sans-serif;
+        font-size: 14px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 250ms;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        box-shadow: 0 3px 16px rgba(99,102,241,.38), inset 0 1px 0 rgba(255,255,255,.15);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .btn-submit::before {
+            content: '';
             position: absolute;
             inset: 0;
-            background: #cbd5e1;
-            border-radius: 13px;
-            cursor: pointer;
-            transition: background .25s;
+            background: linear-gradient(180deg,rgba(255,255,255,.12) 0%,transparent 55%);
         }
 
-            .toggle-track::after {
-                content: '';
-                position: absolute;
-                left: 3px;
-                top: 3px;
-                width: 20px;
-                height: 20px;
-                border-radius: 50%;
-                background: #fff;
-                box-shadow: 0 1px 4px rgba(0,0,0,.18);
-                transition: transform .25s cubic-bezier(.4,0,.2,1);
-            }
-
-        .toggle-switch input:checked + .toggle-track {
-            background: var(--success);
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(99,102,241,.48), inset 0 1px 0 rgba(255,255,255,.15);
         }
 
-            .toggle-switch input:checked + .toggle-track::after {
-                transform: translateX(22px);
-            }
-
-        /* ─── Image Preview ──────────────────────────────────── */
-        .image-preview-box {
-            width: 100%;
-            height: 180px;
-            border: 2px dashed var(--border);
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            background: #fafbfd;
-            font-size: 13px;
-            gap: 6px;
-            transition: border-color .2s, background .2s;
-            overflow: hidden;
-            position: relative;
-            margin-bottom: 12px;
+        .btn-submit:active {
+            transform: translateY(0);
         }
 
-            .image-preview-box.has-image {
-                border-style: solid;
-                border-color: var(--accent);
-                background: #000;
-            }
-
-            .image-preview-box img {
-                position: absolute;
-                inset: 0;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                opacity: 0;
-                transition: opacity .3s;
-            }
-
-                .image-preview-box img.loaded {
-                    opacity: 1;
-                }
-
-        .preview-placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            transition: opacity .2s;
+        .btn-submit:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+            transform: none;
         }
 
-            .preview-placeholder i {
-                font-size: 32px;
-                color: #cbd5e1;
-            }
+    .btn-cancel {
+        height: 46px;
+        padding: 0 20px;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        background: #fff;
+        color: #475569;
+        font-family: 'Plus Jakarta Sans',sans-serif;
+        font-size: 13.5px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 200ms;
+        box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    }
 
-        .image-preview-box.has-image .preview-placeholder {
-            opacity: 0;
+        .btn-cancel:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            color: #0f172a;
         }
 
-        /* ─── Submit Section ─────────────────────────────────── */
-        .submit-card {
-            background: #fff;
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: var(--shadow-md);
-            padding: 22px 24px;
+    /* Animations */
+    .step-block {
+        animation: sbIn .35s cubic-bezier(.4,0,.2,1) both;
+    }
+
+        .step-block:nth-child(1) {
+            animation-delay: .04s;
         }
 
-        .btn-submit {
-            width: 100%;
-            padding: 14px;
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            border-radius: 11px;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background .2s, box-shadow .2s, transform .15s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 9px;
-            box-shadow: 0 2px 12px rgba(45,156,219,.35);
-            margin-bottom: 10px;
+        .step-block:nth-child(3) {
+            animation-delay: .08s;
         }
 
-            .btn-submit:hover {
-                background: var(--accent-dk);
-                box-shadow: 0 4px 20px rgba(45,156,219,.45);
-                transform: translateY(-1px);
-            }
-
-            .btn-submit:active {
-                transform: translateY(0);
-            }
-
-        .btn-cancel-submit {
-            width: 100%;
-            padding: 12px;
-            background: none;
-            color: var(--text-muted);
-            border: 1px solid var(--border);
-            border-radius: 11px;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background .15s, color .15s;
-            text-align: center;
-            display: block;
-            text-decoration: none;
+        .step-block:nth-child(5) {
+            animation-delay: .12s;
         }
 
-            .btn-cancel-submit:hover {
-                background: var(--surface);
-                color: var(--navy);
-            }
-
-        /* ─── Tips Card ──────────────────────────────────────── */
-        .tips-card {
-            background: linear-gradient(135deg, #0d1b2a 0%, #1a3358 100%);
-            border-radius: 16px;
-            padding: 22px 22px;
-            color: #fff;
-            margin-bottom: 20px;
+        .step-block:nth-child(7) {
+            animation-delay: .16s;
         }
 
-        .tips-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 15px;
-            color: #fff;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+    .ct-panel {
+        animation: sbIn .35s .20s cubic-bezier(.4,0,.2,1) both;
+    }
+    @@keyframes sbIn {
+        from
 
-            .tips-title i {
-                color: var(--accent);
-                font-size: 16px;
-            }
+    {
+        opacity: 0;
+        transform: translateY(12px)
+    }
 
-        .tip-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 9px;
-            margin-bottom: 10px;
-            font-size: 12.5px;
-            color: rgba(255,255,255,.75);
-            line-height: 1.5;
-        }
+    to {
+        opacity: 1;
+        transform: none
+    }
 
-            .tip-item:last-child {
-                margin-bottom: 0;
-            }
+    }
 
-            .tip-item i {
-                font-size: 13px;
-                color: var(--accent);
-                flex-shrink: 0;
-                margin-top: 1px;
-            }
+    /* Micro-focus ring on step-head hover */
+    .step-head::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        box-shadow: 0 0 0 0 rgba(99,102,241,.18);
+        transition: box-shadow 250ms;
+        pointer-events: none;
+    }
 
-        /* ─── Form progress indicator ────────────────────────── */
-        .form-progress {
-            background: #fff;
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 18px 20px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow-sm);
-        }
+    .step-head:hover::after {
+        box-shadow: 0 0 0 4px rgba(99,102,241,.06);
+    }
+</style>
 
-        .progress-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
+<!-- Hidden badge input synced with picker -->
+<input type="hidden" name="Badge" id="BadgeHidden" value="" />
 
-        .progress-bar-wrap {
-            height: 6px;
-            background: var(--surface);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        #formProgressBar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent), #38bdf8);
-            border-radius: 10px;
-            width: 0%;
-            transition: width .4s cubic-bezier(.4,0,.2,1);
-        }
-
-        /* ─── Divider ────────────────────────────────────────── */
-        .form-section-divider {
-            height: 1px;
-            background: var(--border);
-            margin: 6px 0 20px;
-        }
-
-        /* ─── Responsive ─────────────────────────────────────── */
-        @@media (max-width: 576px) {
-            .badge-selector
-
-        {
-            grid-template-columns: 1fr 1fr;
-        }
-
-        .form-card-body {
-            padding: 16px;
-        }
-
-        }
-    </style>
-}
-
-<!-- ═══ PAGE HEADER ═══════════════════════════════════════════════════ -->
-<div class="section-header">
+<!-- Page Header -->
+<div class="ph anim" style="margin-bottom:20px;">
     <div>
-        <p class="page-eyebrow">Tur Yönetimi</p>
-        <h1 class="page-title">Yeni Tur Ekle</h1>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/admin" class="text-muted">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="/admin/tours" class="text-muted">Turlar</a></li>
-                <li class="breadcrumb-item active text-muted">Yeni Tur</li>
-            </ol>
-        </nav>
+        <div class="ph-eye">Tours</div>
+        <h1 class="ph-h1">Create New Tour</h1>
+        <p class="ph-desc">Fill in each section to publish a new tour package</p>
     </div>
-    <a href="/admin/tours" class="btn-back">
-        <i class="bi bi-arrow-left"></i>
-        Listeye Dön
-    </a>
+    <div class="ph-acts">
+        <a href="@Url.Action("TourList", "AdminTour")" class="btn btn-ghost">
+            <i class="fa-solid fa-arrow-left"></i> Back
+        </a>
+    </div>
 </div>
 
-<!-- ═══ FORM ══════════════════════════════════════════════════════════ -->
-<form method="post" id="createTourForm" novalidate>
+<form asp-action="CreateTour" asp-controller="AdminTour" method="post" id="ctForm">
     @Html.AntiForgeryToken()
 
-    <div class="form-grid">
+    <div class="ct-layout">
 
-        <!-- ══ LEFT COLUMN ════════════════════════════════════════════ -->
-        <div>
+        <!-- ══ LEFT ══════════════════════════════════════════════ -->
+        <div class="ct-steps">
 
-            <!-- ── Temel Bilgiler ─────────────────────────────────── -->
-            <div class="form-card">
-                <div class="form-card-header">
-                    <div class="form-card-icon fci-blue">
-                        <i class="bi bi-info-circle-fill"></i>
+            <!-- ── Step 1: Basic Info ─────────────────────────── -->
+            <div class="step-block open" id="step1" data-step="1">
+                <div class="step-head" onclick="toggleStep(1)">
+                    <div class="step-num active" id="snum1">1</div>
+                    <div class="step-info">
+                        <div class="step-title">Basic Information</div>
+                        <div class="step-sub">Tour name and description</div>
                     </div>
-                    <div>
-                        <p class="form-card-title">Temel Bilgiler</p>
-                        <p class="form-card-subtitle">Turun adı ve açıklaması</p>
-                    </div>
+                    <div class="step-done-mark"><i class="fa-solid fa-check"></i></div>
+                    <i class="fa-solid fa-chevron-down step-chevron"></i>
                 </div>
-                <div class="form-card-body">
-
-                    <!-- Tur Adı -->
-                    <div class="mb-4">
-                        <label class="form-label-custom" for="Title">
-                            Tur Adı <span class="required">*</span>
+                <div class="step-body">
+                    <!-- Title -->
+                    <div class="fg">
+                        <label class="fl" for="Title">
+                            <i class="fa-solid fa-heading"></i> Tour Name <span class="req">*</span>
                         </label>
-                        <div class="input-wrapper">
-                            <i class="bi bi-type input-icon"></i>
-                            <input asp-for="Title"
-                                   id="Title"
-                                   class="form-control-custom with-icon"
-                                   placeholder="Örn: Kapadokya Balon Turu"
-                                   maxlength="100"
-                                   autocomplete="off" />
+                        <input asp-for="Title" class="fi-ctrl" id="Title"
+                               placeholder="e.g. Kapadokya Masalı: Balonlu 3 Günlük Tur"
+                               maxlength="120" autocomplete="off" />
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span asp-validation-for="Title" class="fi-error"></span>
+                            <div class="char-count" id="titleCount" style="margin-left:auto;">0 / 120</div>
                         </div>
-                        <div class="char-counter" id="titleCounter">0 / 100</div>
-                        <span asp-validation-for="Title" class="validation-msg" style="display:block;"></span>
                     </div>
 
-                    <!-- Açıklama -->
-                    <div class="mb-0">
-                        <label class="form-label-custom" for="Description">
-                            Tur Açıklaması <span class="required">*</span>
-                            <span class="form-label-hint">Kısa ve öz tutun</span>
+                    <!-- Description -->
+                    <div class="fg">
+                        <label class="fl" for="Description">
+                            <i class="fa-solid fa-align-left"></i> Description <span class="req">*</span>
                         </label>
-                        <textarea asp-for="Description"
-                                  id="Description"
-                                  class="form-control-custom"
-                                  placeholder="Tur hakkında kısa bir açıklama yazın…"
-                                  maxlength="500"
-                                  rows="4"></textarea>
-                        <div class="char-counter" id="descCounter">0 / 500</div>
-                        <span asp-validation-for="Description" class="validation-msg" style="display:block;"></span>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- ── Tur Detayları ───────────────────────────────────── -->
-            <div class="form-card">
-                <div class="form-card-header">
-                    <div class="form-card-icon fci-purple">
-                        <i class="bi bi-sliders2-vertical"></i>
-                    </div>
-                    <div>
-                        <p class="form-card-title">Tur Detayları</p>
-                        <p class="form-card-subtitle">Süre, kapasite ve fiyat bilgileri</p>
-                    </div>
-                </div>
-                <div class="form-card-body">
-
-                    <div class="row g-4">
-
-                        <!-- Gün Sayısı -->
-                        <div class="col-sm-6">
-                            <label class="form-label-custom" for="DayCount">
-                                Tur Süresi <span class="required">*</span>
-                            </label>
-                            <div class="number-stepper">
-                                <button type="button" class="stepper-btn" onclick="stepValue('DayCount', -1, 1, 365)">
-                                    <i class="bi bi-dash"></i>
-                                </button>
-                                <input asp-for="DayCount"
-                                       id="DayCount"
-                                       class="stepper-input"
-                                       type="number"
-                                       min="1" max="365"
-                                       value="1" />
-                                <button type="button" class="stepper-btn" onclick="stepValue('DayCount', 1, 1, 365)">
-                                    <i class="bi bi-plus"></i>
-                                </button>
-                            </div>
-                            <p class="field-hint"><i class="bi bi-info-circle"></i> Gün cinsinden süre (1–365)</p>
-                            <span asp-validation-for="DayCount" class="validation-msg" style="display:block;"></span>
+                        <textarea asp-for="Description" class="fi-ctrl" id="Description"
+                                  placeholder="Describe what makes this tour unique, what's included, key highlights..."
+                                  maxlength="500" rows="5"></textarea>
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span asp-validation-for="Description" class="fi-error"></span>
+                            <div class="char-count" id="descCount" style="margin-left:auto;">0 / 500</div>
                         </div>
-
-                        <!-- Kapasite -->
-                        <div class="col-sm-6">
-                            <label class="form-label-custom" for="Capacity">
-                                Kapasite <span class="required">*</span>
-                            </label>
-                            <div class="number-stepper">
-                                <button type="button" class="stepper-btn" onclick="stepValue('Capacity', -1, 1, 999)">
-                                    <i class="bi bi-dash"></i>
-                                </button>
-                                <input asp-for="Capacity"
-                                       id="Capacity"
-                                       class="stepper-input"
-                                       type="number"
-                                       min="1" max="999"
-                                       value="10" />
-                                <button type="button" class="stepper-btn" onclick="stepValue('Capacity', 1, 1, 999)">
-                                    <i class="bi bi-plus"></i>
-                                </button>
-                            </div>
-                            <p class="field-hint"><i class="bi bi-info-circle"></i> Maksimum katılımcı sayısı</p>
-                            <span asp-validation-for="Capacity" class="validation-msg" style="display:block;"></span>
-                        </div>
-
-                        <!-- Fiyat -->
-                        <div class="col-12">
-                            <label class="form-label-custom" for="Price">
-                                Fiyat (USD) <span class="required">*</span>
-                            </label>
-                            <div class="price-wrapper">
-                                <span class="price-prefix">$</span>
-                                <input asp-for="Price"
-                                       id="Price"
-                                       class="form-control-custom price-input"
-                                       type="number"
-                                       min="0" step="0.01"
-                                       placeholder="0.00" />
-                            </div>
-                            <p class="field-hint"><i class="bi bi-info-circle"></i> Kişi başı tur ücreti</p>
-                            <span asp-validation-for="Price" class="validation-msg" style="display:block;"></span>
-                        </div>
-
                     </div>
                 </div>
             </div>
 
-            <!-- ── Kapak Görseli ───────────────────────────────────── -->
-            <div class="form-card">
-                <div class="form-card-header">
-                    <div class="form-card-icon fci-yellow">
-                        <i class="bi bi-image-fill"></i>
-                    </div>
-                    <div>
-                        <p class="form-card-title">Kapak Görseli</p>
-                        <p class="form-card-subtitle">Turun vitrin fotoğrafı</p>
-                    </div>
-                </div>
-                <div class="form-card-body">
+            <div class="step-connector"></div>
 
-                    <!-- Önizleme -->
-                    <div class="image-preview-box" id="imagePreviewBox">
-                        <img id="imagePreview" src="" alt="Görsel önizleme" />
-                        <div class="preview-placeholder">
-                            <i class="bi bi-image"></i>
-                            <span>Görsel önizlemesi burada görünecek</span>
+            <!-- ── Step 2: Tour Details ───────────────────────── -->
+            <div class="step-block" id="step2" data-step="2">
+                <div class="step-head" onclick="toggleStep(2)">
+                    <div class="step-num idle" id="snum2">2</div>
+                    <div class="step-info">
+                        <div class="step-title">Tour Details</div>
+                        <div class="step-sub">Duration, capacity & price</div>
+                    </div>
+                    <div class="step-done-mark"><i class="fa-solid fa-check"></i></div>
+                    <i class="fa-solid fa-chevron-down step-chevron"></i>
+                </div>
+                <div class="step-body">
+                    <div class="fg-row">
+                        <!-- DayCount stepper -->
+                        <div class="fg" style="margin-bottom:0;">
+                            <label class="fl">
+                                <i class="fa-regular fa-calendar"></i> Duration <span class="req">*</span>
+                            </label>
+                            <div class="stepper" id="daysStepper">
+                                <button type="button" onclick="stepChange('DayCount',-1)">
+                                    <i class="fa-solid fa-minus"></i>
+                                </button>
+                                <input asp-for="DayCount" id="DayCount" type="number"
+                                       min="1" max="365" value="1"
+                                       oninput="clampVal(this,1,365)" />
+                                <button type="button" onclick="stepChange('DayCount',1)">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="stepper-label">Days (1–365)</div>
+                            <span asp-validation-for="DayCount" class="fi-error"></span>
+                        </div>
+
+                        <!-- Capacity stepper -->
+                        <div class="fg" style="margin-bottom:0;">
+                            <label class="fl">
+                                <i class="fa-solid fa-users"></i> Capacity <span class="req">*</span>
+                            </label>
+                            <div class="stepper" id="capStepper">
+                                <button type="button" onclick="stepChange('Capacity',-5)">
+                                    <i class="fa-solid fa-minus"></i>
+                                </button>
+                                <input asp-for="Capacity" id="Capacity" type="number"
+                                       min="1" max="1000" value="10"
+                                       oninput="clampVal(this,1,1000)" />
+                                <button type="button" onclick="stepChange('Capacity',5)">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="stepper-label">Max persons</div>
+                            <span asp-validation-for="Capacity" class="fi-error"></span>
                         </div>
                     </div>
 
-                    <!-- URL -->
-                    <label class="form-label-custom" for="CoverImageUrl">
-                        Görsel URL <span class="required">*</span>
-                    </label>
-                    <div class="input-wrapper">
-                        <i class="bi bi-link-45deg input-icon"></i>
-                        <input asp-for="CoverImageUrl"
-                               id="CoverImageUrl"
-                               class="form-control-custom with-icon"
-                               placeholder="https://example.com/image.jpg"
+                    <!-- Price -->
+                    <div class="fg" style="margin-top:18px;">
+                        <label class="fl" for="Price">
+                            <i class="fa-solid fa-turkish-lira-sign"></i> Price per Person <span class="req">*</span>
+                        </label>
+                        <div class="prefix-wrap">
+                            <span class="pfx">₺</span>
+                            <input asp-for="Price" type="number" class="fi-ctrl" id="Price"
+                                   placeholder="0.00" min="0" step="0.01"
+                                   oninput="updatePricePrev(this.value)" />
+                        </div>
+                        <div class="fi-help">Price shown to customers per person</div>
+                        <span asp-validation-for="Price" class="fi-error"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-connector"></div>
+
+            <!-- ── Step 3: Cover Image ────────────────────────── -->
+            <div class="step-block" id="step3" data-step="3">
+                <div class="step-head" onclick="toggleStep(3)">
+                    <div class="step-num idle" id="snum3">3</div>
+                    <div class="step-info">
+                        <div class="step-title">Cover Image</div>
+                        <div class="step-sub">Tour's visual identity</div>
+                    </div>
+                    <div class="step-done-mark"><i class="fa-solid fa-check"></i></div>
+                    <i class="fa-solid fa-chevron-down step-chevron"></i>
+                </div>
+                <div class="step-body">
+                    <div class="img-drop" id="imgDrop" onclick="document.getElementById('CoverImageUrl').focus()">
+                        <img id="previewImg" src="" alt="Preview" />
+                        <div class="img-drop-overlay">
+                            <span><i class="fa-solid fa-pen"></i> Change Image</span>
+                        </div>
+                        <div class="drop-placeholder">
+                            <div class="drop-icon"><i class="fa-regular fa-image"></i></div>
+                            <div class="drop-text">Paste image URL below to preview</div>
+                            <div class="drop-sub">JPG, PNG, WEBP — 16:9 recommended</div>
+                        </div>
+                    </div>
+                    <div class="img-url-wrap">
+                        <i class="fa-solid fa-link"></i>
+                        <input asp-for="CoverImageUrl" class="fi-ctrl" id="CoverImageUrl"
+                               placeholder="https://example.com/tour-cover.jpg"
                                autocomplete="off" />
                     </div>
-                    <p class="field-hint">
-                        <i class="bi bi-info-circle"></i>
-                        Geçerli bir görsel URL'i girin. Önerilen boyut: 1200×800px
-                    </p>
-                    <span asp-validation-for="CoverImageUrl" class="validation-msg" style="display:block;"></span>
-
+                    <div class="fi-help" style="margin-top:6px;">Use a high-resolution landscape image for best results</div>
+                    <span asp-validation-for="CoverImageUrl" class="fi-error" style="margin-top:4px;"></span>
                 </div>
             </div>
 
-        </div><!-- /left column -->
-        <!-- ══ RIGHT COLUMN ═══════════════════════════════════════════ -->
-        <div>
-
-            <!-- ── Form Dolum Durumu ───────────────────────────────── -->
-            <div class="form-progress">
-                <div class="progress-title">
-                    <span>Form Tamamlama</span>
-                    <span id="progressPercent">0%</span>
-                </div>
-                <div class="progress-bar-wrap">
-                    <div id="formProgressBar"></div>
-                </div>
-            </div>
-
-            <!-- ── Rozet ──────────────────────────────────────────── -->
-            <div class="form-card">
-                <div class="form-card-header">
-                    <div class="form-card-icon fci-green">
-                        <i class="bi bi-award-fill"></i>
-                    </div>
-                    <div>
-                        <p class="form-card-title">Tur Rozeti</p>
-                        <p class="form-card-subtitle">Öne çıkarma etiketi</p>
-                    </div>
-                </div>
-                <div class="form-card-body">
-                    <div class="badge-selector">
-
-                        <div class="badge-option">
-                            <input type="radio" asp-for="Badge" value="" id="badge-none" checked />
-                            <label for="badge-none">
-                                <span class="badge-dot bd-none"></span>
-                                Yok
-                            </label>
-                        </div>
-
-                        <div class="badge-option">
-                            <input type="radio" asp-for="Badge" value="Popular" id="badge-popular" />
-                            <label for="badge-popular">
-                                <span class="badge-dot bd-popular"></span>
-                                Popüler
-                            </label>
-                        </div>
-
-                        <div class="badge-option">
-                            <input type="radio" asp-for="Badge" value="New" id="badge-new" />
-                            <label for="badge-new">
-                                <span class="badge-dot bd-new"></span>
-                                Yeni
-                            </label>
-                        </div>
-
-                        <div class="badge-option">
-                            <input type="radio" asp-for="Badge" value="Limited" id="badge-limited" />
-                            <label for="badge-limited">
-                                <span class="badge-dot bd-limited"></span>
-                                Sınırlı
-                            </label>
-                        </div>
-
-                    </div>
-                    <span asp-validation-for="Badge" class="validation-msg" style="display:block; margin-top:8px;"></span>
-                </div>
-            </div>
-
-            <!-- ── Yayın Durumu ────────────────────────────────────── -->
-            <div class="form-card">
-                <div class="form-card-header">
-                    <div class="form-card-icon fci-green">
-                        <i class="bi bi-toggle2-on"></i>
-                    </div>
-                    <div>
-                        <p class="form-card-title">Yayın Durumu</p>
-                        <p class="form-card-subtitle">Tur aktif / pasif ayarı</p>
-                    </div>
-                </div>
-                <div class="form-card-body">
-                    <label class="status-toggle-wrap" for="IsStatus">
-                        <div class="status-toggle-info">
-                            <div class="status-icon" id="statusIcon">
-                                <i class="bi bi-eye-slash-fill" id="statusIconInner"></i>
-                            </div>
-                            <div>
-                                <div class="status-label-title" id="statusLabelTitle">Pasif</div>
-                                <div class="status-label-sub" id="statusLabelSub">Tur listede görünmeyecek</div>
-                            </div>
-                        </div>
-                        <div class="toggle-switch">
-                            <input asp-for="IsStatus" id="IsStatus" type="checkbox"
-                                   onchange="updateStatusLabel(this)" />
-                            <div class="toggle-track"></div>
-                        </div>
-                    </label>
-                    <span asp-validation-for="IsStatus" class="validation-msg" style="display:block; margin-top:8px;"></span>
-                </div>
-            </div>
-
-            <!-- ── Kaydet / İptal ─────────────────────────────────── -->
-            <div class="submit-card">
+            <!-- Submit row -->
+            <div class="submit-area" style="margin-top:4px;border:1px solid rgba(226,232,240,.9);border-radius:16px;">
                 <button type="submit" class="btn-submit" id="submitBtn">
-                    <i class="bi bi-check-circle-fill"></i>
-                    Turu Kaydet
+                    <i class="fa-solid fa-rocket"></i> Publish Tour
                 </button>
-                <a href="/admin/tours" class="btn-cancel-submit">
-                    <i class="bi bi-x-circle me-1"></i> İptal Et
+                <a href="@Url.Action("TourList", "AdminTour")" class="btn-cancel">
+                    Cancel
                 </a>
             </div>
 
-            <!-- ── İpuçları ───────────────────────────────────────── -->
-            <div class="tips-card">
-                <div class="tips-title">
-                    <i class="bi bi-lightbulb-fill"></i>
-                    Başarılı Tur İpuçları
+        </div><!-- /ct-steps -->
+        <!-- ══ RIGHT PANEL ═══════════════════════════════════════ -->
+        <div class="ct-panel">
+
+            <!-- Progress -->
+            <div class="panel-card">
+                <div class="panel-card-head">
+                    <div class="panel-card-title">Form Progress</div>
                 </div>
-                <div class="tip-item">
-                    <i class="bi bi-check2-circle"></i>
-                    <span>Tur adını kısa, akılda kalıcı ve ilgi çekici tutun.</span>
-                </div>
-                <div class="tip-item">
-                    <i class="bi bi-check2-circle"></i>
-                    <span>Yüksek çözünürlüklü, yatay formatlı görseller daha iyi görünür.</span>
-                </div>
-                <div class="tip-item">
-                    <i class="bi bi-check2-circle"></i>
-                    <span>"Popüler" rozetini çok satılan turlara verin.</span>
-                </div>
-                <div class="tip-item">
-                    <i class="bi bi-check2-circle"></i>
-                    <span>Fiyatı rekabetçi tutmak rezervasyon oranını artırır.</span>
-                </div>
-                <div class="tip-item">
-                    <i class="bi bi-check2-circle"></i>
-                    <span>Turu kaydetmeden önce tüm bilgileri kontrol edin.</span>
+                <div class="panel-card-body">
+                    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:4px;">
+                        <div>
+                            <div class="prog-pct" id="progPct">0%</div>
+                            <div class="prog-label">completed</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:11px;color:#94a3b8;font-family:'DM Mono',monospace;" id="progSteps">0 / 3 steps</div>
+                        </div>
+                    </div>
+                    <div class="prog-bar-wrap"><div class="prog-bar-fill" id="progFill"></div></div>
+                    <div class="step-checks" style="margin-top:14px;">
+                        <div class="step-check" id="chk1">
+                            <div class="step-check-ic"><i class="fa-solid fa-check"></i></div>
+                            <span>Basic info</span>
+                        </div>
+                        <div class="step-check" id="chk2">
+                            <div class="step-check-ic"><i class="fa-solid fa-check"></i></div>
+                            <span>Tour details</span>
+                        </div>
+                        <div class="step-check" id="chk3">
+                            <div class="step-check-ic"><i class="fa-solid fa-check"></i></div>
+                            <span>Cover image</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-        </div><!-- /right column -->
+            <!-- Badge picker -->
+            <div class="panel-card">
+                <div class="panel-card-head">
+                    <div class="panel-card-title">Tour Badge</div>
+                </div>
+                <div class="panel-card-body" style="padding-top:12px;">
+                    <div class="badge-picker">
+                        <div class="badge-opt selected" data-val="" onclick="pickBadge(this,'')">
+                            <div class="badge-dot-pick" style="background:#e2e8f0;"></div>
+                            <div>
+                                <div class="badge-opt-name">None</div>
+                                <div class="badge-opt-sub">No badge</div>
+                            </div>
+                            <div class="check-mark"><i class="fa-solid fa-check"></i></div>
+                        </div>
+                        <div class="badge-opt" data-val="Öne Çıkan" onclick="pickBadge(this,'Öne Çıkan')">
+                            <div class="badge-dot-pick" style="background:#3b82f6;"></div>
+                            <div>
+                                <div class="badge-opt-name">Öne Çıkan</div>
+                                <div class="badge-opt-sub">Featured</div>
+                            </div>
+                            <div class="check-mark"><i class="fa-solid fa-check"></i></div>
+                        </div>
+                        <div class="badge-opt" data-val="Yeni" onclick="pickBadge(this,'Yeni')">
+                            <div class="badge-dot-pick" style="background:#10b981;"></div>
+                            <div>
+                                <div class="badge-opt-name">Yeni</div>
+                                <div class="badge-opt-sub">New arrival</div>
+                            </div>
+                            <div class="check-mark"><i class="fa-solid fa-check"></i></div>
+                        </div>
+                        <div class="badge-opt" data-val="Fırsat" onclick="pickBadge(this,'Fırsat')">
+                            <div class="badge-dot-pick" style="background:#f59e0b;"></div>
+                            <div>
+                                <div class="badge-opt-name">Fırsat</div>
+                                <div class="badge-opt-sub">Deal / Offer</div>
+                            </div>
+                            <div class="check-mark"><i class="fa-solid fa-check"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status toggle -->
+            <div class="panel-card">
+                <div class="panel-card-head">
+                    <div class="panel-card-title">Publish Status</div>
+                </div>
+                <div class="panel-card-body" style="padding-top:10px;">
+                    <div class="toggle-row" id="statusRow">
+                        <div class="toggle-row-info">
+                            <div class="trn" id="statusLabel">Passive</div>
+                            <div class="trs" id="statusDesc">Tour won't be visible</div>
+                        </div>
+                        <label class="sw">
+                            <input asp-for="IsStatus" type="checkbox" id="IsStatus"
+                                   onchange="syncStatus(this)" />
+                            <div class="sw-track"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview summary -->
+            <div class="panel-card" id="previewCard" style="display:none;">
+                <div class="panel-card-head">
+                    <div class="panel-card-title">Preview</div>
+                </div>
+                <div class="panel-card-body" style="padding-top:10px;">
+                    <div style="border-radius:10px;overflow:hidden;margin-bottom:10px;display:none;" id="prevImgSmall">
+                        <img id="prevImgSmallImg" src="" style="width:100%;height:80px;object-fit:cover;" />
+                    </div>
+                    <div style="font-size:13.5px;font-weight:800;color:#0f172a;line-height:1.3;" id="prevTitle">—</div>
+                    <div style="display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap;">
+                        <span style="font-size:11px;color:#94a3b8;display:flex;align-items:center;gap:4px;">
+                            <i class="fa-regular fa-calendar" style="color:#94a3b8;"></i>
+                            <span id="prevDays">—</span>
+                        </span>
+                        <span style="font-size:11px;color:#94a3b8;display:flex;align-items:center;gap:4px;">
+                            <i class="fa-solid fa-users" style="color:#94a3b8;"></i>
+                            <span id="prevCap">—</span>
+                        </span>
+                        <span style="font-size:13px;font-weight:800;color:#0f172a;margin-left:auto;" id="prevPrice">—</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips -->
+            <div class="tips-card">
+                <div class="tips-head">
+                    <div class="tips-title"><i class="fa-solid fa-lightbulb"></i> Pro Tips</div>
+                </div>
+                <div class="tips-body">
+                    <div class="tip-item">
+                        <i class="fa-solid fa-circle-dot tip-ic"></i>
+                        <span>Keep the tour name short, memorable, and destination-focused.</span>
+                    </div>
+                    <div class="tip-item">
+                        <i class="fa-solid fa-circle-dot tip-ic"></i>
+                        <span>High-res 16:9 landscape images perform significantly better.</span>
+                    </div>
+                    <div class="tip-item">
+                        <i class="fa-solid fa-circle-dot tip-ic"></i>
+                        <span>The <strong style="color:#818cf8;">"Öne Çıkan"</strong> badge boosts visibility on listings.</span>
+                    </div>
+                    <div class="tip-item">
+                        <i class="fa-solid fa-circle-dot tip-ic"></i>
+                        <span>Set status to Passive while editing — activate when ready.</span>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /ct-panel -->
+
     </div>
 </form>
 
@@ -1108,157 +1344,174 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
-        // ── Character counters ─────────────────────────────────────────────
-        function setupCounter(inputId, counterId, max) {
-            const input   = document.getElementById(inputId);
-            const counter = document.getElementById(counterId);
-            if (!input || !counter) return;
-
-            function update() {
-                const len = input.value.length;
-                counter.textContent = len + ' / ' + max;
-                counter.className = 'char-counter';
-                if (len > max * 0.9) counter.classList.add('warn');
-                if (len >= max)      counter.classList.add('limit');
-            }
-
-            input.addEventListener('input', update);
-            update();
+        /* ── Step accordion ──────────────────────────────────────── */
+        function toggleStep(n) {
+            const block = document.getElementById('step'+n);
+            const isOpen = block.classList.contains('open');
+            // close all
+            [1,2,3].forEach(i => {
+                const b = document.getElementById('step'+i);
+                b.classList.remove('open');
+            });
+            if (!isOpen) block.classList.add('open');
         }
 
-        setupCounter('Title',       'titleCounter', 100);
-        setupCounter('Description', 'descCounter',  500);
+        /* ── Stepper controls ────────────────────────────────────── */
+        function stepChange(id, delta) {
+            const inp = document.getElementById(id);
+            const min = parseInt(inp.min)||1;
+            const max = parseInt(inp.max)||9999;
+            let val = (parseInt(inp.value)||0) + delta;
+            val = Math.max(min, Math.min(max, val));
+            inp.value = val;
+            inp.dispatchEvent(new Event('input'));
+        }
+        function clampVal(inp, min, max) {
+            let v = parseInt(inp.value)||0;
+            if (v<min) inp.value=min;
+            if (v>max) inp.value=max;
+            updatePreview();
+        }
 
-        // ── Number stepper ─────────────────────────────────────────────────
-        function stepValue(id, delta, min, max) {
-            const input = document.getElementById(id);
-            let val = parseInt(input.value) || 0;
-            val = Math.min(max, Math.max(min, val + delta));
-            input.value = val;
+        /* ── Char counters ───────────────────────────────────────── */
+        const titleEl = document.getElementById('Title');
+        const descEl  = document.getElementById('Description');
+
+        function updateCharCount(el, countEl, max) {
+            const n = el.value.length;
+            countEl.textContent = `${n} / ${max}`;
+            countEl.className = 'char-count'+(n>max*.9?' warn':'')+(n>=max?' over':'');
+        }
+
+        titleEl.addEventListener('input', () => {
+            updateCharCount(titleEl, document.getElementById('titleCount'), 120);
+            updatePreview();
             updateProgress();
-        }
-
-        // ── Image preview ──────────────────────────────────────────────────
-        const coverInput   = document.getElementById('CoverImageUrl');
-        const previewBox   = document.getElementById('imagePreviewBox');
-        const previewImg   = document.getElementById('imagePreview');
-
-        let previewTimeout;
-
-        coverInput.addEventListener('input', () => {
-            clearTimeout(previewTimeout);
-            previewTimeout = setTimeout(() => {
-                const url = coverInput.value.trim();
-                if (!url) {
-                    previewBox.classList.remove('has-image');
-                    previewImg.classList.remove('loaded');
-                    return;
-                }
-                previewImg.onload = () => {
-                    previewBox.classList.add('has-image');
-                    previewImg.classList.add('loaded');
-                };
-                previewImg.onerror = () => {
-                    previewBox.classList.remove('has-image');
-                    previewImg.classList.remove('loaded');
-                };
-                previewImg.src = url;
-            }, 600);
+        });
+        descEl.addEventListener('input', () => {
+            updateCharCount(descEl, document.getElementById('descCount'), 500);
+            updateProgress();
         });
 
-        // ── Status label ───────────────────────────────────────────────────
-        function updateStatusLabel(cb) {
-            const title   = document.getElementById('statusLabelTitle');
-            const sub     = document.getElementById('statusLabelSub');
-            const icon    = document.getElementById('statusIconInner');
+        /* ── Image preview ───────────────────────────────────────── */
+        const urlInp = document.getElementById('CoverImageUrl');
+        const drop   = document.getElementById('imgDrop');
+        const prev   = document.getElementById('previewImg');
+        let   imgTimer;
 
+        urlInp.addEventListener('input', () => {
+            clearTimeout(imgTimer);
+            imgTimer = setTimeout(() => {
+                const v = urlInp.value.trim();
+                if (!v) { drop.classList.remove('has-img'); updateProgress(); return; }
+                prev.onload  = () => { drop.classList.add('has-img'); updateProgress(); updatePreview(); };
+                prev.onerror = () => { drop.classList.remove('has-img'); };
+                prev.src = v;
+                // small preview
+                const si = document.getElementById('prevImgSmallImg');
+                si.src = v;
+                si.onload = () => {
+                    document.getElementById('prevImgSmall').style.display='block';
+                };
+            }, 500);
+        });
+
+        /* ── Badge picker ────────────────────────────────────────── */
+        function pickBadge(el, val) {
+            document.querySelectorAll('.badge-opt').forEach(o=>o.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('BadgeHidden').value = val;
+        }
+
+        /* ── Status sync ─────────────────────────────────────────── */
+        function syncStatus(cb) {
+            const lbl  = document.getElementById('statusLabel');
+            const desc = document.getElementById('statusDesc');
+            const row  = document.getElementById('statusRow');
             if (cb.checked) {
-                title.textContent = 'Aktif';
-                sub.textContent   = 'Tur listede görünecek';
-                icon.className    = 'bi bi-eye-fill';
+                lbl.textContent  = 'Active';
+                lbl.style.color  = '#10b981';
+                desc.textContent = 'Tour will be publicly visible';
+                row.style.background = '#f0fdf4';
+                row.style.borderColor = '#bbf7d0';
             } else {
-                title.textContent = 'Pasif';
-                sub.textContent   = 'Tur listede görünmeyecek';
-                icon.className    = 'bi bi-eye-slash-fill';
+                lbl.textContent  = 'Passive';
+                lbl.style.color  = '#94a3b8';
+                desc.textContent = "Tour won't be visible";
+                row.style.background = '#fafbfc';
+                row.style.borderColor = '#f1f5f9';
             }
         }
 
-        // ── Form progress ──────────────────────────────────────────────────
-        const progressBar   = document.getElementById('formProgressBar');
-        const progressPct   = document.getElementById('progressPercent');
+        /* ── Live preview card ───────────────────────────────────── */
+        function updatePricePrev(v) { updatePreview(); }
 
-        const trackedFields = [
-            'Title', 'Description', 'CoverImageUrl', 'Price'
-        ];
+        function updatePreview() {
+            const title = titleEl.value.trim();
+            const days  = document.getElementById('DayCount').value;
+            const cap   = document.getElementById('Capacity').value;
+            const price = document.getElementById('Price').value;
 
+            const card = document.getElementById('previewCard');
+            if (title || price) card.style.display='block'; else { card.style.display='none'; return; }
+
+            document.getElementById('prevTitle').textContent = title || '—';
+            document.getElementById('prevDays').textContent  = days ? days+' days' : '—';
+            document.getElementById('prevCap').textContent   = cap  ? cap+' persons' : '—';
+            document.getElementById('prevPrice').textContent = price ? '₺'+Number(price).toLocaleString('tr-TR') : '—';
+        }
+
+        /* ── Progress tracker ────────────────────────────────────── */
         function updateProgress() {
-            let filled = 0;
-            const total = trackedFields.length + 2; // +DayCount +Capacity (always have value)
+            let done = 0;
+            const c1 = titleEl.value.trim().length>2 && descEl.value.trim().length>10;
+            const c2 = parseInt(document.getElementById('DayCount').value)>0
+                    && parseInt(document.getElementById('Capacity').value)>0
+                    && parseFloat(document.getElementById('Price').value)>0;
+            const c3 = document.getElementById('imgDrop').classList.contains('has-img');
 
-            trackedFields.forEach(id => {
-                const el = document.getElementById(id);
-                if (el && el.value.trim().length > 0) filled++;
-            });
+            function mark(chkId, numId, stepId, isDone) {
+                const chk  = document.getElementById(chkId);
+                const num  = document.getElementById(numId);
+                const step = document.getElementById(stepId);
+                if (isDone) {
+                    chk.classList.add('done');
+                    num.className = 'step-num done';
+                    num.innerHTML = '<i class="fa-solid fa-check" style="font-size:12px;"></i>';
+                    step.classList.add('done');
+                    done++;
+                } else {
+                    chk.classList.remove('done');
+                    step.classList.remove('done');
+                    const isOpen = step.classList.contains('open');
+                    num.className = 'step-num '+(isOpen?'active':'idle');
+                    num.innerHTML = numId.replace('snum','');
+                }
+            }
+            mark('chk1','snum1','step1',c1);
+            mark('chk2','snum2','step2',c2);
+            mark('chk3','snum3','step3',c3);
 
-            // DayCount and Capacity always count as filled since they have default values
-            const dayCount = parseInt(document.getElementById('DayCount').value) || 0;
-            const capacity = parseInt(document.getElementById('Capacity').value) || 0;
-            if (dayCount >= 1) filled++;
-            if (capacity >= 1) filled++;
-
-            const pct = Math.round((filled / total) * 100);
-            progressBar.style.width = pct + '%';
-            progressPct.textContent = pct + '%';
+            const pct = Math.round(done/3*100);
+            document.getElementById('progPct').textContent   = pct+'%';
+            document.getElementById('progFill').style.width  = pct+'%';
+            document.getElementById('progSteps').textContent = done+' / 3 steps';
         }
 
-        trackedFields.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.addEventListener('input', updateProgress);
+        // Wire all detail inputs to progress
+        ['DayCount','Capacity','Price'].forEach(id => {
+            document.getElementById(id).addEventListener('input', () => { updateProgress(); updatePreview(); });
         });
 
-        document.getElementById('DayCount').addEventListener('input', updateProgress);
-        document.getElementById('Capacity').addEventListener('input', updateProgress);
+        /* ── Submit state ────────────────────────────────────────── */
+        document.getElementById('ctForm').addEventListener('submit', function() {
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Publishing...';
+            btn.disabled=true;
+        });
 
+        /* ── Init ────────────────────────────────────────────────── */
         updateProgress();
-
-        // ── Client-side validation highlight ──────────────────────────────
-        document.getElementById('createTourForm').addEventListener('submit', function (e) {
-            let valid = true;
-
-            trackedFields.forEach(id => {
-                const el = document.getElementById(id);
-                if (el && !el.value.trim()) {
-                    el.classList.add('is-invalid');
-                    valid = false;
-                } else if (el) {
-                    el.classList.remove('is-invalid');
-                }
-            });
-
-            const price = parseFloat(document.getElementById('Price').value);
-            const priceEl = document.getElementById('Price');
-            if (isNaN(price) || price <= 0) {
-                priceEl.classList.add('is-invalid');
-                valid = false;
-            }
-
-            if (!valid) {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            } else {
-                const btn = document.getElementById('submitBtn');
-                btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Kaydediliyor…';
-            }
-        });
-
-        // Remove invalid class on input
-        document.querySelectorAll('.form-control-custom').forEach(el => {
-            el.addEventListener('input', () => el.classList.remove('is-invalid'));
-        });
+        syncStatus(document.getElementById('IsStatus'));
     </script>
 }
-
-
-
-

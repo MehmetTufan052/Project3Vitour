@@ -27,5 +27,9 @@ namespace Project3Vitour.Controllers
         {
             return View();
         }
+        public IActionResult TourIndex()
+        {
+            return View();
+        }
     }
 }

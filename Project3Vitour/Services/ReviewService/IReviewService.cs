@@ -13,5 +13,7 @@ namespace Project3Vitour.Services.ReviewService
 
         Task<SentimentSummaryDto> GetSentimentSummaryAsync(string tourId);
         Task<List<SentimentTrendDto>> GetMonthlyTrendAsync(string tourId);
+
+
     }
 }
