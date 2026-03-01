@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
-<link href="~/css/app.css" rel="stylesheet" />
+
 @await Component.InvokeAsync("_TourHeadComponentPartial")
 
 <body class="body header-fixed ">
@@ -60,16 +60,7 @@
 
 
     <!-- Javascript -->
-    <script src="/vitour/app/js/jquery.min.js"></script>
-    <script src="/vitour/app/js/jquery.nice-select.min.js"></script>
-    <script src="/vitour/app/js/bootstrap.min.js"></script>
-    <script src="/vitour/app/js/swiper-bundle.min.js"></script>
-    <script src="/vitour/app/js/swiper.js"></script>
-    <script src="/vitour/app/js/plugin.js"></script>
-    <script src="/vitour/app/js/jquery.fancybox.js"></script>
-    <script src="/vitour/app/js/price-ranger.js"></script>
-    <script src="/vitour/app/js/shortcodes.js"></script>
-    <script src="/vitour/app/js/main.js"></script>
+    @await Component.InvokeAsync("_TourScriptsComponentPartial")
 
 </body>
 

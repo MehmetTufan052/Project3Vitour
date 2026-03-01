@@ -1,4 +1,4 @@
-﻿@model List<Project3Vitour.Dtos.TourDtos.ResultTourDto>
+﻿@model List<ResultTourDto>
 <section class="archieve-tour">
     <div class="tf-container">
         <div class="listing-list-car-wrap listing-list-car-wrap-grid3">
@@ -42,7 +42,7 @@
             <div class="listing-list-car-grid mb-60">
                 @foreach(var item in Model){
                 <div class="tour-listing box-sd">
-                    <a href="tour-single.html" class="tour-listing-image">
+                    <a href="/Tour/TourDetails/@item.TourId" class="tour-listing-image">
                         <div class="badge-top flex-two">
                             <span class="feature">Featured</span>
                             <div class="badge-media flex-five">
@@ -56,7 +56,7 @@
                     <div class="tour-listing-content">
                         <span class="map"><i class="icon-Vector4"></i>United States USA</span>
                         <h3 class="title-tour-list">
-                            <a href="tour-single.html">
+                                <a href="/Tour/TourDetails/@item.TourId">
                                 @item.DayCount Gün - @(item.DayCount-1) Gece
                                 @item.Title
                             </a>

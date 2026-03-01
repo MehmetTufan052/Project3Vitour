@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Project3Vitour.Dtos.TourDtos;
 using Project3Vitour.Services.TourServices.ITourService;
 
@@ -7,10 +8,12 @@ namespace Project3Vitour.Controllers
     public class AdminTourController : Controller
     {
         private readonly ITourService _tourService;
+        private readonly IMapper _mapper;
 
-        public AdminTourController(ITourService tourService)
+        public AdminTourController(ITourService tourService, IMapper mapper)
         {
             _tourService = tourService;
+            _mapper = mapper;
         }
 
         public async Task<IActionResult> TourList()
@@ -42,7 +45,8 @@ namespace Project3Vitour.Controllers
         public async Task<IActionResult> UpdateTour(string id)
         {
             var value = await _tourService.GetTourByIdAsync(id);
-            return View(value);
+            var updateDto = _mapper.Map<UpdateTourDto>(value);
+            return View(updateDto);
         }
         
         [HttpPost]

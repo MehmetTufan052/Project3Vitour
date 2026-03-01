@@ -1,0 +1,49 @@
+﻿@model GetTourByIdDto
+@{
+    Layout = null;
+}
+
+<div class="row mb-50">
+    <div class="col-lg-12">
+        <div class="inner-heading-wrap flex-two">
+            <div class="inner-heading">
+                <span class="feature">@Model.Badge</span>
+                <h2 class="title">@Model.Title</h2>
+                <ul class="flex-three list-wrap-heading">
+                    <li class="flex-three">
+                        <i class="icon-time-left"></i>
+                        <span>@Model.DayCount</span>
+                    </li>
+                    <li class="flex-three">
+                        <i class="icon-user"></i>
+                        <span>Max Guests: @Model.Capacity</span>
+                    </li>
+                    <li class="flex-three">
+                        <i class="icon-18"></i>
+                        <span>1421 San Pedro St, Los Angeles, CA</span>
+                    </li>
+
+
+                </ul>
+
+            </div>
+            <div class="inner-price">
+                <div class="flex-three">
+                    <div class="start">
+                        <i class="icon-Star"></i>
+                        <i class="icon-Star"></i>
+                        <i class="icon-Star"></i>
+                        <i class="icon-Star"></i>
+                        <i class="icon-Star"></i>
+                    </div>
+                    <span class="review">(1 Review)</span>
+                </div>
+                <p class="price-sale text-main">
+                    $130.00 <span class="price">$16000</span>
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+</div>

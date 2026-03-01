@@ -27,9 +27,11 @@ namespace Project3Vitour.Controllers
         {
             return View();
         }
-        public IActionResult TourIndex()
+
+        public async Task<IActionResult> TourDetails(string id)
         {
-            return View();
+            var value=await _tourService.GetTourByIdAsync(id);
+            return View(value);
         }
     }
 }

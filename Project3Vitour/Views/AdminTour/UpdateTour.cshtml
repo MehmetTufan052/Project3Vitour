@@ -1,1243 +1,1629 @@
-﻿@model GetTourByIdDto
+﻿@model UpdateTourDto
 @{
     ViewData["Title"] = "UpdateTour";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-@section Styles {
 <style>
-    /* ─── Page Header ───────────────────────────────────── */
-    .section-header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 16px;
-        flex-wrap: wrap;
-        margin-bottom: 28px;
-    }
+    /* ═══════════════════════════════════════════════════════════
+           UPDATE TOUR — DARK GLASS EDIT MODE
+        ═══════════════════════════════════════════════════════════ */
 
-    .page-eyebrow {
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        color: #f59e0b;
-        margin-bottom: 4px;
-    }
-
-    .page-title { margin: 0; }
-
-    .btn-back {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: #fff;
-        color: var(--text-muted);
-        border: 1px solid var(--border);
-        padding: 10px 18px;
-        border-radius: 10px;
-        font-family: 'DM Sans', sans-serif;
-        font-size: 13.5px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: background .15s, color .15s, border-color .15s;
-        text-decoration: none;
-    }
-
-    .btn-back:hover {
-        background: var(--surface);
-        color: var(--navy);
-        border-color: #c4cdd9;
-    }
-
-    /* ─── Edit Mode Banner ───────────────────────────────── */
+    /* Edit mode banner */
     .edit-banner {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         gap: 14px;
-        background: linear-gradient(135deg, #fffbeb, #fef3c7);
-        border: 1px solid #fde68a;
+        padding: 13px 20px;
         border-radius: 14px;
-        padding: 14px 20px;
-        margin-bottom: 24px;
-    }
-
-    .edit-banner-icon {
-        width: 40px; height: 40px;
-        background: #f59e0b;
-        border-radius: 10px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 18px;
-        color: #fff;
-        flex-shrink: 0;
-        box-shadow: 0 2px 8px rgba(245,158,11,.35);
-    }
-
-    .edit-banner-text { flex: 1; }
-    .edit-banner-title {
-        font-size: 13.5px;
-        font-weight: 700;
-        color: #92400e;
-        margin-bottom: 2px;
-    }
-    .edit-banner-sub { font-size: 12px; color: #b45309; }
-
-    .edit-banner-id {
-        font-size: 11px;
-        font-weight: 600;
-        color: #92400e;
-        background: rgba(245,158,11,.15);
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-family: monospace;
-        letter-spacing: .5px;
-        white-space: nowrap;
-    }
-
-    /* ─── Form Grid ──────────────────────────────────────── */
-    .form-grid {
-        display: grid;
-        grid-template-columns: 1fr 340px;
-        gap: 24px;
-        align-items: start;
-    }
-
-    @@media (max-width: 1100px) {
-        .form-grid { grid-template-columns: 1fr; }
-    }
-
-    /* ─── Form Cards ─────────────────────────────────────── */
-    .form-card {
-        background: #fff;
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        box-shadow: var(--shadow-md);
-        overflow: hidden;
         margin-bottom: 20px;
+        background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(251,191,36,0.07));
+        border: 1px solid rgba(245,158,11,0.3);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 2px 16px rgba(245,158,11,0.1), inset 0 1px 0 rgba(255,255,255,.06);
+        animation: bannerIn .4s cubic-bezier(.4,0,.2,1) both;
     }
 
-    .form-card:last-child { margin-bottom: 0; }
+    @@keyframes bannerIn {
+        from {
+            opacity: 0;
+            transform: translateY(-8px)
+        }
 
-    .form-card-header {
+        to {
+            opacity: 1;
+            transform: none
+        }
+    }
+
+    .edit-banner-left {
         display: flex;
         align-items: center;
         gap: 12px;
-        padding: 18px 24px;
-        border-bottom: 1px solid var(--border);
-        background: #fafbfd;
     }
 
-    .form-card-icon {
-        width: 36px; height: 36px;
+    .edit-banner-icon {
+        width: 38px;
+        height: 38px;
         border-radius: 10px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 17px;
-        flex-shrink: 0;
-    }
-
-    .fci-blue   { background: #e0f2fe; color: #0369a1; }
-    .fci-green  { background: #dcfce7; color: #15803d; }
-    .fci-purple { background: #ede9fe; color: #6d28d9; }
-    .fci-yellow { background: #fef9c3; color: #854d0e; }
-    .fci-orange { background: #ffedd5; color: #c2410c; }
-
-    .form-card-title {
-        font-size: 14.5px;
-        font-weight: 700;
-        color: var(--navy);
-        margin: 0;
-        line-height: 1.3;
-    }
-
-    .form-card-subtitle {
-        font-size: 12px;
-        color: var(--text-muted);
-        margin: 0;
-    }
-
-    .form-card-body { padding: 24px; }
-
-    /* ─── Form Controls ──────────────────────────────────── */
-    .form-label-custom {
-        display: block;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--navy);
-        margin-bottom: 7px;
-    }
-
-    .form-label-custom .required {
-        color: var(--danger);
-        margin-left: 3px;
-    }
-
-    .form-label-hint {
-        font-size: 11.5px;
-        font-weight: 400;
-        color: var(--text-muted);
-        margin-left: 6px;
-    }
-
-    .input-wrapper { position: relative; }
-
-    .input-icon {
-        position: absolute;
-        left: 13px; top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-muted);
+        background: linear-gradient(135deg,#f59e0b,#f97316);
+        display: flex;
+        align-items: center;
+        justify-content: center;
         font-size: 15px;
-        pointer-events: none;
-        z-index: 1;
+        color: #fff;
+        flex-shrink: 0;
+        box-shadow: 0 0 18px rgba(245,158,11,.35);
+        position: relative;
     }
 
-    .form-control-custom {
-        width: 100%;
-        padding: 11px 14px;
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        background: #fff;
-        font-family: 'DM Sans', sans-serif;
+        .edit-banner-icon::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(180deg,rgba(255,255,255,.2) 0%,transparent 60%);
+        }
+
+    .edit-banner-title {
         font-size: 13.5px;
-        color: var(--text-main);
+        font-weight: 800;
+        color: #92400e;
+    }
+
+    .edit-banner-sub {
+        font-size: 11px;
+        color: #b45309;
+        margin-top: 1px;
+    }
+
+    .edit-banner-id {
+        font-size: 10px;
+        font-family: 'DM Mono',monospace;
+        color: #d97706;
+        background: rgba(245,158,11,.12);
+        padding: 4px 10px;
+        border-radius: 8px;
+        border: 1px solid rgba(245,158,11,.2);
+        white-space: nowrap;
+        letter-spacing: .5px;
+    }
+
+    /* Page layout */
+    .ut-layout {
+        display: grid;
+        grid-template-columns: 1fr 290px;
+        gap: 20px;
+        align-items: start;
+    }
+
+    @@media(max - width:1024px) {
+        .ut-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Left steps */
+    .ut-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    /* Step block */
+    .step-block {
+        border-radius: 16px;
+        overflow: hidden;
+        animation: sbIn .35s cubic-bezier(.4,0,.2,1) both;
+    }
+
+        .step-block:nth-child(1) {
+            animation-delay: .04s
+        }
+
+        .step-block:nth-child(3) {
+            animation-delay: .08s
+        }
+
+        .step-block:nth-child(5) {
+            animation-delay: .12s
+        }
+
+    @@keyframes sbIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px)
+        }
+
+        to {
+            opacity: 1;
+            transform: none
+        }
+    }
+
+    .step-head {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 17px 20px;
+        cursor: pointer;
+        user-select: none;
+        background: rgba(255,255,255,.9);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,.9);
+        border-radius: 16px;
+        box-shadow: 0 1px 4px rgba(0,0,0,.05),inset 0 1px 0 rgba(255,255,255,.95);
+        transition: all 240ms cubic-bezier(.4,0,.2,1);
+        position: relative;
+    }
+
+    .step-block.open .step-head {
+        border-radius: 16px 16px 0 0;
+        border-bottom-color: transparent;
+        background: #fff;
+        box-shadow: 0 2px 0 rgba(0,0,0,.03);
+    }
+
+    .step-head:hover:not(.step-block.open .step-head) {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.95);
+    }
+
+    /* Changed indicator on step head */
+    .step-head.has-changes::before {
+        content: '';
+        position: absolute;
+        top: 14px;
+        right: 52px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#f59e0b,#f97316);
+        box-shadow: 0 0 8px rgba(245,158,11,.6);
+        animation: pulse 1.8s ease-in-out infinite;
+    }
+
+    @@keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+            transform: scale(1)
+        }
+
+        50% {
+            opacity: .6;
+            transform: scale(.8)
+        }
+    }
+
+    .step-num {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 800;
+        flex-shrink: 0;
+        transition: all 280ms;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .step-num.idle {
+            background: #f1f5f9;
+            color: #94a3b8;
+        }
+
+        .step-num.active {
+            background: linear-gradient(135deg,#f59e0b,#f97316);
+            color: #fff;
+            box-shadow: 0 0 16px rgba(245,158,11,.4);
+        }
+
+        .step-num.done {
+            background: linear-gradient(135deg,#10b981,#06b6d4);
+            color: #fff;
+            box-shadow: 0 0 14px rgba(16,185,129,.3);
+        }
+
+        .step-num::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(180deg,rgba(255,255,255,.18) 0%,transparent 60%);
+        }
+
+    .step-info {
+        flex: 1;
+    }
+
+    .step-title {
+        font-size: 13.5px;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1;
+    }
+
+    .step-sub {
+        font-size: 11px;
+        color: #94a3b8;
+        margin-top: 2px;
+    }
+
+    .step-chev {
+        font-size: 11px;
+        color: #cbd5e1;
+        transition: transform 240ms,color 240ms;
+    }
+
+    .step-block.open .step-chev {
+        transform: rotate(180deg);
+        color: #f59e0b;
+    }
+
+    .step-done-mark {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#10b981,#06b6d4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        color: #fff;
+        opacity: 0;
+        transform: scale(.5);
+        transition: all 250ms cubic-bezier(.34,1.56,.64,1);
+    }
+
+    .step-block.done .step-done-mark {
+        opacity: 1;
+        transform: scale(1)
+    }
+
+    .step-body {
+        background: #fff;
+        border: 1px solid rgba(226,232,240,.9);
+        border-top: none;
+        border-radius: 0 0 16px 16px;
+        padding: 22px 20px;
+        display: none;
+        box-shadow: 0 4px 16px rgba(0,0,0,.04);
+    }
+
+    .step-block.open .step-body {
+        display: block;
+    }
+
+    .step-connector {
+        width: 2px;
+        height: 6px;
+        background: linear-gradient(180deg,#e2e8f0,transparent);
+        margin: 0 auto;
+    }
+
+    /* ── FORM FIELDS ──────────────────────────────────────────── */
+    .fg {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 18px;
+    }
+
+        .fg:last-child {
+            margin-bottom: 0
+        }
+
+    .fg-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 18px;
+    }
+
+    @@media(max - width:640px) {
+        .fg-row {
+            grid-template-columns: 1fr
+        }
+    }
+
+    .fl {
+        font-size: 11px;
+        font-weight: 800;
+        color: #475569;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 5px;
+    }
+
+        .fl i {
+            color: #94a3b8;
+            font-size: 11px;
+            width: 13px;
+            text-align: center;
+        }
+
+        .fl .req {
+            color: #f43f5e;
+            font-size: 13px;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+    /* Changed field highlight */
+    .fi-wrap {
+        position: relative;
+    }
+
+    .fi-changed-dot {
+        position: absolute;
+        top: 50%;
+        right: -18px;
+        transform: translateY(-50%);
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#f59e0b,#f97316);
+        box-shadow: 0 0 8px rgba(245,158,11,.5);
+        opacity: 0;
+        transition: opacity 250ms;
+        pointer-events: none;
+    }
+
+        .fi-changed-dot.show {
+            opacity: 1;
+        }
+
+    .fi-ctrl {
+        width: 100%;
+        height: 44px;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 11px;
+        background: #fafbfc;
+        padding: 0 14px;
+        font-family: 'Plus Jakarta Sans',sans-serif;
+        font-size: 13px;
+        color: #0f172a;
         outline: none;
-        transition: border-color .18s, box-shadow .18s, background .18s;
-        appearance: none;
+        transition: all 200ms cubic-bezier(.4,0,.2,1);
+        box-shadow: 0 1px 3px rgba(0,0,0,.04),inset 0 1px 0 rgba(255,255,255,.8);
     }
 
-    .form-control-custom.with-icon { padding-left: 38px; }
+        .fi-ctrl:focus {
+            border-color: #f59e0b;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(245,158,11,.10),0 1px 3px rgba(0,0,0,.04);
+        }
 
-    .form-control-custom:focus {
-        border-color: #f59e0b;
-        box-shadow: 0 0 0 3px rgba(245,158,11,.14);
-        background: #fffdf5;
-    }
+        .fi-ctrl:hover:not(:focus) {
+            border-color: #cbd5e1;
+            background: #fff
+        }
 
-    .form-control-custom.is-invalid {
-        border-color: var(--danger);
-        box-shadow: 0 0 0 3px rgba(239,68,68,.12);
-    }
+        .fi-ctrl::placeholder {
+            color: #c4cdd9
+        }
 
-    .form-control-custom.is-modified {
-        border-color: #f59e0b;
-        background: #fffdf5;
-    }
+        .fi-ctrl.changed {
+            border-color: #f59e0b;
+            background: #fffbf0;
+            box-shadow: 0 0 0 3px rgba(245,158,11,.08);
+        }
 
-    textarea.form-control-custom {
+    textarea.fi-ctrl {
+        height: 110px;
+        padding: 13px 14px;
         resize: vertical;
-        min-height: 110px;
         line-height: 1.6;
     }
 
-    .char-counter {
+    select.fi-ctrl {
+        appearance: none;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394a3b8'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        background-color: #fafbfc;
+        padding-right: 38px;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none
+    }
+
+    input[type=number] {
+        -moz-appearance: textfield
+    }
+
+    .fi-help {
+        font-size: 11px;
+        color: #94a3b8;
+        font-weight: 500;
+        margin-top: 3px
+    }
+
+    .fi-error {
+        font-size: 11px;
+        color: #f43f5e;
+        font-weight: 600;
+        margin-top: 3px;
+        display: flex;
+        align-items: center;
+        gap: 4px
+    }
+
+    .char-count {
+        font-size: 10px;
+        color: #c4cdd9;
         text-align: right;
-        font-size: 11.5px;
-        color: var(--text-muted);
-        margin-top: 5px;
+        font-family: 'DM Mono',monospace;
+        transition: color 200ms
     }
 
-    .char-counter.warn  { color: var(--warning); }
-    .char-counter.limit { color: var(--danger); }
+        .char-count.warn {
+            color: #f59e0b
+        }
 
-    .field-hint {
-        font-size: 12px;
-        color: var(--text-muted);
-        margin-top: 6px;
+        .char-count.over {
+            color: #f43f5e
+        }
+
+    /* Prefix wrap */
+    .pfx-wrap {
+        position: relative
+    }
+
+        .pfx-wrap .pfx {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 13px;
+            font-weight: 800;
+            color: #94a3b8;
+            pointer-events: none
+        }
+
+        .pfx-wrap .fi-ctrl {
+            padding-left: 28px
+        }
+
+    /* Stepper */
+    .stepper {
         display: flex;
         align-items: center;
-        gap: 5px;
-    }
-
-    .field-hint i { font-size: 12px; color: #f59e0b; }
-
-    .validation-msg {
-        font-size: 12px;
-        color: var(--danger);
-        margin-top: 5px;
-        display: none;
-    }
-
-    /* ─── Number Stepper ─────────────────────────────────── */
-    .number-stepper {
-        display: flex;
-        align-items: center;
-        border: 1px solid var(--border);
-        border-radius: 10px;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 11px;
+        background: #fafbfc;
         overflow: hidden;
-        background: #fff;
-        transition: border-color .18s, box-shadow .18s;
-    }
-
-    .number-stepper:focus-within {
-        border-color: #f59e0b;
-        box-shadow: 0 0 0 3px rgba(245,158,11,.14);
-    }
-
-    .stepper-btn {
-        width: 40px; height: 44px;
-        border: none;
-        background: #f8fafc;
-        color: var(--text-muted);
-        font-size: 16px;
-        cursor: pointer;
-        display: flex; align-items: center; justify-content: center;
-        transition: background .15s, color .15s;
-        flex-shrink: 0;
-        user-select: none;
-    }
-
-    .stepper-btn:hover { background: var(--surface); color: var(--navy); }
-    .stepper-btn:active { background: #e2e8f0; }
-    .stepper-btn:first-child { border-right: 1px solid var(--border); }
-    .stepper-btn:last-child  { border-left:  1px solid var(--border); }
-
-    .stepper-input {
-        flex: 1;
-        border: none;
-        outline: none;
-        text-align: center;
-        font-family: 'DM Sans', sans-serif;
-        font-size: 15px;
-        font-weight: 600;
-        color: var(--navy);
-        background: transparent;
-        padding: 0 8px;
         height: 44px;
-        -moz-appearance: textfield;
+        box-shadow: 0 1px 3px rgba(0,0,0,.04);
+        transition: border-color 200ms,box-shadow 200ms,background 200ms;
     }
 
-    .stepper-input::-webkit-inner-spin-button,
-    .stepper-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+        .stepper:focus-within {
+            border-color: #f59e0b;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(245,158,11,.10);
+        }
 
-    /* ─── Price Input ────────────────────────────────────── */
-    .price-wrapper { position: relative; }
+        .stepper.changed {
+            border-color: #f59e0b;
+            background: #fffbf0
+        }
 
-    .price-prefix {
-        position: absolute;
-        left: 0; top: 0; bottom: 0;
-        width: 44px;
-        display: flex; align-items: center; justify-content: center;
-        background: #f8fafc;
-        border-right: 1px solid var(--border);
-        border-radius: 10px 0 0 10px;
+        .stepper button {
+            width: 40px;
+            height: 100%;
+            background: transparent;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 180ms;
+            flex-shrink: 0;
+        }
+
+            .stepper button:hover {
+                background: rgba(245,158,11,.08);
+                color: #f59e0b
+            }
+
+        .stepper input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            text-align: center;
+            font-family: 'Plus Jakarta Sans',sans-serif;
+            font-size: 16px;
+            font-weight: 800;
+            color: #0f172a;
+            outline: none;
+            padding: 0;
+            -moz-appearance: textfield;
+        }
+
+            .stepper input::-webkit-inner-spin-button {
+                -webkit-appearance: none
+            }
+
+    .stepper-lbl {
+        font-size: 10px;
         font-weight: 700;
-        font-size: 14px;
-        color: var(--text-muted);
-        pointer-events: none;
-        z-index: 1;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+        color: #94a3b8;
+        font-family: 'DM Mono',monospace;
+        margin-top: 5px;
+        text-align: center
     }
 
-    .price-input { padding-left: 54px !important; }
-
-    /* ─── Badge Selector ─────────────────────────────────── */
-    .badge-selector {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
-
-    .badge-option { position: relative; }
-
-    .badge-option input[type="radio"] {
-        position: absolute;
-        opacity: 0;
-        width: 0; height: 0;
-    }
-
-    .badge-option label {
+    /* Image area */
+    .img-frame {
+        border-radius: 14px;
+        overflow: hidden;
+        position: relative;
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        min-height: 160px;
         display: flex;
         align-items: center;
-        gap: 10px;
-        padding: 11px 14px;
-        border: 2px solid var(--border);
-        border-radius: 10px;
-        cursor: pointer;
-        transition: border-color .18s, background .18s, box-shadow .18s;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-main);
-        user-select: none;
+        justify-content: center;
+        transition: border-color 250ms;
     }
 
-    .badge-option label:hover {
-        border-color: #c4cdd9;
-        background: var(--surface);
+        .img-frame.has-img {
+            border-style: solid;
+            border-color: #e2e8f0;
+            padding: 0
+        }
+
+        .img-frame.changed {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245,158,11,.10)
+        }
+
+        .img-frame img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: none;
+            border-radius: 11px
+        }
+
+        .img-frame.has-img img {
+            display: block
+        }
+
+    .img-frame-ph {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 28px;
+        text-align: center;
     }
 
-    .badge-option input:checked + label {
-        border-color: #f59e0b;
-        background: #fffbeb;
-        box-shadow: 0 0 0 2px rgba(245,158,11,.2);
+    .img-frame.has-img .img-frame-ph {
+        display: none
     }
 
-    .badge-dot {
-        width: 10px; height: 10px;
-        border-radius: 50%;
-        flex-shrink: 0;
+    .img-frame-overlay {
+        position: absolute;
+        inset: 0;
+        border-radius: 11px;
+        background: linear-gradient(180deg,transparent 45%,rgba(0,0,0,.5) 100%);
+        opacity: 0;
+        transition: opacity 250ms;
+        display: flex;
+        align-items: flex-end;
+        padding: 12px;
     }
 
-    .bd-popular { background: #f59e0b; }
-    .bd-new     { background: #10b981; }
-    .bd-limited { background: #ef4444; }
-    .bd-none    { background: #94a3b8; }
+    .img-frame.has-img:hover .img-frame-overlay {
+        opacity: 1
+    }
 
-    /* ─── Status Toggle ──────────────────────────────────── */
-    .status-toggle-wrap {
+    .img-frame-overlay span {
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 6px
+    }
+
+    .img-url-wrap {
+        position: relative;
+        margin-top: 8px
+    }
+
+        .img-url-wrap i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 11px;
+            pointer-events: none
+        }
+
+        .img-url-wrap .fi-ctrl {
+            padding-left: 30px;
+            font-size: 12.5px
+        }
+
+    /* ── RIGHT PANEL ─────────────────────────────────────────── */
+    .ut-panel {
+        position: sticky;
+        top: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .panel-card {
+        background: #fff;
+        border: 1px solid rgba(226,232,240,.9);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0,0,0,.05),inset 0 1px 0 rgba(255,255,255,.95);
+        animation: sbIn .35s .22s cubic-bezier(.4,0,.2,1) both;
+    }
+
+    .pc-head {
+        padding: 13px 16px 9px;
+        border-bottom: 1px solid #f0f4f8;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 16px 18px;
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        background: #fff;
-        transition: border-color .18s, background .18s;
-        cursor: pointer;
+        gap: 8px;
     }
 
-    .status-toggle-wrap:has(input:checked) {
-        border-color: var(--success);
-        background: #f0fdf4;
+    .pc-title {
+        font-size: 9.5px;
+        font-weight: 800;
+        letter-spacing: 1.8px;
+        text-transform: uppercase;
+        color: #94a3b8;
+        font-family: 'DM Mono',monospace
     }
 
-    .status-toggle-info { display: flex; align-items: center; gap: 12px; }
-
-    .status-icon {
-        width: 38px; height: 38px;
-        border-radius: 10px;
-        background: #f1f5f9;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 17px;
-        color: var(--text-muted);
-        transition: background .2s, color .2s;
+    .pc-body {
+        padding: 14px 16px
     }
 
-    .status-toggle-wrap:has(input:checked) .status-icon {
-        background: #dcfce7;
-        color: #15803d;
+    /* Changed fields list */
+    .diff-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-height: 40px
     }
 
-    .status-label-title { font-size: 13.5px; font-weight: 600; color: var(--navy); }
-    .status-label-sub   { font-size: 12px; color: var(--text-muted); }
-
-    .toggle-switch {
-        position: relative;
-        width: 48px; height: 26px;
-        flex-shrink: 0;
+    .diff-empty {
+        font-size: 12px;
+        color: #c4cdd9;
+        font-weight: 600;
+        text-align: center;
+        padding: 8px 0;
+        font-style: italic
     }
 
-    .toggle-switch input { display: none; }
-
-    .toggle-track {
-        position: absolute;
-        inset: 0;
-        background: #cbd5e1;
-        border-radius: 13px;
-        cursor: pointer;
-        transition: background .25s;
+    .diff-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 10px;
+        border-radius: 8px;
+        background: #fffbf0;
+        border: 1px solid rgba(245,158,11,.2);
+        animation: diffIn .25s cubic-bezier(.34,1.56,.64,1) both;
     }
 
-    .toggle-track::after {
-        content: '';
-        position: absolute;
-        left: 3px; top: 3px;
-        width: 20px; height: 20px;
+    @@keyframes diffIn {
+        from {
+            opacity: 0;
+            transform: scale(.92)translateX(-6px)
+        }
+
+        to {
+            opacity: 1;
+            transform: none
+        }
+    }
+
+    .diff-item-dot {
+        width: 8px;
+        height: 8px;
         border-radius: 50%;
-        background: #fff;
-        box-shadow: 0 1px 4px rgba(0,0,0,.18);
-        transition: transform .25s cubic-bezier(.4,0,.2,1);
+        flex-shrink: 0;
+        background: linear-gradient(135deg,#f59e0b,#f97316);
+        box-shadow: 0 0 6px rgba(245,158,11,.5);
     }
 
-    .toggle-switch input:checked + .toggle-track { background: var(--success); }
-    .toggle-switch input:checked + .toggle-track::after { transform: translateX(22px); }
-
-    /* ─── Image Preview ──────────────────────────────────── */
-    .image-preview-box {
-        width: 100%;
-        height: 180px;
-        border: 2px dashed var(--border);
-        border-radius: 12px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        color: var(--text-muted);
-        background: #fafbfd;
-        font-size: 13px;
-        gap: 6px;
-        transition: border-color .2s, background .2s;
-        overflow: hidden;
-        position: relative;
-        margin-bottom: 12px;
-    }
-
-    .image-preview-box.has-image {
-        border-style: solid;
-        border-color: #f59e0b;
-        background: #000;
-    }
-
-    .image-preview-box img {
-        position: absolute;
-        inset: 0;
-        width: 100%; height: 100%;
-        object-fit: cover;
-        opacity: 0;
-        transition: opacity .3s;
-    }
-
-    .image-preview-box img.loaded { opacity: 1; }
-
-    .preview-placeholder {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 6px;
-        transition: opacity .2s;
-    }
-
-    .preview-placeholder i { font-size: 32px; color: #cbd5e1; }
-    .image-preview-box.has-image .preview-placeholder { opacity: 0; }
-
-    /* ─── Changes tracker ────────────────────────────────── */
-    .changes-card {
-        background: #fff;
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 18px 20px;
-        margin-bottom: 20px;
-        box-shadow: var(--shadow-sm);
-    }
-
-    .changes-title {
+    .diff-item-name {
         font-size: 12px;
         font-weight: 700;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
+        color: #92400e
     }
 
-    .changes-title i { color: #f59e0b; font-size: 13px; }
-
-    .change-list { list-style: none; padding: 0; margin: 0; }
-
-    .change-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 12.5px;
-        color: var(--text-muted);
-        padding: 5px 0;
-        border-bottom: 1px solid #f1f5f9;
+    .diff-count {
+        margin-left: auto;
+        font-size: 10px;
+        font-weight: 800;
+        font-family: 'DM Mono',monospace;
+        background: linear-gradient(135deg,#f59e0b,#f97316);
+        color: #fff;
+        padding: 2px 7px;
+        border-radius: 20px;
+        box-shadow: 0 2px 6px rgba(245,158,11,.3);
     }
 
-    .change-item:last-child { border-bottom: none; }
+    /* Badge picker */
+    .badge-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 7px
+    }
 
-    .change-dot {
-        width: 7px; height: 7px;
+    .badge-opt {
+        border: 2px solid #f1f5f9;
+        border-radius: 10px;
+        padding: 9px 10px;
+        cursor: pointer;
+        transition: all 200ms;
+        position: relative;
+        background: #fafbfc;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+        .badge-opt:hover {
+            border-color: #a5b4fc;
+            background: #f5f3ff
+        }
+
+        .badge-opt.sel {
+            border-color: #f59e0b;
+            background: #fffbf0;
+            box-shadow: 0 0 0 3px rgba(245,158,11,.1)
+        }
+
+    .badge-dot {
+        width: 9px;
+        height: 9px;
         border-radius: 50%;
-        background: #cbd5e1;
-        flex-shrink: 0;
-        transition: background .2s;
+        flex-shrink: 0
     }
 
-    .change-item.modified .change-dot  { background: #f59e0b; }
-    .change-item.modified .change-name { color: var(--navy); font-weight: 600; }
-
-    .no-changes-msg {
-        font-size: 12.5px;
-        color: var(--text-muted);
-        text-align: center;
-        padding: 6px 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-    }
-
-    /* ─── Submit buttons ─────────────────────────────────── */
-    .submit-card {
-        background: #fff;
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        box-shadow: var(--shadow-md);
-        padding: 22px 24px;
-    }
-
-    .btn-submit-update {
-        width: 100%;
-        padding: 14px;
-        background: linear-gradient(135deg, #f59e0b, #d97706);
-        color: #fff;
-        border: none;
-        border-radius: 11px;
-        font-family: 'DM Sans', sans-serif;
-        font-size: 15px;
+    .badge-name {
+        font-size: 11.5px;
         font-weight: 700;
-        cursor: pointer;
-        transition: opacity .2s, box-shadow .2s, transform .15s;
+        color: #475569;
+        line-height: 1.2
+    }
+
+    .badge-sub {
+        font-size: 9.5px;
+        color: #94a3b8
+    }
+
+    .badge-ck {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#f59e0b,#f97316);
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 9px;
-        box-shadow: 0 2px 12px rgba(245,158,11,.4);
-        margin-bottom: 10px;
+        font-size: 7px;
+        color: #fff;
+        opacity: 0;
+        transform: scale(.4);
+        transition: all 240ms cubic-bezier(.34,1.56,.64,1);
     }
 
-    .btn-submit-update:hover {
-        opacity: .92;
-        box-shadow: 0 4px 20px rgba(245,158,11,.5);
-        transform: translateY(-1px);
+    .badge-opt.sel .badge-ck {
+        opacity: 1;
+        transform: scale(1)
     }
 
-    .btn-submit-update:active { transform: translateY(0); }
-
-    .btn-cancel-submit {
-        width: 100%;
-        padding: 12px;
-        background: none;
-        color: var(--text-muted);
-        border: 1px solid var(--border);
+    /* Status toggle */
+    .sw-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 11px 13px;
         border-radius: 11px;
-        font-family: 'DM Sans', sans-serif;
-        font-size: 14px;
-        font-weight: 500;
+        background: #fafbfc;
+        border: 1px solid #f1f5f9;
+        transition: all 200ms;
+    }
+
+        .sw-row:hover {
+            background: #f5f3ff;
+            border-color: #e0e7ff
+        }
+
+        .sw-row.on {
+            background: #f0fdf4;
+            border-color: #bbf7d0
+        }
+
+        .sw-row.off {
+            background: #fafbfc;
+            border-color: #f1f5f9
+        }
+
+    .sw-info .swn {
+        font-size: 13px;
+        font-weight: 700;
+        color: #0f172a;
+        transition: color 200ms
+    }
+
+    .sw-info .sws {
+        font-size: 10.5px;
+        color: #94a3b8;
+        margin-top: 1px
+    }
+
+    .sw {
+        position: relative;
+        width: 44px;
+        height: 24px;
+        flex-shrink: 0
+    }
+
+        .sw input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute
+        }
+
+    .sw-track {
+        position: absolute;
+        inset: 0;
+        border-radius: 24px;
+        background: #e2e8f0;
         cursor: pointer;
-        transition: background .15s, color .15s;
-        text-align: center;
+        transition: background 200ms;
+        border: 1px solid #d1d5db;
+    }
+
+        .sw-track::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,.18);
+            transition: transform 200ms cubic-bezier(.34,1.56,.64,1);
+        }
+
+    .sw input:checked ~ .sw-track {
+        background: linear-gradient(135deg,#10b981,#06b6d4);
+        border-color: transparent;
+        box-shadow: 0 0 12px rgba(16,185,129,.35);
+    }
+
+        .sw input:checked ~ .sw-track::after {
+            transform: translateX(20px)
+        }
+
+    /* Save button */
+    .save-btn {
+        width: 100%;
+        height: 46px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(135deg,#f59e0b,#f97316);
+        color: #fff;
+        font-family: 'Plus Jakarta Sans',sans-serif;
+        font-size: 13.5px;
+        font-weight: 800;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        box-shadow: 0 3px 16px rgba(245,158,11,.4),inset 0 1px 0 rgba(255,255,255,.18);
+        transition: all 250ms;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .save-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg,rgba(255,255,255,.14) 0%,transparent 55%);
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(245,158,11,.5),inset 0 1px 0 rgba(255,255,255,.18)
+        }
+
+        .save-btn:active {
+            transform: translateY(0)
+        }
+
+        .save-btn:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+            transform: none
+        }
+
+    .cancel-link {
         display: block;
-        text-decoration: none;
+        text-align: center;
+        margin-top: 9px;
+        font-size: 12.5px;
+        font-weight: 700;
+        color: #94a3b8;
+        transition: color 200ms;
+        cursor: pointer;
     }
 
-    .btn-cancel-submit:hover { background: var(--surface); color: var(--navy); }
+        .cancel-link:hover {
+            color: #f43f5e
+        }
 
-    /* ─── Tips card ──────────────────────────────────────── */
-    .tips-card {
-        background: linear-gradient(135deg, #0d1b2a 0%, #1a3358 100%);
-        border-radius: 16px;
-        padding: 22px;
-        color: #fff;
+    /* Preview mini card */
+    .prev-mini {
+        border-radius: 11px;
+        overflow: hidden;
+        border: 1px solid #f0f4f8;
+        background: #f8fafc;
     }
 
-    .tips-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 15px;
-        color: #fff;
-        margin-bottom: 14px;
+    .prev-mini-img {
+        width: 100%;
+        height: 72px;
+        object-fit: cover;
+        display: block
+    }
+
+    .prev-mini-body {
+        padding: 10px 12px
+    }
+
+    .prev-mini-title {
+        font-size: 12.5px;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.3
+    }
+
+    .prev-mini-meta {
         display: flex;
         align-items: center;
         gap: 8px;
+        margin-top: 6px;
+        flex-wrap: wrap
     }
 
-    .tips-title i { color: #f59e0b; font-size: 16px; }
-
-    .tip-item {
+    .prev-meta-chip {
+        font-size: 10.5px;
+        color: #94a3b8;
         display: flex;
-        align-items: flex-start;
-        gap: 9px;
-        margin-bottom: 10px;
-        font-size: 12.5px;
-        color: rgba(255,255,255,.75);
-        line-height: 1.5;
+        align-items: center;
+        gap: 4px
     }
 
-    .tip-item:last-child { margin-bottom: 0; }
-    .tip-item i { font-size: 13px; color: #f59e0b; flex-shrink: 0; margin-top: 1px; }
+    .prev-price {
+        font-size: 14px;
+        font-weight: 800;
+        color: #f59e0b;
+        margin-left: auto
+    }
 
-    @@media (max-width: 576px) {
-        .badge-selector { grid-template-columns: 1fr 1fr; }
-        .form-card-body { padding: 16px; }
-        .edit-banner { flex-wrap: wrap; }
+    /* Tips */
+    .tips-card {
+        border-radius: 16px;
+        background: linear-gradient(150deg,#0f172a 0%,#1c1917 100%);
+        border: 1px solid rgba(245,158,11,.2);
+        box-shadow: 0 4px 20px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.04);
+        overflow: hidden;
+        position: relative;
+        animation: sbIn .35s .3s cubic-bezier(.4,0,.2,1) both;
+    }
+
+        .tips-card::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle,rgba(245,158,11,.2) 0%,transparent 70%);
+            pointer-events: none;
+        }
+
+    .tips-head {
+        padding: 13px 16px 8px;
+        display: flex;
+        align-items: center;
+        gap: 7px
+    }
+
+    .tips-head-title {
+        font-size: 12px;
+        font-weight: 800;
+        color: #fff
+    }
+
+    .tips-head i {
+        color: #fbbf24
+    }
+
+    .tips-body {
+        padding: 0 16px 14px
+    }
+
+    .tip-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 9px;
+        font-size: 11px;
+        line-height: 1.5;
+        color: rgba(226,232,240,.65)
+    }
+
+    .tip-ic {
+        color: #f59e0b;
+        font-size: 11px;
+        margin-top: 1px;
+        flex-shrink: 0
     }
 </style>
-}
 
-<!-- ═══ PAGE HEADER ═══════════════════════════════════════════════════ -->
-<div class="section-header">
+<!-- Hidden inputs synced by JS -->
+<input type="hidden" name="Badge" id="BadgeHidden" value="@Model.Badge" />
+
+<!-- ── Edit mode banner ─────────────────────────────────── -->
+<div class="edit-banner anim">
+    <div class="edit-banner-left">
+        <div class="edit-banner-icon"><i class="fa-solid fa-pen-to-square"></i></div>
+        <div>
+            <div class="edit-banner-title">Edit Mode — @Model.Title</div>
+            <div class="edit-banner-sub">Changes won't be applied until you save</div>
+        </div>
+    </div>
+    <div class="edit-banner-id">ID: @Model.TourId</div>
+</div>
+
+<!-- ── Page header ──────────────────────────────────────── -->
+<div class="ph anim" style="margin-bottom:20px;">
     <div>
-        <p class="page-eyebrow">Tur Yönetimi</p>
-        <h1 class="page-title">Turu Güncelle</h1>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/admin" class="text-muted">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="/admin/tours" class="text-muted">Turlar</a></li>
-                <li class="breadcrumb-item active text-muted">Güncelle</li>
-            </ol>
-        </nav>
+        <div class="ph-eye">Tours</div>
+        <h1 class="ph-h1">Update Tour</h1>
+        <p class="ph-desc">Edit the details below and save your changes</p>
     </div>
-    <a href="/admin/tours" class="btn-back">
-        <i class="bi bi-arrow-left"></i>
-        Listeye Dön
-    </a>
+    <div class="ph-acts">
+        <a href="@Url.Action("TourList", "AdminTour")" class="btn btn-ghost">
+            <i class="fa-solid fa-arrow-left"></i> Back
+        </a>
+    </div>
 </div>
 
-<!-- ═══ EDIT MODE BANNER ══════════════════════════════════════════════ -->
-<div class="edit-banner">
-    <div class="edit-banner-icon">
-        <i class="bi bi-pencil-fill"></i>
-    </div>
-    <div class="edit-banner-text">
-        <div class="edit-banner-title">Düzenleme Modu — @Model.Title</div>
-        <div class="edit-banner-sub">Değişiklikleriniz kaydedilene kadar uygulanmaz.</div>
-    </div>
-    <span class="edit-banner-id d-none d-sm-block">ID: @Model.TourId</span>
-</div>
-
-<!-- ═══ FORM ══════════════════════════════════════════════════════════ -->
-<form method="post" id="updateTourForm" novalidate>
+<form asp-action="UpdateTour" asp-controller="AdminTour" method="post" id="utForm">
     @Html.AntiForgeryToken()
-
-    <!-- Hidden TourId -->
     <input asp-for="TourId" type="hidden" />
 
-    <div class="form-grid">
+    <div class="ut-layout">
 
-        <!-- ══ LEFT COLUMN ════════════════════════════════════════════ -->
-        <div>
+        <!-- ══ LEFT ═════════════════════════════════════════════ -->
+        <div class="ut-steps">
 
-            <!-- ── Temel Bilgiler ─────────────────────────────────── -->
-            <div class="form-card">
-                <div class="form-card-header">
-                    <div class="form-card-icon fci-blue">
-                        <i class="bi bi-info-circle-fill"></i>
+            <!-- Step 1: Basic Info -->
+            <div class="step-block open" id="step1">
+                <div class="step-head" id="sh1" onclick="toggleStep(1)">
+                    <div class="step-num active" id="snum1">1</div>
+                    <div class="step-info">
+                        <div class="step-title">Basic Information</div>
+                        <div class="step-sub">Tour name and description</div>
                     </div>
-                    <div>
-                        <p class="form-card-title">Temel Bilgiler</p>
-                        <p class="form-card-subtitle">Turun adı ve açıklaması</p>
-                    </div>
+                    <div class="step-done-mark"><i class="fa-solid fa-check"></i></div>
+                    <i class="fa-solid fa-chevron-down step-chev"></i>
                 </div>
-                <div class="form-card-body">
+                <div class="step-body">
 
-                    <!-- Tur Adı -->
-                    <div class="mb-4">
-                        <label class="form-label-custom" for="Title">
-                            Tur Adı <span class="required">*</span>
-                        </label>
-                        <div class="input-wrapper">
-                            <i class="bi bi-type input-icon"></i>
-                            <input asp-for="Title"
-                                   id="Title"
-                                   class="form-control-custom with-icon"
-                                   placeholder="Örn: Kapadokya Balon Turu"
-                                   maxlength="100"
-                                   autocomplete="off"
-                                   data-original="@Model.Title" />
+                    <div class="fg">
+                        <label class="fl"><i class="fa-solid fa-heading"></i> Tour Name <span class="req">*</span></label>
+                        <div class="fi-wrap">
+                            <input asp-for="Title" class="fi-ctrl" id="Title"
+                                   placeholder="Tour name..." maxlength="120"
+                                   data-original="@Model.Title"
+                                   oninput="trackChange(this,'Title')" autocomplete="off" />
+                            <div class="fi-changed-dot" id="dot-Title"></div>
                         </div>
-                        <div class="char-counter" id="titleCounter">0 / 100</div>
-                        <span asp-validation-for="Title" class="validation-msg" style="display:block;"></span>
-                    </div>
-
-                    <!-- Açıklama -->
-                    <div class="mb-0">
-                        <label class="form-label-custom" for="Description">
-                            Tur Açıklaması <span class="required">*</span>
-                            <span class="form-label-hint">Kısa ve öz tutun</span>
-                        </label>
-                        <textarea asp-for="Description"
-                                  id="Description"
-                                  class="form-control-custom"
-                                  placeholder="Tur hakkında kısa bir açıklama yazın…"
-                                  maxlength="500"
-                                  rows="4"
-                                  data-original="@Model.Description"></textarea>
-                        <div class="char-counter" id="descCounter">0 / 500</div>
-                        <span asp-validation-for="Description" class="validation-msg" style="display:block;"></span>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- ── Tur Detayları ───────────────────────────────────── -->
-            <div class="form-card">
-                <div class="form-card-header">
-                    <div class="form-card-icon fci-purple">
-                        <i class="bi bi-sliders2-vertical"></i>
-                    </div>
-                    <div>
-                        <p class="form-card-title">Tur Detayları</p>
-                        <p class="form-card-subtitle">Süre, kapasite ve fiyat bilgileri</p>
-                    </div>
-                </div>
-                <div class="form-card-body">
-                    <div class="row g-4">
-
-                        <!-- Gün Sayısı -->
-                        <div class="col-sm-6">
-                            <label class="form-label-custom" for="DayCount">
-                                Tur Süresi <span class="required">*</span>
-                            </label>
-                            <div class="number-stepper">
-                                <button type="button" class="stepper-btn" onclick="stepValue('DayCount', -1, 1, 365)">
-                                    <i class="bi bi-dash"></i>
-                                </button>
-                                <input asp-for="DayCount"
-                                       id="DayCount"
-                                       class="stepper-input"
-                                       type="number"
-                                       min="1" max="365"
-                                       data-original="@Model.DayCount" />
-                                <button type="button" class="stepper-btn" onclick="stepValue('DayCount', 1, 1, 365)">
-                                    <i class="bi bi-plus"></i>
-                                </button>
-                            </div>
-                            <p class="field-hint"><i class="bi bi-info-circle"></i> Gün cinsinden süre (1–365)</p>
-                            <span asp-validation-for="DayCount" class="validation-msg" style="display:block;"></span>
-                        </div>
-
-                        <!-- Kapasite -->
-                        <div class="col-sm-6">
-                            <label class="form-label-custom" for="Capacity">
-                                Kapasite <span class="required">*</span>
-                            </label>
-                            <div class="number-stepper">
-                                <button type="button" class="stepper-btn" onclick="stepValue('Capacity', -1, 1, 999)">
-                                    <i class="bi bi-dash"></i>
-                                </button>
-                                <input asp-for="Capacity"
-                                       id="Capacity"
-                                       class="stepper-input"
-                                       type="number"
-                                       min="1" max="999"
-                                       data-original="@Model.Capacity" />
-                                <button type="button" class="stepper-btn" onclick="stepValue('Capacity', 1, 1, 999)">
-                                    <i class="bi bi-plus"></i>
-                                </button>
-                            </div>
-                            <p class="field-hint"><i class="bi bi-info-circle"></i> Maksimum katılımcı sayısı</p>
-                            <span asp-validation-for="Capacity" class="validation-msg" style="display:block;"></span>
-                        </div>
-
-                        <!-- Fiyat -->
-                        <div class="col-12">
-                            <label class="form-label-custom" for="Price">
-                                Fiyat (USD) <span class="required">*</span>
-                            </label>
-                            <div class="price-wrapper">
-                                <span class="price-prefix">$</span>
-                                <input asp-for="Price"
-                                       id="Price"
-                                       class="form-control-custom price-input"
-                                       type="number"
-                                       min="0" step="0.01"
-                                       placeholder="0.00"
-                                       data-original="@Model.Price" />
-                            </div>
-                            <p class="field-hint"><i class="bi bi-info-circle"></i> Kişi başı tur ücreti</p>
-                            <span asp-validation-for="Price" class="validation-msg" style="display:block;"></span>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <!-- ── Kapak Görseli ───────────────────────────────────── -->
-            <div class="form-card">
-                <div class="form-card-header">
-                    <div class="form-card-icon fci-yellow">
-                        <i class="bi bi-image-fill"></i>
-                    </div>
-                    <div>
-                        <p class="form-card-title">Kapak Görseli</p>
-                        <p class="form-card-subtitle">Turun vitrin fotoğrafı</p>
-                    </div>
-                </div>
-                <div class="form-card-body">
-
-                    <div class="image-preview-box" id="imagePreviewBox">
-                        <img id="imagePreview" src="" alt="Görsel önizleme" />
-                        <div class="preview-placeholder">
-                            <i class="bi bi-image"></i>
-                            <span>Görsel önizlemesi burada görünecek</span>
-                        </div>
-                    </div>
-
-                    <label class="form-label-custom" for="CoverImageUrl">
-                        Görsel URL <span class="required">*</span>
-                    </label>
-                    <div class="input-wrapper">
-                        <i class="bi bi-link-45deg input-icon"></i>
-                        <input asp-for="CoverImageUrl"
-                               id="CoverImageUrl"
-                               class="form-control-custom with-icon"
-                               placeholder="https://example.com/image.jpg"
-                               autocomplete="off"
-                               data-original="@Model.CoverImageUrl" />
-                    </div>
-                    <p class="field-hint">
-                        <i class="bi bi-info-circle"></i>
-                        Geçerli bir görsel URL'i girin. Önerilen boyut: 1200×800px
-                    </p>
-                    <span asp-validation-for="CoverImageUrl" class="validation-msg" style="display:block;"></span>
-
-                </div>
-            </div>
-
-        </div><!-- /left column -->
-
-        <!-- ══ RIGHT COLUMN ═══════════════════════════════════════════ -->
-        <div>
-
-            <!-- ── Değişiklik Takibi ───────────────────────────────── -->
-            <div class="changes-card">
-                <div class="changes-title">
-                    <i class="bi bi-pencil-square"></i>
-                    Değiştirilen Alanlar
-                </div>
-                <ul class="change-list" id="changeList">
-                    <li class="change-item" data-field="Title">
-                        <span class="change-dot"></span>
-                        <span class="change-name">Tur Adı</span>
-                    </li>
-                    <li class="change-item" data-field="Description">
-                        <span class="change-dot"></span>
-                        <span class="change-name">Açıklama</span>
-                    </li>
-                    <li class="change-item" data-field="CoverImageUrl">
-                        <span class="change-dot"></span>
-                        <span class="change-name">Kapak Görseli</span>
-                    </li>
-                    <li class="change-item" data-field="DayCount">
-                        <span class="change-dot"></span>
-                        <span class="change-name">Tur Süresi</span>
-                    </li>
-                    <li class="change-item" data-field="Capacity">
-                        <span class="change-dot"></span>
-                        <span class="change-name">Kapasite</span>
-                    </li>
-                    <li class="change-item" data-field="Price">
-                        <span class="change-dot"></span>
-                        <span class="change-name">Fiyat</span>
-                    </li>
-                    <li class="change-item" data-field="Badge">
-                        <span class="change-dot"></span>
-                        <span class="change-name">Rozet</span>
-                    </li>
-                    <li class="change-item" data-field="IsStatus">
-                        <span class="change-dot"></span>
-                        <span class="change-name">Yayın Durumu</span>
-                    </li>
-                </ul>
-                <p class="no-changes-msg" id="noChangesMsg" style="display:none;">
-                    <i class="bi bi-check-circle text-success"></i>
-                    Henüz değişiklik yapılmadı
-                </p>
-            </div>
-
-            <!-- ── Rozet ──────────────────────────────────────────── -->
-            <div class="form-card">
-                <div class="form-card-header">
-                    <div class="form-card-icon fci-orange">
-                        <i class="bi bi-award-fill"></i>
-                    </div>
-                    <div>
-                        <p class="form-card-title">Tur Rozeti</p>
-                        <p class="form-card-subtitle">Öne çıkarma etiketi</p>
-                    </div>
-                </div>
-                <div class="form-card-body">
-                    <div class="badge-selector">
-
-                        <div class="badge-option">
-                            <input type="radio" asp-for="Badge" value="" id="badge-none"
-                                   @@(string.IsNullOrEmpty(Model.Badge) ? "checked" : "") />
-                            <label for="badge-none">
-                                <span class="badge-dot bd-none"></span>
-                                Yok
-                            </label>
-                        </div>
-
-                        <div class="badge-option">
-                            <input type="radio" asp-for="Badge" value="Popular" id="badge-popular"
-                                   @@(Model.Badge == "Popular" ? "checked" : "") />
-                            <label for="badge-popular">
-                                <span class="badge-dot bd-popular"></span>
-                                Popüler
-                            </label>
-                        </div>
-
-                        <div class="badge-option">
-                            <input type="radio" asp-for="Badge" value="New" id="badge-new"
-                                   @@(Model.Badge == "New" ? "checked" : "") />
-                            <label for="badge-new">
-                                <span class="badge-dot bd-new"></span>
-                                Yeni
-                            </label>
-                        </div>
-
-                        <div class="badge-option">
-                            <input type="radio" asp-for="Badge" value="Limited" id="badge-limited"
-                                   @@(Model.Badge == "Limited" ? "checked" : "") />
-                            <label for="badge-limited">
-                                <span class="badge-dot bd-limited"></span>
-                                Sınırlı
-                            </label>
-                        </div>
-
-                    </div>
-                    <span asp-validation-for="Badge" class="validation-msg" style="display:block; margin-top:8px;"></span>
-                </div>
-            </div>
-
-            <!-- ── Yayın Durumu ────────────────────────────────────── -->
-            <div class="form-card">
-                <div class="form-card-header">
-                    <div class="form-card-icon fci-green">
-                        <i class="bi bi-toggle2-on"></i>
-                    </div>
-                    <div>
-                        <p class="form-card-title">Yayın Durumu</p>
-                        <p class="form-card-subtitle">Tur aktif / pasif ayarı</p>
-                    </div>
-                </div>
-                <div class="form-card-body">
-                    <label class="status-toggle-wrap" for="IsStatus">
-                        <div class="status-toggle-info">
-                            <div class="status-icon">
-                                <i class="bi @(Model.IsStatus ? "bi-eye-fill" : "bi-eye-slash-fill")" id="statusIconInner"></i>
-                            </div>
-                            <div>
-                                <div class="status-label-title" id="statusLabelTitle">
-                                    @(Model.IsStatus ? "Aktif" : "Pasif")
-                                </div>
-                                <div class="status-label-sub" id="statusLabelSub">
-                                    @(Model.IsStatus ? "Tur listede görünecek" : "Tur listede görünmeyecek")
-                                </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">
+                            <span asp-validation-for="Title" class="fi-error"></span>
+                            <div class="char-count" id="titleCount" style="margin-left:auto">
+                                @(Model.Title?.Length ?? 0) / 120
                             </div>
                         </div>
-                        <div class="toggle-switch">
-                            <input asp-for="IsStatus"
-                                   id="IsStatus"
-                                   type="checkbox"
-                                   onchange="updateStatusLabel(this)"
-                                   data-original="@Model.IsStatus.ToString().ToLower()" />
-                            <div class="toggle-track"></div>
+                    </div>
+
+                    <div class="fg">
+                        <label class="fl"><i class="fa-solid fa-align-left"></i> Description <span class="req">*</span></label>
+                        <div class="fi-wrap">
+                            <textarea asp-for="Description" class="fi-ctrl" id="Description"
+                                      placeholder="Describe this tour..." maxlength="500" rows="5"
+                                      data-original="@Model.Description"
+                                      oninput="trackChange(this,'Description')"></textarea>
+                            <div class="fi-changed-dot" id="dot-Description" style="top:18px;"></div>
                         </div>
-                    </label>
-                    <span asp-validation-for="IsStatus" class="validation-msg" style="display:block; margin-top:8px;"></span>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">
+                            <span asp-validation-for="Description" class="fi-error"></span>
+                            <div class="char-count" id="descCount" style="margin-left:auto">
+                                @(Model.Description?.Length ?? 0) / 500
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- ── Güncelle / İptal ───────────────────────────────── -->
-            <div class="submit-card">
-                <button type="submit" class="btn-submit-update" id="submitBtn">
-                    <i class="bi bi-arrow-clockwise"></i>
-                    Değişiklikleri Kaydet
+            <div class="step-connector"></div>
+
+            <!-- Step 2: Tour Details -->
+            <div class="step-block" id="step2">
+                <div class="step-head" id="sh2" onclick="toggleStep(2)">
+                    <div class="step-num idle" id="snum2">2</div>
+                    <div class="step-info">
+                        <div class="step-title">Tour Details</div>
+                        <div class="step-sub">Duration, capacity & pricing</div>
+                    </div>
+                    <div class="step-done-mark"><i class="fa-solid fa-check"></i></div>
+                    <i class="fa-solid fa-chevron-down step-chev"></i>
+                </div>
+                <div class="step-body">
+
+                    <div class="fg-row">
+                        <div class="fg" style="margin-bottom:0">
+                            <label class="fl"><i class="fa-regular fa-calendar"></i> Duration <span class="req">*</span></label>
+                            <div class="stepper" id="daysStepper">
+                                <button type="button" onclick="stepChange('DayCount',-1)"><i class="fa-solid fa-minus"></i></button>
+                                <input asp-for="DayCount" id="DayCount" type="number" min="1" max="365"
+                                       data-original="@Model.DayCount"
+                                       oninput="clampVal(this,1,365);trackChange(this,'DayCount')" />
+                                <button type="button" onclick="stepChange('DayCount',1)"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                            <div class="stepper-lbl">Days (1–365)</div>
+                            <span asp-validation-for="DayCount" class="fi-error"></span>
+                        </div>
+                        <div class="fg" style="margin-bottom:0">
+                            <label class="fl"><i class="fa-solid fa-users"></i> Capacity <span class="req">*</span></label>
+                            <div class="stepper" id="capStepper">
+                                <button type="button" onclick="stepChange('Capacity',-5)"><i class="fa-solid fa-minus"></i></button>
+                                <input asp-for="Capacity" id="Capacity" type="number" min="1" max="1000"
+                                       data-original="@Model.Capacity"
+                                       oninput="clampVal(this,1,1000);trackChange(this,'Capacity')" />
+                                <button type="button" onclick="stepChange('Capacity',5)"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                            <div class="stepper-lbl">Max persons</div>
+                            <span asp-validation-for="Capacity" class="fi-error"></span>
+                        </div>
+                    </div>
+
+                    <div class="fg" style="margin-top:18px">
+                        <label class="fl"><i class="fa-solid fa-turkish-lira-sign"></i> Price per Person <span class="req">*</span></label>
+                        <div class="fi-wrap pfx-wrap">
+                            <span class="pfx">₺</span>
+                            <input asp-for="Price" type="number" class="fi-ctrl" id="Price"
+                                   placeholder="0.00" min="0" step="0.01"
+                                   data-original="@Model.Price"
+                                   oninput="trackChange(this,'Price');updatePrevPrice()" />
+                            <div class="fi-changed-dot" id="dot-Price"></div>
+                        </div>
+                        <div class="fi-help">Per person pricing shown to customers</div>
+                        <span asp-validation-for="Price" class="fi-error"></span>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="step-connector"></div>
+
+            <!-- Step 3: Cover Image -->
+            <div class="step-block" id="step3">
+                <div class="step-head" id="sh3" onclick="toggleStep(3)">
+                    <div class="step-num idle" id="snum3">3</div>
+                    <div class="step-info">
+                        <div class="step-title">Cover Image</div>
+                        <div class="step-sub">Visual identity of the tour</div>
+                    </div>
+                    <div class="step-done-mark"><i class="fa-solid fa-check"></i></div>
+                    <i class="fa-solid fa-chevron-down step-chev"></i>
+                </div>
+                <div class="step-body">
+
+                    <div class="img-frame @(!string.IsNullOrEmpty(Model.CoverImageUrl) ? "has-img" : "")" id="imgFrame">
+                        <img id="previewImg"
+                             src="@(Model.CoverImageUrl ?? "")"
+                             alt="Cover" onerror="this.style.display='none'" />
+                        <div class="img-frame-overlay">
+                            <span><i class="fa-solid fa-pen"></i> Change Image</span>
+                        </div>
+                        <div class="img-frame-ph">
+                            <div style="font-size:28px;color:#c4cdd9;margin-bottom:8px"><i class="fa-regular fa-image"></i></div>
+                            <div style="font-size:13px;font-weight:600;color:#94a3b8">Paste image URL to preview</div>
+                        </div>
+                    </div>
+
+                    <div class="img-url-wrap">
+                        <i class="fa-solid fa-link"></i>
+                        <input asp-for="CoverImageUrl" class="fi-ctrl" id="CoverImageUrl"
+                               placeholder="https://example.com/cover.jpg"
+                               data-original="@Model.CoverImageUrl"
+                               oninput="trackChange(this,'CoverImageUrl');debouncedImgLoad()" />
+                    </div>
+                    <div class="fi-help" style="margin-top:5px">Use a 16:9 high-res image for best results</div>
+                    <span asp-validation-for="CoverImageUrl" class="fi-error" style="margin-top:4px"></span>
+
+                </div>
+            </div>
+
+            <!-- Submit row -->
+            <div style="margin-top:4px;padding:16px 20px;background:#fff;border:1px solid rgba(226,232,240,.9);border-radius:16px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);">
+                <button type="submit" id="saveBtn"
+                        style="flex:1;height:46px;border:none;border-radius:12px;
+                           background:linear-gradient(135deg,#f59e0b,#f97316);
+                           color:#fff;font-family:'Plus Jakarta Sans',sans-serif;
+                           font-size:14px;font-weight:800;cursor:pointer;
+                           display:flex;align-items:center;justify-content:center;gap:8px;
+                           box-shadow:0 3px 16px rgba(245,158,11,.4),inset 0 1px 0 rgba(255,255,255,.18);
+                           transition:all 250ms;position:relative;overflow:hidden;">
+                    <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                    <span id="changeCount" style="background:rgba(0,0,0,.15);padding:2px 8px;border-radius:20px;font-size:11px;display:none;"></span>
                 </button>
-                <a href="/admin/tours" class="btn-cancel-submit">
-                    <i class="bi bi-x-circle me-1"></i> İptal Et
+                <a href="@Url.Action("TourList", "AdminTour")"
+                   style="height:46px;padding:0 20px;border:1.5px solid #e2e8f0;border-radius:12px;
+                      background:#fff;color:#475569;font-family:'Plus Jakarta Sans',sans-serif;
+                      font-size:13.5px;font-weight:700;cursor:pointer;transition:all 200ms;
+                      display:flex;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,.04);">
+                    Cancel
                 </a>
             </div>
 
-            <!-- ── İpuçları ───────────────────────────────────────── -->
-            <div class="tips-card">
-                <div class="tips-title">
-                    <i class="bi bi-lightbulb-fill"></i>
-                    Güncelleme İpuçları
+        </div><!-- /ut-steps -->
+        <!-- ══ RIGHT PANEL ══════════════════════════════════════ -->
+        <div class="ut-panel">
+
+            <!-- Changed fields tracker -->
+            <div class="panel-card">
+                <div class="pc-head">
+                    <div class="pc-title">Changed Fields</div>
+                    <div id="diffBadge" style="display:none;font-size:10px;font-weight:800;font-family:'DM Mono',monospace;background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;padding:2px 9px;border-radius:20px;box-shadow:0 2px 8px rgba(245,158,11,.3);">0</div>
                 </div>
-                <div class="tip-item">
-                    <i class="bi bi-check2-circle"></i>
-                    <span>Yalnızca değiştirmeniz gereken alanları güncelleyin.</span>
-                </div>
-                <div class="tip-item">
-                    <i class="bi bi-check2-circle"></i>
-                    <span>Fiyat değişikliği mevcut rezervasyonları etkilemez.</span>
-                </div>
-                <div class="tip-item">
-                    <i class="bi bi-check2-circle"></i>
-                    <span>Turu pasife çekmek yeni rezervasyonları durdurur.</span>
-                </div>
-                <div class="tip-item">
-                    <i class="bi bi-check2-circle"></i>
-                    <span>Kapasite düşürülürken mevcut rezervasyon sayısını kontrol edin.</span>
+                <div class="pc-body">
+                    <div class="diff-list" id="diffList">
+                        <div class="diff-empty" id="diffEmpty">No changes yet</div>
+                    </div>
                 </div>
             </div>
 
-        </div><!-- /right column -->
+            <!-- Badge picker -->
+            <div class="panel-card">
+                <div class="pc-head"><div class="pc-title">Tour Badge</div></div>
+                <div class="pc-body" style="padding-top:10px">
+                    <div class="badge-grid">
+                        <div class="badge-opt @(string.IsNullOrEmpty(Model.Badge) ? "sel" : "")"
+                             data-val="" onclick="pickBadge(this,'')">
+                            <div class="badge-dot" style="background:#e2e8f0"></div>
+                            <div><div class="badge-name">None</div><div class="badge-sub">No badge</div></div>
+                            <div class="badge-ck"><i class="fa-solid fa-check"></i></div>
+                        </div>
+                        <div class="badge-opt @(Model.Badge == "Öne Çıkan" ? "sel" : "")"
+                             data-val="Öne Çıkan" onclick="pickBadge(this,'Öne Çıkan')">
+                            <div class="badge-dot" style="background:#3b82f6"></div>
+                            <div><div class="badge-name">Öne Çıkan</div><div class="badge-sub">Featured</div></div>
+                            <div class="badge-ck"><i class="fa-solid fa-check"></i></div>
+                        </div>
+                        <div class="badge-opt @(Model.Badge == "Yeni" ? "sel" : "")"
+                             data-val="Yeni" onclick="pickBadge(this,'Yeni')">
+                            <div class="badge-dot" style="background:#10b981"></div>
+                            <div><div class="badge-name">Yeni</div><div class="badge-sub">New arrival</div></div>
+                            <div class="badge-ck"><i class="fa-solid fa-check"></i></div>
+                        </div>
+                        <div class="badge-opt @(Model.Badge == "Fırsat" ? "sel" : "")"
+                             data-val="Fırsat" onclick="pickBadge(this,'Fırsat')">
+                            <div class="badge-dot" style="background:#f59e0b"></div>
+                            <div><div class="badge-name">Fırsat</div><div class="badge-sub">Deal / Offer</div></div>
+                            <div class="badge-ck"><i class="fa-solid fa-check"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status -->
+            <div class="panel-card">
+                <div class="pc-head"><div class="pc-title">Publish Status</div></div>
+                <div class="pc-body" style="padding-top:10px">
+                    <div class="sw-row @(Model.IsStatus ? "on" : "off")" id="swRow">
+                        <div class="sw-info">
+                            <div class="swn" id="swLabel">@(Model.IsStatus ? "Active" : "Passive")</div>
+                            <div class="sws" id="swDesc">@(Model.IsStatus ? "Tour is publicly visible" : "Tour won't be visible")</div>
+                        </div>
+                        <label class="sw">
+                            <input asp-for="IsStatus" type="checkbox" id="IsStatus"
+                                   onchange="syncStatus(this)" />
+                            <div class="sw-track"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live mini preview -->
+            <div class="panel-card" id="miniPreview">
+                <div class="pc-head"><div class="pc-title">Live Preview</div></div>
+                <div class="pc-body" style="padding:0 0 14px">
+                    <div class="prev-mini">
+                        <img class="prev-mini-img" id="prevMiniImg"
+                             src="@(Model.CoverImageUrl ?? "")"
+                             style="@(string.IsNullOrEmpty(Model.CoverImageUrl) ? "display:none" : "")"
+                             onerror="this.style.display='none'" />
+                        <div class="prev-mini-body">
+                            <div class="prev-mini-title" id="prevTitle">@(Model.Title ?? "—")</div>
+                            <div class="prev-mini-meta">
+                                <span class="prev-meta-chip">
+                                    <i class="fa-regular fa-calendar"></i>
+                                    <span id="prevDays">@Model.DayCount days</span>
+                                </span>
+                                <span class="prev-meta-chip">
+                                    <i class="fa-solid fa-users"></i>
+                                    <span id="prevCap">@Model.Capacity persons</span>
+                                </span>
+                                <span class="prev-price" id="prevPrice">₺@Model.Price.ToString("N0")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips -->
+            <div class="tips-card">
+                <div class="tips-head"><i class="fa-solid fa-triangle-exclamation"></i><div class="tips-head-title">Update Tips</div></div>
+                <div class="tips-body">
+                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Only update the fields you need to change.</span></div>
+                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Price changes will affect new reservations only.</span></div>
+                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Reducing capacity may impact existing bookings.</span></div>
+                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Set Passive before making major edits.</span></div>
+                </div>
+            </div>
+
+        </div><!-- /ut-panel -->
+
     </div>
 </form>
 
 @section Scripts {
-@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-<script>
-    // ── Original values for change tracking ───────────────────────────
-    const originals = {
-        Title:        document.getElementById('Title')?.dataset.original        ?? '',
-        Description:  document.getElementById('Description')?.dataset.original  ?? '',
-        CoverImageUrl:document.getElementById('CoverImageUrl')?.dataset.original ?? '',
-        DayCount:     document.getElementById('DayCount')?.dataset.original      ?? '',
-        Capacity:     document.getElementById('Capacity')?.dataset.original      ?? '',
-        Price:        document.getElementById('Price')?.dataset.original         ?? '',
-        Badge:        '@Model.Badge',
-        IsStatus:     '@Model.IsStatus.ToString().ToLower()'
-    };
-
-    // ── Character counters ─────────────────────────────────────────────
-    function setupCounter(inputId, counterId, max) {
-        const input   = document.getElementById(inputId);
-        const counter = document.getElementById(counterId);
-        if (!input || !counter) return;
-        function update() {
-            const len = input.value.length;
-            counter.textContent = len + ' / ' + max;
-            counter.className = 'char-counter';
-            if (len > max * 0.9) counter.classList.add('warn');
-            if (len >= max)      counter.classList.add('limit');
-        }
-        input.addEventListener('input', update);
-        update();
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        /* ── original values snapshot ────────────────────────────── */
+        const origBadge = "@Model.Badge";
+        let   curBadge  = origBadge;
+        const changed   = new Set();
 
-    setupCounter('Title',       'titleCounter', 100);
-    setupCounter('Description', 'descCounter',  500);
+        const FIELD_LABELS = {
+            Title:         'Tour Name',
+            Description:   'Description',
+            DayCount:      'Duration',
+            Capacity:      'Capacity',
+            Price:         'Price',
+            CoverImageUrl: 'Cover Image',
+            Badge:         'Badge',
+            IsStatus:      'Status',
+        };
 
-    // ── Number stepper ─────────────────────────────────────────────────
-    function stepValue(id, delta, min, max) {
-        const input = document.getElementById(id);
-        let val = parseInt(input.value) || 0;
-        val = Math.min(max, Math.max(min, val + delta));
-        input.value = val;
-        trackChange(id);
-    }
+        /* ── Track field changes ─────────────────────────────────── */
+        function trackChange(el, key) {
+            const orig = el.dataset.original ?? '';
+            const cur  = el.value ?? '';
+            const dot  = document.getElementById('dot-'+key);
 
-    // ── Image preview ──────────────────────────────────────────────────
-    const coverInput = document.getElementById('CoverImageUrl');
-    const previewBox = document.getElementById('imagePreviewBox');
-    const previewImg = document.getElementById('imagePreview');
-
-    function loadPreview(url) {
-        if (!url) { previewBox.classList.remove('has-image'); previewImg.classList.remove('loaded'); return; }
-        previewImg.onload  = () => { previewBox.classList.add('has-image'); previewImg.classList.add('loaded'); };
-        previewImg.onerror = () => { previewBox.classList.remove('has-image'); previewImg.classList.remove('loaded'); };
-        previewImg.src = url;
-    }
-
-    // Load existing image on page load
-    loadPreview(coverInput.value.trim());
-
-    let previewTimeout;
-    coverInput.addEventListener('input', () => {
-        clearTimeout(previewTimeout);
-        previewTimeout = setTimeout(() => loadPreview(coverInput.value.trim()), 600);
-    });
-
-    // ── Status label ───────────────────────────────────────────────────
-    function updateStatusLabel(cb) {
-        document.getElementById('statusLabelTitle').textContent = cb.checked ? 'Aktif'  : 'Pasif';
-        document.getElementById('statusLabelSub').textContent   = cb.checked
-            ? 'Tur listede görünecek'
-            : 'Tur listede görünmeyecek';
-        document.getElementById('statusIconInner').className = cb.checked
-            ? 'bi bi-eye-fill'
-            : 'bi bi-eye-slash-fill';
-    }
-
-    // ── Change tracker ─────────────────────────────────────────────────
-    function trackChange(fieldId) {
-        const el  = document.getElementById(fieldId);
-        const row = document.querySelector(`.change-item[data-field="${fieldId}"]`);
-        if (!el || !row) return;
-
-        const current  = el.value.trim();
-        const original = (originals[fieldId] ?? '').toString().trim();
-        const changed  = current !== original;
-
-        row.classList.toggle('modified', changed);
-        if (changed) el.classList.add('is-modified');
-        else         el.classList.remove('is-modified');
-
-        updateNoChangesMsg();
-    }
-
-    function trackRadioChange() {
-        const selected = document.querySelector('input[name="Badge"]:checked')?.value ?? '';
-        const row = document.querySelector('.change-item[data-field="Badge"]');
-        if (!row) return;
-        const changed = selected !== originals.Badge;
-        row.classList.toggle('modified', changed);
-        updateNoChangesMsg();
-    }
-
-    function trackToggleChange(cb) {
-        const row = document.querySelector('.change-item[data-field="IsStatus"]');
-        if (!row) return;
-        const changed = cb.checked.toString() !== originals.IsStatus;
-        row.classList.toggle('modified', changed);
-        updateNoChangesMsg();
-    }
-
-    function updateNoChangesMsg() {
-        const anyModified = document.querySelectorAll('.change-item.modified').length > 0;
-        document.getElementById('noChangesMsg').style.display = anyModified ? 'none' : 'flex';
-        document.querySelectorAll('.change-item').forEach(item => {
-            item.style.display = 'flex';
-        });
-    }
-
-    // Attach listeners
-    ['Title', 'Description', 'CoverImageUrl', 'Price'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('input', () => trackChange(id));
-    });
-
-    ['DayCount', 'Capacity'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('input', () => trackChange(id));
-    });
-
-    document.querySelectorAll('input[name="Badge"]').forEach(r => {
-        r.addEventListener('change', trackRadioChange);
-    });
-
-    const toggleEl = document.getElementById('IsStatus');
-    if (toggleEl) {
-        toggleEl.addEventListener('change', function () {
-            updateStatusLabel(this);
-            trackToggleChange(this);
-        });
-    }
-
-    // Initial check
-    updateNoChangesMsg();
-
-    // ── Client-side validation ─────────────────────────────────────────
-    const requiredFields = ['Title', 'Description', 'CoverImageUrl'];
-
-    document.getElementById('updateTourForm').addEventListener('submit', function (e) {
-        let valid = true;
-
-        requiredFields.forEach(id => {
-            const el = document.getElementById(id);
-            if (el && !el.value.trim()) {
-                el.classList.add('is-invalid');
-                valid = false;
-            } else if (el) {
-                el.classList.remove('is-invalid');
+            if (cur !== orig) {
+                changed.add(key);
+                el.classList.add('changed');
+                if (dot) dot.classList.add('show');
+                // stepper highlight
+                if (key==='DayCount') document.getElementById('daysStepper').classList.add('changed');
+                if (key==='Capacity') document.getElementById('capStepper').classList.add('changed');
+            } else {
+                changed.delete(key);
+                el.classList.remove('changed');
+                if (dot) dot.classList.remove('show');
+                if (key==='DayCount') document.getElementById('daysStepper').classList.remove('changed');
+                if (key==='Capacity') document.getElementById('capStepper').classList.remove('changed');
             }
+
+            // char counters
+            if (key==='Title')       updateCC('titleCount', el.value.length, 120);
+            if (key==='Description') updateCC('descCount',  el.value.length, 500);
+
+            renderDiff();
+            updatePreview();
+            markStepHeads();
+        }
+
+        function updateCC(id, n, max) {
+            const el = document.getElementById(id);
+            el.textContent = n+' / '+max;
+            el.className = 'char-count'+(n>max*.9?' warn':'')+(n>=max?' over':'');
+        }
+
+        /* ── Badge pick ──────────────────────────────────────────── */
+        function pickBadge(el, val) {
+            document.querySelectorAll('.badge-opt').forEach(o=>o.classList.remove('sel'));
+            el.classList.add('sel');
+            document.getElementById('BadgeHidden').value = val;
+            curBadge = val;
+            if (val !== origBadge) changed.add('Badge'); else changed.delete('Badge');
+            renderDiff();
+            markStepHeads();
+        }
+
+        /* ── Render diff list ────────────────────────────────────── */
+        function renderDiff() {
+            const list  = document.getElementById('diffList');
+            const empty = document.getElementById('diffEmpty');
+            const badge = document.getElementById('diffBadge');
+            const cc    = document.getElementById('changeCount');
+
+            list.querySelectorAll('.diff-item').forEach(e=>e.remove());
+
+            if (changed.size === 0) {
+                empty.style.display = 'block';
+                badge.style.display = 'none';
+                cc.style.display    = 'none';
+                return;
+            }
+            empty.style.display = 'none';
+            badge.style.display = 'block';
+            badge.textContent   = changed.size;
+            cc.style.display    = 'inline-flex';
+            cc.textContent      = changed.size + (changed.size===1?' change':' changes');
+
+            changed.forEach(key => {
+                const d = document.createElement('div');
+                d.className = 'diff-item';
+                d.innerHTML = `<div class="diff-item-dot"></div><div class="diff-item-name">${FIELD_LABELS[key]||key}</div>`;
+                list.appendChild(d);
+            });
+        }
+
+        /* ── Mark step heads with change indicator ───────────────── */
+        function markStepHeads() {
+            const s1keys = ['Title','Description'];
+            const s2keys = ['DayCount','Capacity','Price'];
+            const s3keys = ['CoverImageUrl'];
+
+            [['sh1',s1keys],['sh2',s2keys],['sh3',s3keys]].forEach(([id,keys])=>{
+                const h = document.getElementById(id);
+                const hasChange = keys.some(k=>changed.has(k)) || (id==='sh1'&&changed.has('Badge'));
+                h.classList.toggle('has-changes', hasChange);
+            });
+        }
+
+        /* ── Status sync ─────────────────────────────────────────── */
+        function syncStatus(cb) {
+            const row  = document.getElementById('swRow');
+            const lbl  = document.getElementById('swLabel');
+            const desc = document.getElementById('swDesc');
+            if (cb.checked) {
+                lbl.textContent = 'Active'; lbl.style.color = '#10b981';
+                desc.textContent = 'Tour is publicly visible';
+                row.className = 'sw-row on';
+            } else {
+                lbl.textContent = 'Passive'; lbl.style.color = '#94a3b8';
+                desc.textContent = "Tour won't be visible";
+                row.className = 'sw-row off';
+            }
+            const origStatus = '@Model.IsStatus'.toLowerCase() === 'true';
+            if (cb.checked !== origStatus) changed.add('IsStatus'); else changed.delete('IsStatus');
+            renderDiff(); markStepHeads();
+        }
+
+        /* ── Stepper ─────────────────────────────────────────────── */
+        function stepChange(id, delta) {
+            const inp = document.getElementById(id);
+            const min = parseInt(inp.min)||1, max=parseInt(inp.max)||9999;
+            let v = (parseInt(inp.value)||0)+delta;
+            v = Math.max(min,Math.min(max,v));
+            inp.value = v;
+            inp.dispatchEvent(new Event('input'));
+        }
+        function clampVal(inp,min,max){
+            let v=parseInt(inp.value)||0;
+            if(v<min)inp.value=min; if(v>max)inp.value=max;
+        }
+
+        /* ── Live preview ────────────────────────────────────────── */
+        function updatePreview() {
+            const t = document.getElementById('Title').value||'—';
+            const d = document.getElementById('DayCount').value;
+            const c = document.getElementById('Capacity').value;
+            const p = document.getElementById('Price').value;
+            document.getElementById('prevTitle').textContent = t;
+            document.getElementById('prevDays').textContent  = d ? d+' days' : '—';
+            document.getElementById('prevCap').textContent   = c ? c+' persons' : '—';
+            document.getElementById('prevPrice').textContent = p ? '₺'+Number(p).toLocaleString('tr-TR') : '—';
+        }
+        function updatePrevPrice() { updatePreview(); }
+
+        /* ── Image preview ───────────────────────────────────────── */
+        let imgTimer;
+        function debouncedImgLoad() {
+            clearTimeout(imgTimer);
+            imgTimer = setTimeout(() => {
+                const v = document.getElementById('CoverImageUrl').value.trim();
+                const frame = document.getElementById('imgFrame');
+                const img   = document.getElementById('previewImg');
+                const mini  = document.getElementById('prevMiniImg');
+                if (!v) { frame.classList.remove('has-img'); return; }
+                img.onload  = () => { frame.classList.add('has-img'); };
+                img.onerror = () => { frame.classList.remove('has-img'); };
+                img.src = v;
+                mini.src = v;
+                mini.style.display = 'block';
+            }, 450);
+        }
+
+        /* ── Step accordion ──────────────────────────────────────── */
+        function toggleStep(n) {
+            const b = document.getElementById('step'+n);
+            const wasOpen = b.classList.contains('open');
+            [1,2,3].forEach(i => {
+                document.getElementById('step'+i).classList.remove('open');
+                const sn = document.getElementById('snum'+i);
+                if (!sn.classList.contains('done')) sn.className='step-num idle';
+            });
+            if (!wasOpen) {
+                b.classList.add('open');
+                const sn = document.getElementById('snum'+n);
+                if (!sn.classList.contains('done')) sn.className='step-num active';
+            }
+        }
+
+        /* ── Submit ──────────────────────────────────────────────── */
+        document.getElementById('utForm').addEventListener('submit', () => {
+            const btn = document.getElementById('saveBtn');
+            btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+            btn.disabled=true;
         });
 
-        const price = parseFloat(document.getElementById('Price').value);
-        if (isNaN(price) || price <= 0) {
-            document.getElementById('Price').classList.add('is-invalid');
-            valid = false;
-        }
-
-        if (!valid) {
-            e.preventDefault();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Güncelleniyor…';
-        }
-    });
-
-    document.querySelectorAll('.form-control-custom').forEach(el => {
-        el.addEventListener('input', () => el.classList.remove('is-invalid'));
-    });
-</script>
+        /* ── Init ────────────────────────────────────────────────── */
+        updatePreview();
+        // init char counts
+        const titleEl = document.getElementById('Title');
+        const descEl  = document.getElementById('Description');
+        updateCC('titleCount', titleEl.value.length, 120);
+        updateCC('descCount',  descEl.value.length,  500);
+        // wire inputs
+        ['DayCount','Capacity'].forEach(id=>document.getElementById(id).addEventListener('input',updatePreview));
+    </script>
 }
-
-
-

@@ -1,23 +1,13 @@
+﻿@model GetTourByIdDto
+@{
+    Layout = null;
+}
+
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
 
-<head>
-    <meta charset="utf-8">
-    <title>Vitour - Travel & Tour Booking HTML Template</title>
-
-    <meta name="author" content="themesflat.com">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
-    <link rel="stylesheet" href="app/css/app.css">
-    <link rel="stylesheet" href="app/css/map.min.css">
-    <link rel="stylesheet" href="app/css/jquery.fancybox.min.css">
-
-    <!-- Favicon and Touch Icons  -->
-    <link rel="shortcut icon" href="assets/images/favico.png">
-    <link rel="apple-touch-icon-precomposed" href="assets/images/favico.png">
-
-</head>
+@await Component.InvokeAsync("_TourHeadComponentPartial")
 
 <body class="body header-fixed ">
 
@@ -35,239 +25,16 @@
     <div id="wrapper">
         <div id="pagee" class="clearfix">
 
-            <!-- Main Header -->
-            <header class="main-header flex">
-                <!-- Header Lower -->
-                <div id="header">
-                    <div class="header-top">
-                        <div class="header-top-wrap flex-two">
-                            <div class="header-top-right">
-                                <ul class=" flex-three">
-                                    <li class="flex-three">
-                                        <i class="icon-day"></i>
-                                        <span>Thursday, Mar 26, 2021</span>
-                                    </li>
-                                    <li class="flex-three">
-                                        <i class="icon-mail"></i>
-                                        <span>support@example.com</span>
-                                    </li>
-                                    <li class="flex-three">
-                                        <i class="icon-phone"></i>
-                                        <span>684 555-0102 490</span>
-                                    </li>
-
-
-                                </ul>
-                            </div>
-                            <div class="header-top-left flex-two">
-                                <a href="contact-us.html" class="booking">
-                                    <i class="icon-19"></i>
-                                    <span>Booking Now</span>
-                                </a>
-                                <div class="follow-social flex-two">
-                                    <span>Follow Us :</span>
-                                    <ul class="flex-two">
-                                        <li><a href="#"><i class="icon-icon-2"></i></a></li>
-                                        <li><a href="#"><i class="icon-icon_03"></i></a></li>
-                                        <li><a href="#"><i class="icon-x"></i></a></li>
-                                        <li><a href="#"><i class="icon-icon"></i></a></li>
-                                    </ul>
-                                </div>
-
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="header-lower">
-                        <div class="tf-container full">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="inner-container flex justify-space align-center">
-                                        <!-- Logo Box -->
-                                        <div class="mobile-nav-toggler mobie-mt mobile-button">
-                                            <i class="icon-Vector3"></i>
-                                        </div>
-                                        <div class="logo-box">
-                                            <div class="logo">
-                                                <a href="index.html">
-                                                    <img src="assets/images/logo.png" alt="Logo">
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <div class="nav-outer flex align-center">
-                                            <!-- Main Menu -->
-                                            <nav class="main-menu show navbar-expand-md">
-                                                <div class="navbar-collapse collapse clearfix"
-                                                    id="navbarSupportedContent">
-                                                    <ul class="navigation clearfix">
-                                                        <li class="dropdown2">
-                                                            <a href="#">Home</a>
-                                                            <ul>
-                                                                <li><a href="index.html">Home Page 01</a></li>
-                                                                <li><a href="home2.html">Home Page 02</a></li>
-                                                                <li><a href="home3.html">Home Page 03</a></li>
-                                                                <li><a href="home4.html">Home Page 04</a></li>
-                                                                <li><a href="home5.html">Home Page 05</a></li>
-                                                            </ul>
-                                                        </li>
-                                                        <li class="dropdown2 current">
-                                                            <a href="#">Tour</a>
-                                                            <ul>
-                                                                <li><a href="archieve-tour.html">Archieve tour</a>
-
-                                                                </li>
-                                                                <li><a href="tour-package-v2.html">Tour left sidebar</a>
-
-                                                                </li>
-                                                                <li><a href="tour-package-v4.html">Tour package </a>
-
-                                                                </li>
-                                                                <li class="current"><a href="tour-single.html">Tour
-                                                                        Single </a>
-
-                                                                </li>
-                                                            </ul>
-                                                        </li>
-                                                        <li class="dropdown2"><a href="#">Destination</a>
-                                                            <ul>
-                                                                <li><a href="tour-destination-v1.html">Destination
-                                                                        V1</a></li>
-                                                                <li><a href="tour-destination-v2.html">Destination
-                                                                        V2</a></li>
-                                                                <li><a href="tour-destination-v3.html">Destination
-                                                                        V3</a></li>
-                                                                <li><a href="single-destination.html">Destination
-                                                                        Single</a></li>
-                                                            </ul>
-                                                        </li>
-                                                        <li class="dropdown2 "><a href="#">Blog</a>
-                                                            <ul>
-                                                                <li><a href="blog.html">Blog</a></li>
-                                                                <li><a href="blog-details.html">Blog Detail</a></li>
-                                                            </ul>
-                                                        </li>
-
-                                                        <li class="dropdown2"><a href="#">Pages</a>
-                                                            <ul>
-                                                                <li><a href="about-us.html">About Us</a></li>
-                                                                <li><a href="team.html">Team member</a></li>
-                                                                <li><a href="gallery.html">Gallery</a></li>
-                                                                <li><a href="terms-condition.html">Terms & Condition</a>
-                                                                </li>
-                                                                <li><a href="help-center.html">Help center</a></li>
-                                                            </ul>
-                                                        </li>
-                                                        <li class="dropdown2"><a href="#">Dashboard</a>
-                                                            <ul>
-                                                                <li><a href="dashboard.html">Dashboard</a></li>
-                                                                <li><a href="my-booking.html">My booking</a></li>
-                                                                <li><a href="my-listing.html">My Listing</a></li>
-                                                                <li><a href="add-tour.html">Add Tour</a></li>
-                                                                <li><a href="my-favorite.html">My Favorites</a></li>
-                                                                <li><a href="my-profile.html">My profile</a></li>
-                                                            </ul>
-                                                        </li>
-                                                        <li><a href="contact-us.html">Contact</a></li>
-                                                    </ul>
-                                                </div>
-                                            </nav>
-                                            <!-- Main Menu End-->
-                                        </div>
-                                        <div class="header-account flex align-center">
-                                            <div class="language">
-                                                <div class="nice-select" tabindex="0">
-                                                    <img src="./assets/images/page/language.svg" alt=""><span
-                                                        class="current">English</span>
-                                                    <ul class="list">
-                                                        <li data-value class="option selected"><img
-                                                                src="/vitour/assets/images/page/language.svg" alt="">English
-                                                        </li>
-                                                        <li data-value="Vietnam" class="option"><img
-                                                                src="./assets/images/page/language.svg" alt="">Vietnam
-                                                        </li>
-                                                        <li data-value="German" class="option"><img
-                                                                src="./assets/images/page/language.svg" alt="">German
-                                                        </li>
-                                                        <li data-value="Russian" class="option"><img
-                                                                src="./assets/images/page/language.svg" alt="">Russian
-                                                        </li>
-                                                        <li data-value="Canada" class="option"><img
-                                                                src="./assets/images/page/language.svg" alt="">Canada
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <div class="currency">
-                                                <div class="nice-select" tabindex="0">
-                                                    <span class="current">USD</span>
-                                                    <ul class="list">
-                                                        <li data-value class="option selected">USD</li>
-                                                        <li data-value="vnd" class="option">VND</li>
-                                                        <li data-value="ero" class="option">ERO</li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <div class="search-mobie relative">
-                                                <div class="dropdown">
-                                                    <a  type="button" class="show-search" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <i class="icon-Vector5"></i>
-                                                    </a>
-                                                    <ul class="dropdown-menu top-search">
-                                                        <form action="/" id="search-bar-widget">
-                                                            <input type="text" placeholder="Search here...">
-                                                            <button type="button"><i class="icon-search-2"></i></button>
-                                                        </form>
-                                                    </ul>
-                                                  </div> 
-                                            </div>
-                                            <div class="register">
-                                                <ul class="flex align-center">
-                                                    <li class="">
-                                                        <a href="login.html"><i class="icon-user-1-1"></i>
-                                                            <span>Sign in</span>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <img src="./assets/images/page/fl1.png" alt="" class="fly-ab">
-                    </div>
-                </div>
-
-                <!-- End Header Lower -->
-                <a href="#" class="header-sidebar flex-three" data-bs-toggle="offcanvas"
-                    data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
-                    <i class="icon-Bars"></i>
-                </a>
-
-                <!-- Mobile Menu  -->
-                <div class="close-btn"><span class="icon flaticon-cancel-1"></span></div>
-                <div class="mobile-menu">
-                    <div class="menu-backdrop"></div>
-                    <nav class="menu-box">
-                        <div class="nav-logo"><a href="index.html">
-                                <img src="assets/images/logo2.png" alt=""></a></div>
-                        <div class="bottom-canvas">
-                            <div class="menu-outer">
-                            </div>
-                        </div>
-                    </nav>
-                </div>
-                <!-- End Mobile Menu -->
-
-            </header>
-            <!-- End Main Header -->
+          
+           @await Component.InvokeAsync("_TourHeaderComponentPartial")
+          
             <main id="main">
 
                 <section>
                     <div class="tf-container full">
                         <div class="row">
                             <div class="col-md-12">
-                                <img src="./assets/images/page/breakcrumb2.jpg" alt="image">
+                                <img src="/vitour/assets/images/page/breakcrumb2.jpg" alt="image">
                             </div>
                         </div>
                     </div>
@@ -280,33 +47,38 @@
                                 <ul class="nav justify-content-between tab-tour-single" id="pills-tab" role="tablist">
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link active" id="pills-information-tab" data-bs-toggle="pill"
-                                            data-bs-target="#pills-information" type="button" role="tab"
-                                            aria-controls="pills-information" aria-selected="true"><i
-                                                class="icon-Vector-51"></i> Information</button>
+                                                data-bs-target="#pills-information" type="button" role="tab"
+                                                aria-controls="pills-information" aria-selected="true">
+                                            <i class="icon-Vector-51"></i> Information
+                                        </button>
                                     </li>
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link" id="pills-tour-planing-tab" data-bs-toggle="pill"
-                                            data-bs-target="#pills-tour-planing" type="button" role="tab"
-                                            aria-controls="pills-tour-planing" aria-selected="false"><i
-                                                class="icon-destination-2-1"></i> Tour Planing</button>
+                                                data-bs-target="#pills-tour-planing" type="button" role="tab"
+                                                aria-controls="pills-tour-planing" aria-selected="false">
+                                            <i class="icon-destination-2-1"></i> Tour Planing
+                                        </button>
                                     </li>
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link" id="pills-location-share-tab" data-bs-toggle="pill"
-                                            data-bs-target="#pills-location-share" type="button" role="tab"
-                                            aria-controls="pills-location-share" aria-selected="false"><i
-                                                class="icon-map-1"></i> Location share</button>
+                                                data-bs-target="#pills-location-share" type="button" role="tab"
+                                                aria-controls="pills-location-share" aria-selected="false">
+                                            <i class="icon-map-1"></i> Location share
+                                        </button>
                                     </li>
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link" id="pills-reviews-tab" data-bs-toggle="pill"
-                                            data-bs-target="#pills-reviews" type="button" role="tab"
-                                            aria-controls="pills-reviews" aria-selected="false"><i
-                                                class="icon-favourite-1"></i> Reviews</button>
+                                                data-bs-target="#pills-reviews" type="button" role="tab"
+                                                aria-controls="pills-reviews" aria-selected="false">
+                                            <i class="icon-favourite-1"></i> Reviews
+                                        </button>
                                     </li>
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link" id="pills-shot-gallery-tab" data-bs-toggle="pill"
-                                            data-bs-target="#pills-shot-gallery" type="button" role="tab"
-                                            aria-controls="pills-shot-gallery" aria-selected="false"><i
-                                                class="icon-image-gallery-1"></i> Shot Gallery</button>
+                                                data-bs-target="#pills-shot-gallery" type="button" role="tab"
+                                                aria-controls="pills-shot-gallery" aria-selected="false">
+                                            <i class="icon-image-gallery-1"></i> Shot Gallery
+                                        </button>
                                     </li>
                                 </ul>
                             </div>
@@ -315,67 +87,18 @@
                             <div class="col-lg-12">
                                 <div class="tab-content" id="pills-tabContent">
                                     <div class="tab-pane fade show active" id="pills-information" role="tabpanel"
-                                        aria-labelledby="pills-information-tab" tabindex="0">
-                                        <div class="row mb-50">
-                                            <div class="col-lg-12">
-                                                <div class="inner-heading-wrap flex-two">
-                                                    <div class="inner-heading">
-                                                        <span class="feature">Featured</span>
-                                                        <h2 class="title">Africa – Amazing African Safari</h2>
-                                                        <ul class="flex-three list-wrap-heading">
-                                                            <li class="flex-three">
-                                                                <i class="icon-time-left"></i>
-                                                                <span>5 Hours</span>
-                                                            </li>
-                                                            <li class="flex-three">
-                                                                <i class="icon-user"></i>
-                                                                <span>Max Guests: 12</span>
-                                                            </li>
-                                                            <li class="flex-three">
-                                                                <i class="icon-18"></i>
-                                                                <span>1421 San Pedro St, Los Angeles, CA</span>
-                                                            </li>
-
-
-                                                        </ul>
-
-                                                    </div>
-                                                    <div class="inner-price">
-                                                        <div class="flex-three">
-                                                            <div class="start">
-                                                                <i class="icon-Star"></i>
-                                                                <i class="icon-Star"></i>
-                                                                <i class="icon-Star"></i>
-                                                                <i class="icon-Star"></i>
-                                                                <i class="icon-Star"></i>
-                                                            </div>
-                                                            <span class="review">(1 Review)</span>
-                                                        </div>
-                                                        <p class="price-sale text-main">$130.00 <span
-                                                                class="price">$16000</span></p>
-                                                    </div>
-
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                        <div class="row mb-40 image-gallery-single">
-                                            <div class="col-12 col-sm-6">
-                                                <img src="./assets/images/destination/1.jpg" alt="image">
-                                            </div>
-                                            <div class="col-6 col-sm-3">
-                                                <img src="./assets/images/destination/2.jpg" alt="image">
-                                            </div>
-                                            <div class="col-6 col-sm-3">
-                                                <img src="./assets/images/destination/3.jpg" alt="image">
-                                            </div>
-                                        </div>
+                                         aria-labelledby="pills-information-tab" tabindex="0">                                        
+                                       
+                                         @await Component.InvokeAsync("_TourDetailInformationComponentPartial")
+                                       
+                                        @await Component.InvokeAsync("_TourDetailDestinationSmallGalleryComponentPartial")
                                         <div class="row">
                                             <div class="col-lg-8">
                                                 <div class="information-content-tour">
                                                     <div class="description-wrap mb-40">
                                                         <span class="description">Description:</span>
-                                                        <p class="des">Description It is a long established fact that a
+                                                        <p class="des">
+                                                            Description It is a long established fact that a
                                                             reader will be distrac by any websites look for ways
                                                             mornings
                                                             of spring prevent AdBlock from blocking annoying ads. As a
@@ -385,18 +108,22 @@
                                                             ad blocking ability by reporting any time you run into a
                                                             website that won't allow you to block the readable
                                                             content of a page when looking at its layout. It is a long
-                                                            established fact</p>
+                                                            established fact
+                                                        </p>
                                                     </div>
                                                     <div class="description-wrap mb-40">
                                                         <span class="description">Advance Facilities</span>
-                                                        <p class="des">Leave your guidebooks at home and dive into the
+                                                        <p class="des">
+                                                            Leave your guidebooks at home and dive into the
                                                             local cultures that make each destination so special. We’ll
                                                             connect you with our exclusive experiences. Each trip is
-                                                            carefully crafted to let enjoy your vacation.</p>
+                                                            carefully crafted to let enjoy your vacation.
+                                                        </p>
                                                     </div>
                                                     <div class="description-wrap mb-40">
                                                         <span class="description">What to Expect</span>
-                                                        <p class="des mb-18">Leave your guidebooks at home and dive into
+                                                        <p class="des mb-18">
+                                                            Leave your guidebooks at home and dive into
                                                             the local cultures that make each destination so special.
                                                             We’ll
                                                             connect you with our exclusive experiences. Each trip is
@@ -459,7 +186,8 @@
                                                                     </li>
                                                                     <li class="flex-three">
                                                                         <i class="icon-Vector-7"></i>
-                                                                        <p>Visit 7 Best Places in the City With Group
+                                                                        <p>
+                                                                            Visit 7 Best Places in the City With Group
                                                                         </p>
                                                                     </li>
                                                                 </ul>
@@ -481,7 +209,8 @@
                                                                     </li>
                                                                     <li class="flex-three">
                                                                         <i class="icon-Vector-7"></i>
-                                                                        <p>Visit 7 Best Places in the City With Group
+                                                                        <p>
+                                                                            Visit 7 Best Places in the City With Group
                                                                         </p>
                                                                     </li>
                                                                 </ul>
@@ -573,10 +302,10 @@
                                                                 <span class="label">Time:</span>
                                                                 <div class="radio">
                                                                     <input id="first" type="radio" name="numbers"
-                                                                        value="first" checked>
+                                                                           value="first" checked>
                                                                     <label for="first">14.00</label>
                                                                     <input id="second" type="radio" name="numbers"
-                                                                        value="second">
+                                                                           value="second">
                                                                     <label for="second">16.00</label>
                                                                 </div>
                                                             </div>
@@ -623,12 +352,12 @@
                                                                 <span class="label">Add Extra</span>
                                                                 <div class="checkbox">
                                                                     <input id="check" type="checkbox" name="check"
-                                                                        value="check">
+                                                                           value="check">
                                                                     <label for="check">Service per booking</label>
                                                                 </div>
                                                                 <div class="checkbox">
                                                                     <input id="check1" type="checkbox" name="check"
-                                                                        value="check">
+                                                                           value="check">
                                                                     <label for="check1">Service per person</label>
                                                                 </div>
                                                                 <div class="extra">
@@ -681,7 +410,7 @@
                                                             <div class="list-recent flex-three">
                                                                 <a href="blog-details.html" class="recent-image">
                                                                     <img src="./assets/images/blog/re-blog1.jpg"
-                                                                        alt="Image">
+                                                                         alt="Image">
                                                                 </a>
                                                                 <div class="recent-info">
                                                                     <div class="start">
@@ -692,8 +421,10 @@
                                                                         <i class="icon-Star"></i>
                                                                     </div>
                                                                     <h4 class="title">
-                                                                        <a href="blog-details.html">Walking the Amalfi
-                                                                            Coast</a>
+                                                                        <a href="blog-details.html">
+                                                                            Walking the Amalfi
+                                                                            Coast
+                                                                        </a>
                                                                     </h4>
                                                                     <p>From <span class="text-main">$129.00</span></p>
                                                                 </div>
@@ -701,7 +432,7 @@
                                                             <div class="list-recent flex-three">
                                                                 <a href="blog-details.html" class="recent-image">
                                                                     <img src="./assets/images/blog/re-blog2.jpg"
-                                                                        alt="Image">
+                                                                         alt="Image">
                                                                 </a>
                                                                 <div class="recent-info">
                                                                     <div class="start">
@@ -712,8 +443,10 @@
                                                                         <i class="icon-Star"></i>
                                                                     </div>
                                                                     <h4 class="title">
-                                                                        <a href="blog-details.html">Walking the Amalfi
-                                                                            Coast</a>
+                                                                        <a href="blog-details.html">
+                                                                            Walking the Amalfi
+                                                                            Coast
+                                                                        </a>
                                                                     </h4>
                                                                     <p>From <span class="text-main">$129.00</span></p>
                                                                 </div>
@@ -721,7 +454,7 @@
                                                             <div class="list-recent flex-three">
                                                                 <a href="blog-details.html" class="recent-image">
                                                                     <img src="./assets/images/blog/re-blog3.jpg"
-                                                                        alt="Image">
+                                                                         alt="Image">
                                                                 </a>
                                                                 <div class="recent-info">
                                                                     <div class="start">
@@ -732,8 +465,10 @@
                                                                         <i class="icon-Star"></i>
                                                                     </div>
                                                                     <h4 class="title">
-                                                                        <a href="blog-details.html">Walking the Amalfi
-                                                                            Coast</a>
+                                                                        <a href="blog-details.html">
+                                                                            Walking the Amalfi
+                                                                            Coast
+                                                                        </a>
                                                                     </h4>
                                                                     <p>From <span class="text-main">$129.00</span></p>
                                                                 </div>
@@ -746,7 +481,7 @@
 
                                     </div>
                                     <div class="tab-pane fade" id="pills-tour-planing" role="tabpanel"
-                                        aria-labelledby="pills-tour-planing-tab" tabindex="0">
+                                         aria-labelledby="pills-tour-planing-tab" tabindex="0">
                                         <div class="row">
                                             <div class="col-lg-8">
                                                 <div class="planing-content-tour">
@@ -755,27 +490,32 @@
                                                         <div class="number-box flex-five">01</div>
                                                         <div class="content-box">
                                                             <h5 class="title">Day 1: Arrive in Zürich, Switzerland</h5>
-                                                            <p class="des">We’ll meet at 4 p.m. at our hotel in Luzern
+                                                            <p class="des">
+                                                                We’ll meet at 4 p.m. at our hotel in Luzern
                                                                 (Lucerne) for a “Welcome to Switzerland”
                                                                 meeting. Then we’ll take a meandering evening walk
                                                                 through Switzerland’s most
                                                                 charming lakeside town, and get acquainted with one
                                                                 another over dinner we've
                                                                 focused on improving our funct together. Sleep in Luzern
-                                                                (2 nights). No bus. Walk</p>
+                                                                (2 nights). No bus. Walk
+                                                            </p>
                                                         </div>
                                                     </div>
                                                     <div class="tour-planing-section flex">
                                                         <div class="number-box flex-five">02</div>
                                                         <div class="content-box">
-                                                            <h5 class="title">Day 2: Zürich–Biel/BienneNeuchâtel–Geneva
+                                                            <h5 class="title">
+                                                                Day 2: Zürich–Biel/BienneNeuchâtel–Geneva
                                                             </h5>
-                                                            <p class="des mb-10">We’ll meet at 4 p.m. at our hotel in
+                                                            <p class="des mb-10">
+                                                                We’ll meet at 4 p.m. at our hotel in
                                                                 Luzern (Lucerne) for a “Welcome to Switzerland”
                                                                 meeting. Then we’ll take a meandering evening walk
                                                                 through Switzerland’s most
                                                                 charming lakeside town, and get acquainted with one
-                                                                another over </p>
+                                                                another over
+                                                            </p>
                                                             <ul class="listing-des">
                                                                 <li>
                                                                     <p>View the City Walls</p>
@@ -796,27 +536,35 @@
                                                         <div class="number-box flex-five">03</div>
                                                         <div class="content-box">
                                                             <h5 class="title">Day 3: Enchanting Engelberg</h5>
-                                                            <p class="des mb-22">We’ll meet at 4 p.m. at our hotel in
+                                                            <p class="des mb-22">
+                                                                We’ll meet at 4 p.m. at our hotel in
                                                                 Luzern (Lucerne) for a “Welcome to Switzerland”
                                                                 meeting. Then we’ll take a meandering evening walk
                                                                 through Switzerland’s most
                                                                 charming lakeside town, and get acquainted with one
-                                                                another over </p>
+                                                                another over
+                                                            </p>
                                                             <ul class="listing-icon">
                                                                 <li class="flex-three">
                                                                     <i class="icon-10"></i>
-                                                                    <p>Praesent vulputate at enim sit amet mattis
-                                                                        lobortis ante pulvinar at diam</p>
+                                                                    <p>
+                                                                        Praesent vulputate at enim sit amet mattis
+                                                                        lobortis ante pulvinar at diam
+                                                                    </p>
                                                                 </li>
                                                                 <li class="flex-three">
                                                                     <i class="icon-10"></i>
-                                                                    <p>Donec ut lobortis ante, non lobortis ante
-                                                                        imperdiet est volutpat in diam erat</p>
+                                                                    <p>
+                                                                        Donec ut lobortis ante, non lobortis ante
+                                                                        imperdiet est volutpat in diam erat
+                                                                    </p>
                                                                 </li>
                                                                 <li class="flex-three">
                                                                     <i class="icon-10"></i>
-                                                                    <p>Donec ut lobortis ante, non lobortis ante
-                                                                        imperdiet est volutpat in diam erat</p>
+                                                                    <p>
+                                                                        Donec ut lobortis ante, non lobortis ante
+                                                                        imperdiet est volutpat in diam erat
+                                                                    </p>
                                                                 </li>
                                                             </ul>
                                                         </div>
@@ -825,10 +573,12 @@
                                                         <div class="number-box flex-five">04</div>
                                                         <div class="content-box">
                                                             <h5 class="title">Day 4: Arrive in Zürich, Switzerland</h5>
-                                                            <p class="des mb-25">We’ll meet at 4 p.m. at our hotel in
+                                                            <p class="des mb-25">
+                                                                We’ll meet at 4 p.m. at our hotel in
                                                                 Luzern (Lucerne) for a “Welcome to Switzerland”
                                                                 meeting. Then we’ll take a meandering evening walk
-                                                                through Switzerland</p>
+                                                                through Switzerland
+                                                            </p>
                                                             <ul class="listing-clude">
                                                                 <li class="flex-three">
                                                                     <i class="icon-Vector-7"></i>
@@ -864,10 +614,10 @@
                                                                 <span class="label">Time:</span>
                                                                 <div class="radio">
                                                                     <input id="first" type="radio" name="numbers"
-                                                                        value="first" checked>
+                                                                           value="first" checked>
                                                                     <label for="first">14.00</label>
                                                                     <input id="second" type="radio" name="numbers"
-                                                                        value="second">
+                                                                           value="second">
                                                                     <label for="second">16.00</label>
                                                                 </div>
                                                             </div>
@@ -914,12 +664,12 @@
                                                                 <span class="label">Add Extra</span>
                                                                 <div class="checkbox">
                                                                     <input id="check" type="checkbox" name="check"
-                                                                        value="check">
+                                                                           value="check">
                                                                     <label for="check">Service per booking</label>
                                                                 </div>
                                                                 <div class="checkbox">
                                                                     <input id="check1" type="checkbox" name="check"
-                                                                        value="check">
+                                                                           value="check">
                                                                     <label for="check1">Service per person</label>
                                                                 </div>
                                                                 <div class="extra">
@@ -972,7 +722,7 @@
                                                             <div class="list-recent flex-three">
                                                                 <a href="blog-details.html" class="recent-image">
                                                                     <img src="./assets/images/blog/re-blog1.jpg"
-                                                                        alt="Image">
+                                                                         alt="Image">
                                                                 </a>
                                                                 <div class="recent-info">
                                                                     <div class="start">
@@ -983,8 +733,10 @@
                                                                         <i class="icon-Star"></i>
                                                                     </div>
                                                                     <h4 class="title">
-                                                                        <a href="blog-details.html">Walking the Amalfi
-                                                                            Coast</a>
+                                                                        <a href="blog-details.html">
+                                                                            Walking the Amalfi
+                                                                            Coast
+                                                                        </a>
                                                                     </h4>
                                                                     <p>From <span class="text-main">$129.00</span></p>
                                                                 </div>
@@ -992,7 +744,7 @@
                                                             <div class="list-recent flex-three">
                                                                 <a href="blog-details.html" class="recent-image">
                                                                     <img src="./assets/images/blog/re-blog2.jpg"
-                                                                        alt="Image">
+                                                                         alt="Image">
                                                                 </a>
                                                                 <div class="recent-info">
                                                                     <div class="start">
@@ -1003,8 +755,10 @@
                                                                         <i class="icon-Star"></i>
                                                                     </div>
                                                                     <h4 class="title">
-                                                                        <a href="blog-details.html">Walking the Amalfi
-                                                                            Coast</a>
+                                                                        <a href="blog-details.html">
+                                                                            Walking the Amalfi
+                                                                            Coast
+                                                                        </a>
                                                                     </h4>
                                                                     <p>From <span class="text-main">$129.00</span></p>
                                                                 </div>
@@ -1012,7 +766,7 @@
                                                             <div class="list-recent flex-three">
                                                                 <a href="blog-details.html" class="recent-image">
                                                                     <img src="./assets/images/blog/re-blog3.jpg"
-                                                                        alt="Image">
+                                                                         alt="Image">
                                                                 </a>
                                                                 <div class="recent-info">
                                                                     <div class="start">
@@ -1023,8 +777,10 @@
                                                                         <i class="icon-Star"></i>
                                                                     </div>
                                                                     <h4 class="title">
-                                                                        <a href="blog-details.html">Walking the Amalfi
-                                                                            Coast</a>
+                                                                        <a href="blog-details.html">
+                                                                            Walking the Amalfi
+                                                                            Coast
+                                                                        </a>
                                                                     </h4>
                                                                     <p>From <span class="text-main">$129.00</span></p>
                                                                 </div>
@@ -1037,7 +793,7 @@
 
                                     </div>
                                     <div class="tab-pane fade" id="pills-location-share" role="tabpanel"
-                                        aria-labelledby="pills-location-share-tab" tabindex="0">
+                                         aria-labelledby="pills-location-share-tab" tabindex="0">
                                         <div class="row">
                                             <div class="col-lg-8">
                                                 <div class="localtion-content-tour">
@@ -1049,7 +805,8 @@
                                                         <p>1421 San Pedro St, Los Angeles, CA</p>
                                                     </div>
                                                     <h3 class="title-location">Description:</h3>
-                                                    <p class="des mb-22">Description It is a long established fact that
+                                                    <p class="des mb-22">
+                                                        Description It is a long established fact that
                                                         a reader will be distrac by any websites look for ways mornings
                                                         even
                                                         of spring prevent AdBlock from blocking annoying ads. As a
@@ -1089,10 +846,10 @@
                                                                 <span class="label">Time:</span>
                                                                 <div class="radio">
                                                                     <input id="first" type="radio" name="numbers"
-                                                                        value="first" checked>
+                                                                           value="first" checked>
                                                                     <label for="first">14.00</label>
                                                                     <input id="second" type="radio" name="numbers"
-                                                                        value="second">
+                                                                           value="second">
                                                                     <label for="second">16.00</label>
                                                                 </div>
                                                             </div>
@@ -1139,12 +896,12 @@
                                                                 <span class="label">Add Extra</span>
                                                                 <div class="checkbox">
                                                                     <input id="check" type="checkbox" name="check"
-                                                                        value="check">
+                                                                           value="check">
                                                                     <label for="check">Service per booking</label>
                                                                 </div>
                                                                 <div class="checkbox">
                                                                     <input id="check1" type="checkbox" name="check"
-                                                                        value="check">
+                                                                           value="check">
                                                                     <label for="check1">Service per person</label>
                                                                 </div>
                                                                 <div class="extra">
@@ -1197,7 +954,7 @@
                                                             <div class="list-recent flex-three">
                                                                 <a href="blog-details.html" class="recent-image">
                                                                     <img src="./assets/images/blog/re-blog1.jpg"
-                                                                        alt="Image">
+                                                                         alt="Image">
                                                                 </a>
                                                                 <div class="recent-info">
                                                                     <div class="start">
@@ -1208,8 +965,10 @@
                                                                         <i class="icon-Star"></i>
                                                                     </div>
                                                                     <h4 class="title">
-                                                                        <a href="blog-details.html">Walking the Amalfi
-                                                                            Coast</a>
+                                                                        <a href="blog-details.html">
+                                                                            Walking the Amalfi
+                                                                            Coast
+                                                                        </a>
                                                                     </h4>
                                                                     <p>From <span class="text-main">$129.00</span></p>
                                                                 </div>
@@ -1217,7 +976,7 @@
                                                             <div class="list-recent flex-three">
                                                                 <a href="blog-details.html" class="recent-image">
                                                                     <img src="./assets/images/blog/re-blog2.jpg"
-                                                                        alt="Image">
+                                                                         alt="Image">
                                                                 </a>
                                                                 <div class="recent-info">
                                                                     <div class="start">
@@ -1228,8 +987,10 @@
                                                                         <i class="icon-Star"></i>
                                                                     </div>
                                                                     <h4 class="title">
-                                                                        <a href="blog-details.html">Walking the Amalfi
-                                                                            Coast</a>
+                                                                        <a href="blog-details.html">
+                                                                            Walking the Amalfi
+                                                                            Coast
+                                                                        </a>
                                                                     </h4>
                                                                     <p>From <span class="text-main">$129.00</span></p>
                                                                 </div>
@@ -1237,7 +998,7 @@
                                                             <div class="list-recent flex-three">
                                                                 <a href="blog-details.html" class="recent-image">
                                                                     <img src="./assets/images/blog/re-blog3.jpg"
-                                                                        alt="Image">
+                                                                         alt="Image">
                                                                 </a>
                                                                 <div class="recent-info">
                                                                     <div class="start">
@@ -1248,8 +1009,10 @@
                                                                         <i class="icon-Star"></i>
                                                                     </div>
                                                                     <h4 class="title">
-                                                                        <a href="blog-details.html">Walking the Amalfi
-                                                                            Coast</a>
+                                                                        <a href="blog-details.html">
+                                                                            Walking the Amalfi
+                                                                            Coast
+                                                                        </a>
                                                                     </h4>
                                                                     <p>From <span class="text-main">$129.00</span></p>
                                                                 </div>
@@ -1262,7 +1025,7 @@
 
                                     </div>
                                     <div class="tab-pane fade" id="pills-reviews" role="tabpanel"
-                                        aria-labelledby="pills-reviews-tab" tabindex="0">
+                                         aria-labelledby="pills-reviews-tab" tabindex="0">
                                         <div class="row">
                                             <div class="col-lg-8">
                                                 <div class="review-content-tour">
@@ -1274,7 +1037,7 @@
                                                                     <svg>
                                                                         <circle cx="105" cy="105" r="100"></circle>
                                                                         <circle cx="105" cy="105" r="100"
-                                                                            style="--percent: 30"></circle>
+                                                                                style="--percent: 30"></circle>
                                                                     </svg>
                                                                     <div class="number center">
                                                                         <span>overall Ratings</span>
@@ -1298,8 +1061,8 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="progress" role="progressbar"
-                                                                        aria-label="example" aria-valuenow="25"
-                                                                        aria-valuemin="0" aria-valuemax="100">
+                                                                         aria-label="example" aria-valuenow="25"
+                                                                         aria-valuemin="0" aria-valuemax="100">
                                                                         <div class="progress-bar" style="width: 70%">
                                                                         </div>
                                                                     </div>
@@ -1318,8 +1081,8 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="progress" role="progressbar"
-                                                                        aria-label="example" aria-valuenow="25"
-                                                                        aria-valuemin="0" aria-valuemax="100">
+                                                                         aria-label="example" aria-valuenow="25"
+                                                                         aria-valuemin="0" aria-valuemax="100">
                                                                         <div class="progress-bar" style="width: 80%">
                                                                         </div>
                                                                     </div>
@@ -1338,8 +1101,8 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="progress" role="progressbar"
-                                                                        aria-label="example" aria-valuenow="25"
-                                                                        aria-valuemin="0" aria-valuemax="100">
+                                                                         aria-label="example" aria-valuenow="25"
+                                                                         aria-valuemin="0" aria-valuemax="100">
                                                                         <div class="progress-bar" style="width: 60%">
                                                                         </div>
                                                                     </div>
@@ -1358,8 +1121,8 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="progress" role="progressbar"
-                                                                        aria-label="example" aria-valuenow="25"
-                                                                        aria-valuemin="0" aria-valuemax="100">
+                                                                         aria-label="example" aria-valuenow="25"
+                                                                         aria-valuemin="0" aria-valuemax="100">
                                                                         <div class="progress-bar" style="width: 90%">
                                                                         </div>
                                                                     </div>
@@ -1391,11 +1154,12 @@
                                                             <div class="client-review-item flex">
                                                                 <div class="avata">
                                                                     <img src="./assets/images/avata/avt-review.jpg"
-                                                                        alt="image">
+                                                                         alt="image">
                                                                 </div>
                                                                 <div class="content">
                                                                     <span class="name">Rohan De Spond</span>
-                                                                    <p class="des">Lorem ipsum dolor sit amet,
+                                                                    <p class="des">
+                                                                        Lorem ipsum dolor sit amet,
                                                                         consectetur adipiscing elit.Curabitur have is
                                                                         covered many vulputate vestibulum Phasellus
                                                                         rhoncus, dolor eget viverra
@@ -1418,11 +1182,12 @@
                                                             <div class="client-review-item flex">
                                                                 <div class="avata">
                                                                     <img src="./assets/images/avata/avt-review.jpg"
-                                                                        alt="image">
+                                                                         alt="image">
                                                                 </div>
                                                                 <div class="content">
                                                                     <span class="name">Rohan De Spond</span>
-                                                                    <p class="des">Lorem ipsum dolor sit amet,
+                                                                    <p class="des">
+                                                                        Lorem ipsum dolor sit amet,
                                                                         consectetur adipiscing elit.Curabitur have is
                                                                         covered many vulputate vestibulum Phasellus
                                                                         rhoncus, dolor eget viverra
@@ -1445,11 +1210,12 @@
                                                             <div class="client-review-item flex">
                                                                 <div class="avata">
                                                                     <img src="./assets/images/avata/avt-review.jpg"
-                                                                        alt="image">
+                                                                         alt="image">
                                                                 </div>
                                                                 <div class="content">
                                                                     <span class="name">Rohan De Spond</span>
-                                                                    <p class="des">Lorem ipsum dolor sit amet,
+                                                                    <p class="des">
+                                                                        Lorem ipsum dolor sit amet,
                                                                         consectetur adipiscing elit.Curabitur have is
                                                                         covered many vulputate vestibulum Phasellus
                                                                         rhoncus, dolor eget viverra
@@ -1527,35 +1293,39 @@
                                                                     <fieldset class="relative input-wrap mb-37">
                                                                         <i class="icon-user-1-1"></i>
                                                                         <input type="text" placeholder="First name"
-                                                                            name="name">
+                                                                               name="name">
                                                                     </fieldset>
                                                                 </div>
                                                                 <div class="col-md-6">
                                                                     <fieldset class="relative input-wrap mb-37">
                                                                         <i class="icon-Group-51"></i>
                                                                         <input type="email" placeholder="Email Address"
-                                                                            name="email">
+                                                                               name="email">
                                                                     </fieldset>
                                                                 </div>
                                                                 <div class="col-lg-12">
                                                                     <fieldset class="relative input-wrap mb-37">
                                                                         <i class="icon-content"></i>
                                                                         <textarea name="review" rows="10" cols="50"
-                                                                            placeholder="Write Review"></textarea>
+                                                                                  placeholder="Write Review"></textarea>
                                                                     </fieldset>
                                                                 </div>
                                                                 <div class="col-lg-12">
                                                                     <div class="checkbox mb-60">
                                                                         <input id="check-review" type="checkbox"
-                                                                            name="check" value="check">
-                                                                        <label for="check-review">I agree to Terms &
+                                                                               name="check" value="check">
+                                                                        <label for="check-review">
+                                                                            I agree to Terms &
                                                                             Conditions, Refund Policy and Privacy Policy
-                                                                            of Fabrilife.</label>
+                                                                            of Fabrilife.
+                                                                        </label>
                                                                     </div>
                                                                 </div>
                                                                 <div class="cok-lg-12">
-                                                                    <button type="submit" class="submit">Post
-                                                                        Comment</button>
+                                                                    <button type="submit" class="submit">
+                                                                        Post
+                                                                        Comment
+                                                                    </button>
                                                                 </div>
                                                             </div>
 
@@ -1577,10 +1347,10 @@
                                                                 <span class="label">Time:</span>
                                                                 <div class="radio">
                                                                     <input id="first" type="radio" name="numbers"
-                                                                        value="first" checked>
+                                                                           value="first" checked>
                                                                     <label for="first">14.00</label>
                                                                     <input id="second" type="radio" name="numbers"
-                                                                        value="second">
+                                                                           value="second">
                                                                     <label for="second">16.00</label>
                                                                 </div>
                                                             </div>
@@ -1627,12 +1397,12 @@
                                                                 <span class="label">Add Extra</span>
                                                                 <div class="checkbox">
                                                                     <input id="check" type="checkbox" name="check"
-                                                                        value="check">
+                                                                           value="check">
                                                                     <label for="check">Service per booking</label>
                                                                 </div>
                                                                 <div class="checkbox">
                                                                     <input id="check1" type="checkbox" name="check"
-                                                                        value="check">
+                                                                           value="check">
                                                                     <label for="check1">Service per person</label>
                                                                 </div>
                                                                 <div class="extra">
@@ -1685,7 +1455,7 @@
                                                             <div class="list-recent flex-three">
                                                                 <a href="blog-details.html" class="recent-image">
                                                                     <img src="./assets/images/blog/re-blog1.jpg"
-                                                                        alt="Image">
+                                                                         alt="Image">
                                                                 </a>
                                                                 <div class="recent-info">
                                                                     <div class="start">
@@ -1696,8 +1466,10 @@
                                                                         <i class="icon-Star"></i>
                                                                     </div>
                                                                     <h4 class="title">
-                                                                        <a href="blog-details.html">Walking the Amalfi
-                                                                            Coast</a>
+                                                                        <a href="blog-details.html">
+                                                                            Walking the Amalfi
+                                                                            Coast
+                                                                        </a>
                                                                     </h4>
                                                                     <p>From <span class="text-main">$129.00</span></p>
                                                                 </div>
@@ -1705,7 +1477,7 @@
                                                             <div class="list-recent flex-three">
                                                                 <a href="blog-details.html" class="recent-image">
                                                                     <img src="./assets/images/blog/re-blog2.jpg"
-                                                                        alt="Image">
+                                                                         alt="Image">
                                                                 </a>
                                                                 <div class="recent-info">
                                                                     <div class="start">
@@ -1716,8 +1488,10 @@
                                                                         <i class="icon-Star"></i>
                                                                     </div>
                                                                     <h4 class="title">
-                                                                        <a href="blog-details.html">Walking the Amalfi
-                                                                            Coast</a>
+                                                                        <a href="blog-details.html">
+                                                                            Walking the Amalfi
+                                                                            Coast
+                                                                        </a>
                                                                     </h4>
                                                                     <p>From <span class="text-main">$129.00</span></p>
                                                                 </div>
@@ -1725,7 +1499,7 @@
                                                             <div class="list-recent flex-three">
                                                                 <a href="blog-details.html" class="recent-image">
                                                                     <img src="./assets/images/blog/re-blog3.jpg"
-                                                                        alt="Image">
+                                                                         alt="Image">
                                                                 </a>
                                                                 <div class="recent-info">
                                                                     <div class="start">
@@ -1736,8 +1510,10 @@
                                                                         <i class="icon-Star"></i>
                                                                     </div>
                                                                     <h4 class="title">
-                                                                        <a href="blog-details.html">Walking the Amalfi
-                                                                            Coast</a>
+                                                                        <a href="blog-details.html">
+                                                                            Walking the Amalfi
+                                                                            Coast
+                                                                        </a>
                                                                     </h4>
                                                                     <p>From <span class="text-main">$129.00</span></p>
                                                                 </div>
@@ -1750,38 +1526,38 @@
 
                                     </div>
                                     <div class="tab-pane fade" id="pills-shot-gallery" role="tabpanel"
-                                        aria-labelledby="pills-shot-gallery-tab" tabindex="0">
+                                         aria-labelledby="pills-shot-gallery-tab" tabindex="0">
                                         <div class="row">
                                             <div class="col-lg-8">
                                                 <div class="gallery-content-tour">
                                                     <div class="image-gallery1 image">
                                                         <img src="./assets/images/gallery/gallery.jpg" alt="image"
-                                                            class="item1">
+                                                             class="item1">
                                                     </div>
 
                                                     <div class="image-gallery2 image">
                                                         <img src="./assets/images/gallery/gallery2.jpg" alt="image"
-                                                            class="item2">
+                                                             class="item2">
                                                     </div>
 
                                                     <div class="image-gallery3 image">
                                                         <img src="./assets/images/gallery/gallery3.jpg" alt="image"
-                                                            class="item1">
+                                                             class="item1">
                                                     </div>
 
                                                     <div class="image-gallery4 image">
                                                         <img src="./assets/images/gallery/gallery4.jpg" alt="image"
-                                                            class="item2">
+                                                             class="item2">
                                                     </div>
 
                                                     <div class="image-gallery5 image">
                                                         <img src="./assets/images/gallery/gallery5.jpg" alt="image"
-                                                            class="item1">
+                                                             class="item1">
                                                     </div>
 
                                                     <div class="image-gallery6 image">
                                                         <img src="./assets/images/gallery/gallery6.jpg" alt="image"
-                                                            class="item2">
+                                                             class="item2">
                                                     </div>
                                                 </div>
 
@@ -1798,10 +1574,10 @@
                                                                 <span class="label">Time:</span>
                                                                 <div class="radio">
                                                                     <input id="first" type="radio" name="numbers"
-                                                                        value="first" checked>
+                                                                           value="first" checked>
                                                                     <label for="first">14.00</label>
                                                                     <input id="second" type="radio" name="numbers"
-                                                                        value="second">
+                                                                           value="second">
                                                                     <label for="second">16.00</label>
                                                                 </div>
                                                             </div>
@@ -1848,12 +1624,12 @@
                                                                 <span class="label">Add Extra</span>
                                                                 <div class="checkbox">
                                                                     <input id="check" type="checkbox" name="check"
-                                                                        value="check">
+                                                                           value="check">
                                                                     <label for="check">Service per booking</label>
                                                                 </div>
                                                                 <div class="checkbox">
                                                                     <input id="check1" type="checkbox" name="check"
-                                                                        value="check">
+                                                                           value="check">
                                                                     <label for="check1">Service per person</label>
                                                                 </div>
                                                                 <div class="extra">
@@ -1906,7 +1682,7 @@
                                                             <div class="list-recent flex-three">
                                                                 <a href="blog-details.html" class="recent-image">
                                                                     <img src="./assets/images/blog/re-blog1.jpg"
-                                                                        alt="Image">
+                                                                         alt="Image">
                                                                 </a>
                                                                 <div class="recent-info">
                                                                     <div class="start">
@@ -1917,8 +1693,10 @@
                                                                         <i class="icon-Star"></i>
                                                                     </div>
                                                                     <h4 class="title">
-                                                                        <a href="blog-details.html">Walking the Amalfi
-                                                                            Coast</a>
+                                                                        <a href="blog-details.html">
+                                                                            Walking the Amalfi
+                                                                            Coast
+                                                                        </a>
                                                                     </h4>
                                                                     <p>From <span class="text-main">$129.00</span></p>
                                                                 </div>
@@ -1926,7 +1704,7 @@
                                                             <div class="list-recent flex-three">
                                                                 <a href="blog-details.html" class="recent-image">
                                                                     <img src="./assets/images/blog/re-blog2.jpg"
-                                                                        alt="Image">
+                                                                         alt="Image">
                                                                 </a>
                                                                 <div class="recent-info">
                                                                     <div class="start">
@@ -1937,8 +1715,10 @@
                                                                         <i class="icon-Star"></i>
                                                                     </div>
                                                                     <h4 class="title">
-                                                                        <a href="blog-details.html">Walking the Amalfi
-                                                                            Coast</a>
+                                                                        <a href="blog-details.html">
+                                                                            Walking the Amalfi
+                                                                            Coast
+                                                                        </a>
                                                                     </h4>
                                                                     <p>From <span class="text-main">$129.00</span></p>
                                                                 </div>
@@ -1946,7 +1726,7 @@
                                                             <div class="list-recent flex-three">
                                                                 <a href="blog-details.html" class="recent-image">
                                                                     <img src="./assets/images/blog/re-blog3.jpg"
-                                                                        alt="Image">
+                                                                         alt="Image">
                                                                 </a>
                                                                 <div class="recent-info">
                                                                     <div class="start">
@@ -1957,8 +1737,10 @@
                                                                         <i class="icon-Star"></i>
                                                                     </div>
                                                                     <h4 class="title">
-                                                                        <a href="blog-details.html">Walking the Amalfi
-                                                                            Coast</a>
+                                                                        <a href="blog-details.html">
+                                                                            Walking the Amalfi
+                                                                            Coast
+                                                                        </a>
                                                                     </h4>
                                                                     <p>From <span class="text-main">$129.00</span></p>
                                                                 </div>
@@ -2001,149 +1783,7 @@
 
             </main>
 
-            <footer class="footer footer-style1">
-                <div class="tf-container">
-                    <div class="footer-main">
-                        <div class="footer-logo">
-                            <div class="logo-footer">
-                                <img src="./assets/images/logo2.png" alt="">
-                            </div>
-                            <p class="des-footer">The world’s first and largest digital market
-                                for crypto collectibles and non-fungible
-                            </p>
-                            <ul class="footer-info">
-                                <li class="flex-three">
-                                    <i class="icon-noun-mail-5780740-1"></i>
-                                    <p>Info@webmail.com</p>
-                                </li>
-                                <li class="flex-three">
-                                    <i class="icon-Group-9"></i>
-                                    <p>684 555-0102 490</p>
-                                </li>
-                                <li class="flex-three">
-                                    <i class="icon-Layer-19"></i>
-                                    <p>6391 Elgin St. Celina, NYC 10299</p>
-                                </li>
-                            </ul>
-
-                        </div>
-                        <div class="footer-service">
-                            <h5 class="title">Services Req</h5>
-
-                            <ul class="footer-menu">
-                                <li>
-                                    <a href="about-us.html">About Us</a>
-                                </li>
-                                <li>
-                                    <a href="gallery.html">Gallery</a>
-                                </li>
-                                <li>
-                                    <a href="team.html">Our Team</a>
-                                </li>
-                                <li>
-                                    <a href="blog.html">Blog Insights</a>
-                                </li>
-                                <li>
-                                    <a href="contact-us.html">Contact</a>
-                                </li>
-                            </ul>
-
-                        </div>
-                        <div class="footer-gallery">
-                            <h5 class="title">Gallery</h5>
-
-                            <div class="gallery-img">
-                                <a href="./assets/images/gallery/gl1.jpg" data-fancybox="gallery">
-                                    <img src="./assets/images/gallery/gl1.jpg" alt="image gallery">
-                                </a>
-                                <a href="./assets/images/gallery/gl2.jpg" data-fancybox="gallery">
-                                    <img src="./assets/images/gallery/gl2.jpg" alt="image gallery">
-                                </a>
-                                <a href="./assets/images/gallery/gl3.jpg" data-fancybox="gallery">
-                                    <img src="./assets/images/gallery/gl3.jpg" alt="image gallery">
-                                </a>
-                                <a href="./assets/images/gallery/gl4.jpg" data-fancybox="gallery">
-                                    <img src="./assets/images/gallery/gl4.jpg" alt="image gallery">
-                                </a>
-                                <a href="./assets/images/gallery/gl5.jpg" data-fancybox="gallery">
-                                    <img src="./assets/images/gallery/gl5.jpg" alt="image gallery">
-                                </a>
-                                <a href="./assets/images/gallery/gl6.jpg" data-fancybox="gallery">
-                                    <img src="./assets/images/gallery/gl6.jpg" alt="image gallery">
-                                </a>
-                            </div>
-
-                        </div>
-                        <div class="footer-newsletter">
-                            <h5 class="title">Newsletter</h5>
-                            <form action="/" id="footer-form">
-                                <div class="input-wrap flex-three">
-                                    <input type="email" placeholder="Enter Email Adress">
-                                    <button type="submit"><i class="icon-paper-plane"></i></button>
-                                </div>
-                                <div class="check-form flex-three">
-                                    <i class="icon-Vector-121"></i>
-                                    <p>I agree to all your terms and policies</p>
-                                </div>
-
-                            </form>
-                            <ul class="social-ft flex-three">
-                                <li>
-                                    <a href="#">
-                                        <i class="icon-icon-2"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="icon-x"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="icon-8"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="icon-2"></i>
-                                    </a>
-                                </li>
-                            </ul>
-
-                        </div>
-                    </div>
-
-                    <div class="row footer-bottom">
-                        <div class="col-md-6">
-                            <p class="copy-right">Copyright © 2024 by Themesflat. All Rights Reserved</p>
-                        </div>
-                        <div class="col-md-6">
-                            <ul class="social flex-six">
-                                <li>
-                                    <a href="#">
-                                        <i class="icon-icon-2"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="icon-x"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="icon-icon_03"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="icon-2"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+            @await Component.InvokeAsync("_TourFooterComponentPartial")
 
             <!-- Bottom -->
         </div>
@@ -2162,7 +1802,8 @@
             <div class="logo-canvas">
                 <img src="./assets/images/logo.png" alt="image">
             </div>
-            <p class="des">The world’s first and largest digital market
+            <p class="des">
+                The world’s first and largest digital market
                 for crypto collectibles and non-fungible
             </p>
             <ul class="canvas-info">
@@ -2206,18 +1847,9 @@
     </div>
 
     <!-- Javascript -->
-    <script src="app/js/jquery.min.js"></script>
-    <script src="app/js/jquery.nice-select.min.js"></script>
-    <script src="app/js/bootstrap.min.js"></script>
-    <script src="app/js/swiper-bundle.min.js"></script>
-    <script src="app/js/swiper.js"></script>
-    <script src="app/js/plugin.js"></script>
-    <script src="app/js/jquery.fancybox.js"></script>
-    <script src="app/js/map.min.js"></script>
-    <script src="app/js/map.js"></script>
-    <script src="app/js/shortcodes.js"></script>
-    <script src="app/js/main.js"></script>
+    @await Component.InvokeAsync("_TourScriptsComponentPartial")
 
 </body>
 
 </html>
+

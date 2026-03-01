@@ -19,7 +19,9 @@ namespace Project3Vitour.Mapping
             CreateMap<Tour, ResultTourDto>().ReverseMap();
             CreateMap<Tour, UpdateTourDto>().ReverseMap();
             CreateMap<Tour, GetTourByIdDto>().ReverseMap();
-            
+            CreateMap<ResultTourDto, UpdateTourDto>().ReverseMap();
+            CreateMap<GetTourByIdDto, UpdateTourDto>().ReverseMap();
+
             CreateMap<Review, CreateReviewDto>().ReverseMap();
             CreateMap<Review, UpdateReviewDto>().ReverseMap();
             CreateMap<Review, GetReviewByIdDto>().ReverseMap();
