@@ -8,5 +8,6 @@
         public string CategoryCollectionName { get; set; }
         public string ReviewCollectionName { get; set; }
         public string ReservationCollectionName { get; set; }
+        public string GalleryCollectionName { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Project3Vitour.Dtos.CategoryDto;
+using Project3Vitour.Dtos.GalleryDto;
 using Project3Vitour.Dtos.ReviewDto;
 using Project3Vitour.Dtos.TourDtos;
 using Project3Vitour.Entities;
@@ -27,6 +28,8 @@ namespace Project3Vitour.Mapping
             CreateMap<Review, GetReviewByIdDto>().ReverseMap();
             CreateMap<Review, ResultReviewDto>().ReverseMap();
             CreateMap<Review, ResultReviewByTourIdDto>().ReverseMap();
+
+            CreateMap<Gallery, CreateGalleryDto>().ReverseMap();
         }
         
     }
