@@ -32,7 +32,7 @@ namespace Project3Vitour.Services.ReservationService
 
         public async Task<List<ResultReservationDto>> GetAllReservationAsync()
         {
-            var values=_reservationCollection.Find(x => true).ToListAsync();
+            var values=await _reservationCollection.Find(x => true).ToListAsync();
             return _mapper.Map<List<ResultReservationDto>>(values);
         }
 

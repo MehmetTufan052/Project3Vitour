@@ -3,6 +3,7 @@ using Project3Vitour.Services.CatregoryService;
 using Project3Vitour.Services.GalleryService;
 using Project3Vitour.Services.HuggingFaceService;
 using Project3Vitour.Services.ReviewService;
+using Project3Vitour.Services.TourPlanService;
 using Project3Vitour.Services.TourServices.ITourService;
 using Project3Vitour.Settings;
 using System.Reflection;
@@ -14,6 +15,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ITourService, TourService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IGalleryService, GalleryService>();
+builder.Services.AddScoped<ITourPlanService, TourPlanService>();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddHttpClient<HuggingFaceService>();

@@ -30,6 +30,9 @@ namespace Project3Vitour.Mapping
             CreateMap<Review, ResultReviewByTourIdDto>().ReverseMap();
 
             CreateMap<Gallery, CreateGalleryDto>().ReverseMap();
+            CreateMap<Gallery, UpdateGalleryDto>().ReverseMap();
+            CreateMap<Gallery, GetGalleryByIdDto>().ReverseMap();
+            CreateMap<Gallery, ResultGalleryDto>().ReverseMap();
         }
         
     }
