@@ -3,6 +3,7 @@ using Project3Vitour.Dtos.CategoryDto;
 using Project3Vitour.Dtos.GalleryDto;
 using Project3Vitour.Dtos.ReviewDto;
 using Project3Vitour.Dtos.TourDtos;
+using Project3Vitour.Dtos.TourPlanDto;
 using Project3Vitour.Entities;
 
 namespace Project3Vitour.Mapping
@@ -33,6 +34,12 @@ namespace Project3Vitour.Mapping
             CreateMap<Gallery, UpdateGalleryDto>().ReverseMap();
             CreateMap<Gallery, GetGalleryByIdDto>().ReverseMap();
             CreateMap<Gallery, ResultGalleryDto>().ReverseMap();
+
+            CreateMap<TourPlan, CreateTourPlanDto>().ReverseMap();
+            CreateMap<TourPlan, UpdateTourPlanDto>().ReverseMap();
+            CreateMap<TourPlan, ResultTourPlanDto>().ReverseMap();
+            CreateMap<TourPlan, GetTourPlanByIdDto>().ReverseMap();
+            CreateMap<GetCategoryByIdDto, UpdateCategoryDto>().ReverseMap();
         }
         
     }

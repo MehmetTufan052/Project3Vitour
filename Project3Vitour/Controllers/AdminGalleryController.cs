@@ -16,9 +16,9 @@ namespace Project3Vitour.Controllers
         }
 
 
-        public IActionResult GalleryList()
+        public async Task<IActionResult> GalleryList()
         {
-            var values = _galleryService.GetAllGalleryAsync();
+            var values = await _galleryService.GetAllGalleryAsync();
             return View(values);
         }
 
@@ -33,7 +33,19 @@ namespace Project3Vitour.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateGallery(CreateGalleryDto createGalleryDto)
         {
-           await _galleryService.CreateGalleryAsync(createGalleryDto);
+            if (!ModelState.IsValid)
+            {
+                var tours = await _tourService.GetAllTourAsync();
+                ViewBag.Tours = tours;
+                return View(createGalleryDto);
+            }
+            await _galleryService.CreateGalleryAsync(createGalleryDto);
+            return RedirectToAction("GalleryList");
+        }
+
+        public async Task<IActionResult> DeleteGallery(string id)
+        {
+            await _galleryService.DeleteGalleryAsync(id);
             return RedirectToAction("GalleryList");
         }
     }

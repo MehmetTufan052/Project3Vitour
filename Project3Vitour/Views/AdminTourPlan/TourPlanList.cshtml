@@ -1,0 +1,919 @@
+﻿@model IEnumerable<Project3Vitour.Dtos.TourPlanDto.ResultTourPlanDto>
+@{
+    ViewData["Title"] = "Tour Plans";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    var list = Model?.ToList() ?? new List<Project3Vitour.Dtos.TourPlanDto.ResultTourPlanDto>();
+    var total = list.Count;
+    var tours = list.Select(p => p.TourId).Distinct().Count();
+    var maxDay = list.Any() ? list.Max(p => p.NumberOfDay) : 0;
+    var grouped = list.GroupBy(p => p.TourId).OrderBy(g => g.Key).ToList();
+}
+
+<style>
+    /* ══════════════════════════════════════════════════════════
+       TOUR PLAN LIST — TIMELINE VIEW
+    ══════════════════════════════════════════════════════════ */
+
+    /* ── STAT CARDS ────────────────────────────────────────── */
+    .tpl-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin-bottom: 20px;
+        animation: tplIn .3s .04s cubic-bezier(.4,0,.2,1) both;
+    }
+    @@media (max-width: 640px) {
+        .tpl-stats
+
+    {
+        grid-template-columns: 1fr;
+    }
+
+    }
+    @@keyframes tplIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(8px)
+    }
+
+    to {
+        opacity: 1;
+        transform: none
+    }
+
+    }
+
+    .tpl-stat {
+        background: #fff;
+        border: 1px solid rgba(226,232,240,.9);
+        border-radius: 14px;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.05), inset 0 1px 0 rgba(255,255,255,.9);
+        transition: transform 200ms, box-shadow 200ms;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .tpl-stat::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.9), transparent);
+        }
+
+        .tpl-stat:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,.08);
+        }
+
+    .tpl-stat-ico {
+        width: 42px;
+        height: 42px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        flex-shrink: 0;
+        position: relative;
+    }
+
+        .tpl-stat-ico::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(180deg, rgba(255,255,255,.25) 0%, transparent 60%);
+        }
+
+    .tpl-stat-lbl {
+        font-size: 10.5px;
+        font-weight: 600;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        margin-bottom: 2px;
+    }
+
+    .tpl-stat-val {
+        font-size: 22px;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -.6px;
+        line-height: 1.1;
+    }
+
+    /* ── FILTER BAR ────────────────────────────────────────── */
+    .tpl-filter {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        animation: tplIn .3s .08s cubic-bezier(.4,0,.2,1) both;
+    }
+
+    .tpl-search {
+        position: relative;
+        flex: 1;
+        max-width: 300px;
+    }
+
+        .tpl-search i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 12px;
+            pointer-events: none;
+        }
+
+        .tpl-search input {
+            width: 100%;
+            height: 38px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #fff;
+            padding: 0 14px 0 34px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
+            color: #0f172a;
+            outline: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,.05);
+            transition: all 200ms;
+        }
+
+            .tpl-search input:focus {
+                border-color: #10b981;
+                box-shadow: 0 0 0 3px rgba(16,185,129,.10);
+            }
+
+            .tpl-search input::placeholder {
+                color: #c4cdd9;
+            }
+
+    .tpl-sel {
+        height: 38px;
+        padding: 0 32px 0 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background: #fff;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 13px;
+        color: #0f172a;
+        outline: none;
+        box-shadow: 0 1px 3px rgba(0,0,0,.05);
+        appearance: none;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394a3b8'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-color: #fff;
+        transition: border-color 200ms;
+    }
+
+        .tpl-sel:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16,185,129,.10);
+        }
+
+    /* View toggle */
+    .view-tog {
+        display: flex;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background: #fff;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,.05);
+        margin-left: auto;
+    }
+
+    .vt-btn {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        cursor: pointer;
+        color: #94a3b8;
+        background: transparent;
+        border: none;
+        transition: all 180ms;
+    }
+
+        .vt-btn.on {
+            background: #10b981;
+            color: #fff;
+        }
+
+        .vt-btn:hover:not(.on) {
+            background: #f0fdf4;
+            color: #10b981;
+        }
+
+    .tpl-count {
+        font-size: 11px;
+        color: #94a3b8;
+        font-family: 'DM Mono', monospace;
+        white-space: nowrap;
+    }
+
+        .tpl-count strong {
+            color: #475569;
+        }
+
+    /* ── TIMELINE VIEW (default) ───────────────────────────── */
+    .tpl-content {
+        animation: tplIn .3s .12s cubic-bezier(.4,0,.2,1) both;
+    }
+
+    /* Tour group */
+    .tour-group {
+        margin-bottom: 28px;
+    }
+
+        .tour-group[data-hidden="true"] {
+            display: none;
+        }
+
+    .tour-group-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+        padding: 13px 18px;
+        background: #fff;
+        border: 1px solid rgba(226,232,240,.9);
+        border-radius: 13px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.04), inset 0 1px 0 rgba(255,255,255,.9);
+    }
+
+    .tgh-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        background: linear-gradient(135deg, #10b981, #06b6d4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        color: #fff;
+        flex-shrink: 0;
+        box-shadow: 0 0 12px rgba(16,185,129,.3);
+        position: relative;
+    }
+
+        .tgh-icon::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(180deg, rgba(255,255,255,.2) 0%, transparent 60%);
+        }
+
+    .tgh-name {
+        font-size: 14px;
+        font-weight: 800;
+        color: #0f172a;
+        flex: 1;
+    }
+
+    .tgh-count {
+        font-size: 10px;
+        font-weight: 800;
+        font-family: 'DM Mono', monospace;
+        background: linear-gradient(135deg, #10b981, #06b6d4);
+        color: #fff;
+        padding: 3px 10px;
+        border-radius: 20px;
+        box-shadow: 0 2px 8px rgba(16,185,129,.3);
+    }
+
+    /* Timeline */
+    .timeline {
+        position: relative;
+        padding-left: 52px;
+    }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 18px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #10b981 0%, #06b6d4 50%, #e2e8f0 100%);
+            border-radius: 2px;
+        }
+
+    /* Timeline item */
+    .tl-item {
+        position: relative;
+        margin-bottom: 12px;
+        transition: all 200ms;
+    }
+
+        .tl-item[data-hidden="true"] {
+            display: none;
+        }
+
+        .tl-item:last-child {
+            margin-bottom: 0;
+        }
+
+    /* Day badge on timeline */
+    .tl-dot {
+        position: absolute;
+        left: -42px;
+        top: 14px;
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        background: linear-gradient(135deg, #10b981, #06b6d4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 800;
+        color: #fff;
+        font-family: 'DM Mono', monospace;
+        box-shadow: 0 0 0 3px #fff, 0 0 12px rgba(16,185,129,.35);
+        transition: all 250ms cubic-bezier(.34,1.56,.64,1);
+        z-index: 1;
+    }
+
+    .tl-item:hover .tl-dot {
+        transform: scale(1.12);
+        box-shadow: 0 0 0 3px #fff, 0 0 20px rgba(16,185,129,.5);
+    }
+
+    /* Plan card */
+    .plan-card {
+        background: #fff;
+        border: 1px solid rgba(226,232,240,.9);
+        border-radius: 13px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,.04);
+        transition: all 220ms cubic-bezier(.4,0,.2,1);
+    }
+
+        .plan-card:hover {
+            transform: translateX(4px);
+            box-shadow: 0 6px 20px rgba(0,0,0,.09);
+            border-color: #bbf7d0;
+        }
+
+    .plan-card-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 13px 16px 10px;
+        border-bottom: 1px solid #f0fdf4;
+        background: linear-gradient(135deg, #fafffe 0%, #f0fdf4 100%);
+    }
+
+    .pc-day-label {
+        font-size: 9.5px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #6ee7b7;
+        font-family: 'DM Mono', monospace;
+    }
+
+    .pc-day-title {
+        font-size: 14px;
+        font-weight: 800;
+        color: #065f46;
+        line-height: 1.2;
+    }
+
+    .plan-card-actions {
+        display: flex;
+        gap: 6px;
+        margin-left: auto;
+        flex-shrink: 0;
+    }
+
+    .pc-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 180ms;
+        text-decoration: none;
+    }
+
+        .pc-btn.edit {
+            background: #f0fdf4;
+            color: #10b981;
+        }
+
+        .pc-btn.delete {
+            background: #fff5f5;
+            color: #f43f5e;
+        }
+
+        .pc-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .pc-btn.edit:hover {
+            background: #dcfce7;
+        }
+
+        .pc-btn.delete:hover {
+            background: #fee2e2;
+        }
+
+    .plan-card-body {
+        padding: 12px 16px;
+    }
+
+    .pc-desc {
+        font-size: 12.5px;
+        line-height: 1.65;
+        color: #475569;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .pc-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #f0f4f8;
+        flex-wrap: wrap;
+    }
+
+    .pc-meta-chip {
+        font-size: 10.5px;
+        color: #94a3b8;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-family: 'DM Mono', monospace;
+    }
+
+        .pc-meta-chip i {
+            font-size: 10px;
+        }
+
+    /* ── TABLE VIEW ────────────────────────────────────────── */
+    #tableView {
+        display: none;
+    }
+
+        #tableView.visible {
+            display: block;
+        }
+
+    #timelineView.hidden {
+        display: none;
+    }
+
+    /* ── EMPTY STATE ───────────────────────────────────────── */
+    .tpl-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 72px 20px;
+        text-align: center;
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid rgba(226,232,240,.9);
+        box-shadow: 0 2px 12px rgba(0,0,0,.05);
+    }
+
+    .tpl-empty-rings {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+    }
+
+        .tpl-empty-rings::before, .tpl-empty-rings::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 2px solid rgba(16,185,129,.15);
+            animation: emRing 2.8s ease-in-out infinite;
+        }
+
+        .tpl-empty-rings::after {
+            animation-delay: 1.4s;
+        }
+    @@keyframes emRing {
+        0%,100%
+
+    {
+        transform: scale(1);
+        opacity: .5
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: .1
+    }
+
+    }
+
+    .tpl-empty-ic {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        color: #c4cdd9;
+    }
+
+    .tpl-empty h3 {
+        font-size: 15px;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 6px;
+    }
+
+    .tpl-empty p {
+        font-size: 13px;
+        color: #94a3b8;
+        margin-bottom: 20px;
+    }
+
+    /* No results */
+    .no-results {
+        display: none;
+        text-align: center;
+        padding: 40px 20px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #94a3b8;
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid rgba(226,232,240,.9);
+    }
+
+        .no-results i {
+            font-size: 26px;
+            color: #e2e8f0;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+    /* Table */
+    .dtbl {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+        .dtbl thead tr {
+            border-bottom: 2px solid #f0f4f8;
+        }
+
+        .dtbl th {
+            padding: 10px 14px;
+            text-align: left;
+            font-size: 9.5px;
+            font-weight: 800;
+            color: #94a3b8;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            font-family: 'DM Mono', monospace;
+            white-space: nowrap;
+        }
+
+        .dtbl td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #f8fafc;
+            font-size: 13px;
+            color: #475569;
+            vertical-align: middle;
+        }
+
+        .dtbl tbody tr:hover td {
+            background: #fafffe;
+        }
+
+        .dtbl tbody tr:last-child td {
+            border-bottom: none;
+        }
+</style>
+
+<!-- Page Header -->
+<div class="ph anim">
+    <div>
+        <div class="ph-eye">Collections</div>
+        <h1 class="ph-h1">Tour Plans</h1>
+        <p class="ph-desc">Daily itinerary plans for all tours</p>
+    </div>
+    <div class="ph-acts">
+        <a href="@Url.Action("CreateTourPlan", "AdminTourPlan")" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Add Plan
+        </a>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="tpl-stats">
+    <div class="tpl-stat">
+        <div class="tpl-stat-ico" style="background:#f0fdf4;color:#10b981;">
+            <i class="fa-solid fa-calendar-days"></i>
+        </div>
+        <div>
+            <div class="tpl-stat-lbl">Total Plans</div>
+            <div class="tpl-stat-val">@total</div>
+        </div>
+    </div>
+    <div class="tpl-stat">
+        <div class="tpl-stat-ico" style="background:#eff6ff;color:#3b82f6;">
+            <i class="fa-solid fa-map-location-dot"></i>
+        </div>
+        <div>
+            <div class="tpl-stat-lbl">Tours Planned</div>
+            <div class="tpl-stat-val">@tours</div>
+        </div>
+    </div>
+    <div class="tpl-stat">
+        <div class="tpl-stat-ico" style="background:#fdf4ff;color:#a855f7;">
+            <i class="fa-solid fa-flag-checkered"></i>
+        </div>
+        <div>
+            <div class="tpl-stat-lbl">Max Day</div>
+            <div class="tpl-stat-val">@maxDay</div>
+        </div>
+    </div>
+</div>
+
+@if (!list.Any())
+{
+    <div class="tpl-empty">
+        <div class="tpl-empty-rings">
+            <div class="tpl-empty-ic"><i class="fa-solid fa-calendar-days"></i></div>
+        </div>
+        <h3>No plans yet</h3>
+        <p>Start building tour itineraries by adding the first daily plan.</p>
+        <a href="@Url.Action("CreateTourPlan", "AdminTourPlan")" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Add First Plan
+        </a>
+    </div>
+}
+else
+{
+    <!-- Filter bar -->
+    <div class="tpl-filter">
+        <div class="tpl-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="Search title or description...">
+        </div>
+        <select class="tpl-sel" id="tourFilter">
+            <option value="">All Tours</option>
+            @foreach (var g in grouped)
+            {
+                var firstName = list.FirstOrDefault(p => p.TourId == g.Key)?.TourId ?? g.Key;
+                <option value="@g.Key">Tour: @(g.Key?.Length > 16 ? g.Key[..16] + "…" : g.Key)</option>
+            }
+        </select>
+        <select class="tpl-sel" id="dayFilter">
+            <option value="">All Days</option>
+            @foreach (var d in list.Select(p => p.NumberOfDay).Distinct().OrderBy(x => x))
+            {
+                <option value="@d">Day @d</option>
+            }
+        </select>
+        <span class="tpl-count">
+            <strong id="visibleCount">@total</strong> of <strong>@total</strong> plans
+        </span>
+        <div class="view-tog">
+            <button class="vt-btn on" id="btnTimeline" onclick="setView('timeline')" title="Timeline view">
+                <i class="fa-solid fa-timeline"></i>
+            </button>
+            <button class="vt-btn" id="btnTable" onclick="setView('table')" title="Table view">
+                <i class="fa-solid fa-table-list"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ── TIMELINE VIEW ────────────────────────────────── -->
+    <div class="tpl-content" id="timelineView">
+        @foreach (var group in grouped)
+        {
+            var groupPlans = group.OrderBy(p => p.NumberOfDay).ToList();
+            <div class="tour-group" data-tour="@group.Key" id="tg-@group.Key">
+                <div class="tour-group-head">
+                    <div class="tgh-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+                    <div class="tgh-name">
+                        <span style="font-size:9.5px;font-weight:700;color:#94a3b8;font-family:'DM Mono',monospace;letter-spacing:.8px;text-transform:uppercase;display:block;margin-bottom:2px;">Tour ID</span>
+                        @group.Key
+                    </div>
+                    <span class="tgh-count">@groupPlans.Count day@(groupPlans.Count != 1 ? "s" : "")</span>
+                </div>
+
+                <div class="timeline">
+                    @foreach (var plan in groupPlans)
+                    {
+                        <div class="tl-item"
+                             data-tour="@plan.TourId"
+                             data-day="@plan.NumberOfDay"
+                             data-title="@plan.DayTitle?.ToLower()"
+                             data-desc="@plan.Description?.ToLower()">
+
+                            <div class="tl-dot">@plan.NumberOfDay</div>
+
+                            <div class="plan-card">
+                                <div class="plan-card-head">
+                                    <div>
+                                        <div class="pc-day-label">Day @plan.NumberOfDay</div>
+                                        <div class="pc-day-title">@plan.DayTitle</div>
+                                    </div>
+                                    <div class="plan-card-actions">
+                                        <a href="@Url.Action("UpdateTourPlan", "AdminTourPlan", new { id = plan.TourPlanId })"
+                                           class="pc-btn edit" title="Edit">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+                                        <a href="@Url.Action("DeleteTourPlan", "AdminTourPlan", new { id = plan.TourPlanId })"
+                                           class="pc-btn delete" title="Delete"
+                                           onclick="return confirm('Bu planı silmek istediğinize emin misiniz?')">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="plan-card-body">
+                                    <div class="pc-desc">@plan.Description</div>
+                                    <div class="pc-meta">
+                                        <span class="pc-meta-chip">
+                                            <i class="fa-regular fa-calendar"></i> Day @plan.NumberOfDay
+                                        </span>
+                                        <span class="pc-meta-chip" style="margin-left:auto;font-size:9.5px;color:#c4cdd9;">
+                                            @(plan.TourPlanId?.Length > 10 ? plan.TourPlanId[..10] + "…" : plan.TourPlanId)
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <div class="no-results" id="noResults">
+            <i class="fa-regular fa-face-frown-open"></i>
+            No plans found for this filter.
+        </div>
+    </div>
+
+    <!-- ── TABLE VIEW ───────────────────────────────────── -->
+    <div id="tableView">
+        <div class="card" style="background:#fff;">
+            <table class="dtbl">
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Tour ID</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    @foreach (var plan in list.OrderBy(p => p.NumberOfDay))
+                    {
+                        <tr data-tour="@plan.TourId"
+                            data-day="@plan.NumberOfDay"
+                            data-title="@plan.DayTitle?.ToLower()"
+                            data-desc="@plan.Description?.ToLower()">
+                            <td>
+                                <span style="display:inline-flex;align-items:center;justify-content:center;
+                                                     width:28px;height:28px;border-radius:7px;
+                                                     background:linear-gradient(135deg,#10b981,#06b6d4);
+                                                     color:#fff;font-size:11px;font-weight:800;font-family:'DM Mono',monospace;
+                                                     box-shadow:0 0 8px rgba(16,185,129,.3);">
+                                    @plan.NumberOfDay
+                                </span>
+                            </td>
+                            <td style="font-weight:700;color:#0f172a;">@plan.DayTitle</td>
+                            <td style="max-width:320px;">
+                                <span style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                    @plan.Description
+                                </span>
+                            </td>
+                            <td>
+                                <span style="font-size:10.5px;color:#94a3b8;font-family:'DM Mono',monospace;">
+                                    @(plan.TourId?.Length > 12 ? plan.TourId[..12] + "…" : plan.TourId)
+                                </span>
+                            </td>
+                            <td>
+                                <div style="display:flex;gap:6px;">
+                                    <a href="@Url.Action("UpdateTourPlan", "AdminTourPlan", new { id = plan.TourPlanId })"
+                                       class="pc-btn edit" title="Edit">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+                                    <a href="@Url.Action("DeleteTourPlan", "AdminTourPlan", new { id = plan.TourPlanId })"
+                                       class="pc-btn delete" title="Delete"
+                                       onclick="return confirm('Bu planı silmek istediğinize emin misiniz?')">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        /* ── Filter ──────────────────────────────────────────────── */
+        function applyFilter() {
+            const q    = document.getElementById('searchInput')?.value.toLowerCase().trim() ?? '';
+            const tour = document.getElementById('tourFilter')?.value ?? '';
+            const day  = document.getElementById('dayFilter')?.value ?? '';
+
+            let visible = 0;
+            const currentView = document.getElementById('timelineView')?.classList.contains('hidden') ? 'table' : 'timeline';
+
+            if (currentView === 'timeline') {
+                // Filter timeline items
+                document.querySelectorAll('.tl-item').forEach(item => {
+                    const match = (!q    || item.dataset.title?.includes(q) || item.dataset.desc?.includes(q))
+                               && (!tour || item.dataset.tour === tour)
+                               && (!day  || item.dataset.day  === day);
+                    item.dataset.hidden = match ? 'false' : 'true';
+                    item.style.display  = match ? '' : 'none';
+                    if (match) visible++;
+                });
+                // Hide empty groups
+                document.querySelectorAll('.tour-group').forEach(grp => {
+                    const anyVisible = [...grp.querySelectorAll('.tl-item')].some(i => i.dataset.hidden !== 'true');
+                    grp.dataset.hidden = anyVisible ? 'false' : 'true';
+                    grp.style.display  = anyVisible ? '' : 'none';
+                });
+            } else {
+                document.querySelectorAll('#tableBody tr').forEach(row => {
+                    const match = (!q    || row.dataset.title?.includes(q) || row.dataset.desc?.includes(q))
+                               && (!tour || row.dataset.tour === tour)
+                               && (!day  || row.dataset.day  === day);
+                    row.style.display = match ? '' : 'none';
+                    if (match) visible++;
+                });
+            }
+
+            const vc = document.getElementById('visibleCount');
+            if (vc) vc.textContent = visible;
+
+            const nr = document.getElementById('noResults');
+            if (nr) nr.style.display = (visible === 0 && currentView === 'timeline') ? 'block' : 'none';
+        }
+
+        document.getElementById('searchInput')?.addEventListener('input', applyFilter);
+        document.getElementById('tourFilter')?.addEventListener('change', applyFilter);
+        document.getElementById('dayFilter')?.addEventListener('change', applyFilter);
+
+        /* ── View toggle ─────────────────────────────────────────── */
+        function setView(v) {
+            const tl   = document.getElementById('timelineView');
+            const tb   = document.getElementById('tableView');
+            const btnT = document.getElementById('btnTimeline');
+            const btnTb= document.getElementById('btnTable');
+            if (!tl || !tb) return;
+
+            if (v === 'table') {
+                tl.classList.add('hidden');
+                tb.classList.add('visible');
+                btnTb.classList.add('on'); btnT.classList.remove('on');
+            } else {
+                tl.classList.remove('hidden');
+                tb.classList.remove('visible');
+                btnT.classList.add('on'); btnTb.classList.remove('on');
+            }
+            applyFilter();
+        }
+    </script>
+}

@@ -1,0 +1,841 @@
+﻿@model IEnumerable<Project3Vitour.Dtos.CategoryDto.ResultCategoryDto>
+@{
+    ViewData["Title"] = "CategoryList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    var list = Model?.ToList() ?? new List<Project3Vitour.Dtos.CategoryDto.ResultCategoryDto>();
+    var total = list.Count;
+    var active = list.Count(c => c.CategoryStatus);
+    var passive = list.Count(c => !c.CategoryStatus);
+
+    var gradients = new[]
+    {
+        "linear-gradient(135deg,#3b82f6,#6366f1)",
+        "linear-gradient(135deg,#10b981,#06b6d4)",
+        "linear-gradient(135deg,#f59e0b,#f97316)",
+        "linear-gradient(135deg,#8b5cf6,#ec4899)",
+        "linear-gradient(135deg,#06b6d4,#3b82f6)",
+        "linear-gradient(135deg,#f43f5e,#f97316)",
+    };
+}
+
+<style>
+    /* ══════════════════════════════════════════════════════════
+       CATEGORY LIST
+    ══════════════════════════════════════════════════════════ */
+
+    /* ── STATS ─────────────────────────────────────────────── */
+    .cl-stats {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 14px;
+        margin-bottom: 20px;
+        animation: clIn .3s .04s cubic-bezier(.4,0,.2,1) both;
+    }
+    @@media (max-width:640px) {
+        .cl-stats
+
+    {
+        grid-template-columns: 1fr;
+    }
+
+    }
+    @@keyframes clIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(8px)
+    }
+
+    to {
+        opacity: 1;
+        transform: none
+    }
+
+    }
+
+    .cl-stat {
+        background: #fff;
+        border: 1px solid rgba(226,232,240,.9);
+        border-radius: 14px;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.05), inset 0 1px 0 rgba(255,255,255,.9);
+        transition: transform 200ms, box-shadow 200ms;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .cl-stat::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.9), transparent);
+        }
+
+        .cl-stat:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,.08);
+        }
+
+    .cl-stat-ico {
+        width: 42px;
+        height: 42px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        flex-shrink: 0;
+        position: relative;
+    }
+
+        .cl-stat-ico::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(180deg, rgba(255,255,255,.25) 0%, transparent 60%);
+        }
+
+    .cl-stat-lbl {
+        font-size: 10.5px;
+        font-weight: 600;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        margin-bottom: 2px;
+    }
+
+    .cl-stat-val {
+        font-size: 22px;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -.6px;
+        line-height: 1.1;
+    }
+
+    /* ── FILTER BAR ────────────────────────────────────────── */
+    .cl-filter {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        animation: clIn .3s .08s cubic-bezier(.4,0,.2,1) both;
+    }
+
+    .cl-search {
+        position: relative;
+        flex: 1;
+        max-width: 320px;
+    }
+
+        .cl-search i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 12px;
+            pointer-events: none;
+        }
+
+        .cl-search input {
+            width: 100%;
+            height: 38px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #fff;
+            padding: 0 14px 0 34px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
+            color: #0f172a;
+            outline: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,.05);
+            transition: all 200ms;
+        }
+
+            .cl-search input:focus {
+                border-color: #6366f1;
+                box-shadow: 0 0 0 3px rgba(99,102,241,.10);
+            }
+
+            .cl-search input::placeholder {
+                color: #c4cdd9;
+            }
+
+    .cl-sel {
+        height: 38px;
+        padding: 0 32px 0 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background: #fff;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 13px;
+        color: #0f172a;
+        outline: none;
+        box-shadow: 0 1px 3px rgba(0,0,0,.05);
+        appearance: none;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394a3b8'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-color: #fff;
+        transition: border-color 200ms;
+    }
+
+        .cl-sel:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,.10);
+        }
+
+    /* View toggle */
+    .view-tog {
+        display: flex;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background: #fff;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,.05);
+        margin-left: auto;
+    }
+
+    .vt-btn {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        cursor: pointer;
+        color: #94a3b8;
+        background: transparent;
+        border: none;
+        transition: all 180ms;
+    }
+
+        .vt-btn.on {
+            background: #6366f1;
+            color: #fff;
+        }
+
+        .vt-btn:hover:not(.on) {
+            background: #f5f3ff;
+            color: #6366f1;
+        }
+
+    .cl-count {
+        font-size: 11px;
+        color: #94a3b8;
+        font-family: 'DM Mono', monospace;
+        white-space: nowrap;
+    }
+
+        .cl-count strong {
+            color: #475569;
+        }
+
+    /* ── GRID VIEW ─────────────────────────────────────────── */
+    .cat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 14px;
+        animation: clIn .3s .12s cubic-bezier(.4,0,.2,1) both;
+    }
+
+    .cat-card {
+        background: #fff;
+        border: 1px solid rgba(226,232,240,.9);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,.05), inset 0 1px 0 rgba(255,255,255,.9);
+        transition: all 240ms cubic-bezier(.4,0,.2,1);
+        position: relative;
+        cursor: default;
+    }
+
+        .cat-card:hover {
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 10px 30px rgba(0,0,0,.10);
+        }
+
+        .cat-card[data-hidden="true"] {
+            display: none;
+        }
+
+    /* Color bar top */
+    .cat-card-bar {
+        height: 4px;
+        width: 100%;
+    }
+
+    .cat-card-body {
+        padding: 18px 18px 14px;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .cat-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 900;
+        color: #fff;
+        flex-shrink: 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .cat-avatar::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,.2) 0%, transparent 60%);
+        }
+
+    .cat-name {
+        font-size: 14.5px;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.2;
+        margin-bottom: 5px;
+        word-break: break-word;
+    }
+
+    .cat-id {
+        font-size: 10px;
+        color: #c4cdd9;
+        font-family: 'DM Mono', monospace;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 140px;
+    }
+
+    .cat-card-foot {
+        padding: 10px 18px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        border-top: 1px solid #f8fafc;
+    }
+
+    .cat-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+    }
+
+        .cat-status.on {
+            background: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .cat-status.off {
+            background: #f8fafc;
+            color: #94a3b8;
+            border: 1px solid #e2e8f0;
+        }
+
+    .cat-status-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+    }
+
+    .cat-status.on .cat-status-dot {
+        background: #10b981;
+    }
+
+    .cat-status.off .cat-status-dot {
+        background: #cbd5e1;
+    }
+
+    .cat-actions {
+        display: flex;
+        gap: 6px;
+    }
+
+    .cat-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 180ms;
+        text-decoration: none;
+    }
+
+        .cat-btn.edit {
+            background: #f5f3ff;
+            color: #6366f1;
+        }
+
+        .cat-btn.delete {
+            background: #fff5f5;
+            color: #f43f5e;
+        }
+
+        .cat-btn:hover {
+            transform: scale(1.12);
+        }
+
+        .cat-btn.edit:hover {
+            background: #ede9fe;
+        }
+
+        .cat-btn.delete:hover {
+            background: #fee2e2;
+        }
+
+    /* ── TABLE VIEW ────────────────────────────────────────── */
+    #tableView {
+        display: none;
+    }
+
+        #tableView.visible {
+            display: block;
+        }
+
+    #gridView.hidden {
+        display: none;
+    }
+
+    .dtbl {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+        .dtbl thead tr {
+            border-bottom: 2px solid #f0f4f8;
+        }
+
+        .dtbl th {
+            padding: 10px 16px;
+            text-align: left;
+            font-size: 9.5px;
+            font-weight: 800;
+            color: #94a3b8;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            font-family: 'DM Mono', monospace;
+            white-space: nowrap;
+        }
+
+        .dtbl td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f8fafc;
+            font-size: 13px;
+            color: #475569;
+            vertical-align: middle;
+        }
+
+        .dtbl tbody tr:hover td {
+            background: #fafbff;
+        }
+
+        .dtbl tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .dtbl tbody tr[data-hidden="true"] {
+            display: none;
+        }
+
+    /* ── EMPTY ─────────────────────────────────────────────── */
+    .cl-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 72px 20px;
+        text-align: center;
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid rgba(226,232,240,.9);
+        box-shadow: 0 2px 12px rgba(0,0,0,.05);
+    }
+
+    .cl-empty-rings {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+    }
+
+        .cl-empty-rings::before, .cl-empty-rings::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 2px solid rgba(99,102,241,.15);
+            animation: emRing 2.8s ease-in-out infinite;
+        }
+
+        .cl-empty-rings::after {
+            animation-delay: 1.4s;
+        }
+    @@keyframes emRing {
+        0%,100%
+
+    {
+        transform: scale(1);
+        opacity: .5
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: .1
+    }
+
+    }
+
+    .cl-empty-ic {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        color: #c4cdd9;
+    }
+
+    .cl-empty h3 {
+        font-size: 15px;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 6px;
+    }
+
+    .cl-empty p {
+        font-size: 13px;
+        color: #94a3b8;
+        margin-bottom: 20px;
+    }
+
+    .no-results {
+        display: none;
+        text-align: center;
+        padding: 40px 20px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #94a3b8;
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid rgba(226,232,240,.9);
+        grid-column: 1 / -1;
+    }
+
+        .no-results i {
+            font-size: 26px;
+            color: #e2e8f0;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+    /* Table view card */
+    .tbl-card {
+        background: #fff;
+        border: 1px solid rgba(226,232,240,.9);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0,0,0,.05);
+        animation: clIn .3s .12s cubic-bezier(.4,0,.2,1) both;
+    }
+</style>
+
+<!-- Page Header -->
+<div class="ph anim">
+    <div>
+        <div class="ph-eye">Collections</div>
+        <h1 class="ph-h1">Categories</h1>
+        <p class="ph-desc">Manage tour category taxonomy</p>
+    </div>
+    <div class="ph-acts">
+        <a href="@Url.Action("CreateCategory", "AdminCategory")" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Add Category
+        </a>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="cl-stats">
+    <div class="cl-stat">
+        <div class="cl-stat-ico" style="background:#f5f3ff;color:#6366f1;">
+            <i class="fa-solid fa-layer-group"></i>
+        </div>
+        <div>
+            <div class="cl-stat-lbl">Total</div>
+            <div class="cl-stat-val">@total</div>
+        </div>
+    </div>
+    <div class="cl-stat">
+        <div class="cl-stat-ico" style="background:#f0fdf4;color:#10b981;">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div>
+            <div class="cl-stat-lbl">Active</div>
+            <div class="cl-stat-val">@active</div>
+        </div>
+    </div>
+    <div class="cl-stat">
+        <div class="cl-stat-ico" style="background:#f8fafc;color:#94a3b8;">
+            <i class="fa-solid fa-circle-pause"></i>
+        </div>
+        <div>
+            <div class="cl-stat-lbl">Passive</div>
+            <div class="cl-stat-val">@passive</div>
+        </div>
+    </div>
+</div>
+
+@if (!list.Any())
+{
+    <div class="cl-empty">
+        <div class="cl-empty-rings">
+            <div class="cl-empty-ic"><i class="fa-solid fa-layer-group"></i></div>
+        </div>
+        <h3>No categories yet</h3>
+        <p>Create your first category to start organizing tours.</p>
+        <a href="@Url.Action("CreateCategory", "AdminCategory")" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Add First Category
+        </a>
+    </div>
+}
+else
+{
+    <!-- Filter bar -->
+    <div class="cl-filter">
+        <div class="cl-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="Search categories...">
+        </div>
+        <select class="cl-sel" id="statusFilter">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="passive">Passive</option>
+        </select>
+        <span class="cl-count">
+            <strong id="visibleCount">@total</strong> of <strong>@total</strong> categories
+        </span>
+        <div class="view-tog">
+            <button class="vt-btn on" id="btnGrid" onclick="setView('grid')" title="Grid view">
+                <i class="fa-solid fa-grip"></i>
+            </button>
+            <button class="vt-btn" id="btnTable" onclick="setView('table')" title="Table view">
+                <i class="fa-solid fa-table-list"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ── GRID VIEW ──────────────────────────────────────── -->
+    <div class="cat-grid" id="gridView">
+
+        @foreach (var (cat, i) in list.Select((c, idx) => (c, idx)))
+        {
+            var grad = gradients[i % gradients.Length];
+            var initials = cat.CategoryName?.Length > 0
+            ? char.ToUpper(cat.CategoryName[0]).ToString()
+            : "?";
+            var statusKey = cat.CategoryStatus ? "active" : "passive";
+
+            <div class="cat-card"
+                 data-name="@cat.CategoryName?.ToLower()"
+                 data-status="@statusKey"
+                 data-hidden="false">
+
+                <!-- Color bar -->
+                <div class="cat-card-bar" style="background:@grad;"></div>
+
+                <div class="cat-card-body">
+                    <div class="cat-avatar" style="background:@grad;">
+                        @initials
+                    </div>
+                    <div style="flex:1;min-width:0;">
+                        <div class="cat-name">@cat.CategoryName</div>
+                        <div class="cat-id" title="@cat.CategoryId">@cat.CategoryId</div>
+                    </div>
+                </div>
+
+                <div class="cat-card-foot">
+                    @if (cat.CategoryStatus)
+                    {
+                        <span class="cat-status on">
+                            <span class="cat-status-dot"></span> Active
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="cat-status off">
+                            <span class="cat-status-dot"></span> Passive
+                        </span>
+                    }
+                    <div class="cat-actions">
+                        <a href="@Url.Action("UpdateCategory", "AdminCategory", new { id = cat.CategoryId })"
+                           class="cat-btn edit" title="Edit">
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
+                        <a href="@Url.Action("DeleteCategory", "AdminCategory", new { id = cat.CategoryId })"
+                           class="cat-btn delete" title="Delete"
+                           onclick="return confirm('Bu kategoriyi silmek istediğinize emin misiniz?')">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        }
+
+        <div class="no-results" id="noResults" style="background:transparent;border:none;box-shadow:none;">
+            <i class="fa-regular fa-face-frown-open"></i>
+            No categories found.
+        </div>
+
+    </div>
+
+    <!-- ── TABLE VIEW ─────────────────────────────────────── -->
+    <div id="tableView">
+        <div class="tbl-card">
+            <table class="dtbl">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>ID</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    @foreach (var (cat, i) in list.Select((c, idx) => (c, idx)))
+                    {
+                        var grad = gradients[i % gradients.Length];
+                        var initials = cat.CategoryName?.Length > 0 ? char.ToUpper(cat.CategoryName[0]).ToString() : "?";
+                        var statusKey = cat.CategoryStatus ? "active" : "passive";
+
+                        <tr data-name="@cat.CategoryName?.ToLower()" data-status="@statusKey">
+                            <td>
+                                <div style="display:flex;align-items:center;gap:10px;">
+                                    <div style="width:34px;height:34px;border-radius:9px;
+                                                        background:@grad;display:flex;align-items:center;
+                                                        justify-content:center;font-size:13px;font-weight:800;
+                                                        color:#fff;flex-shrink:0;">
+                                        @initials
+                                    </div>
+                                    <span style="font-weight:700;color:#0f172a;">@cat.CategoryName</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span style="font-size:10.5px;color:#94a3b8;font-family:'DM Mono',monospace;">
+                                    @(cat.CategoryId?.Length > 14 ? cat.CategoryId[..14] + "…" : cat.CategoryId)
+                                </span>
+                            </td>
+                            <td>
+                                @if (cat.CategoryStatus)
+                                {
+                                    <span class="cat-status on"><span class="cat-status-dot"></span>Active</span>
+                                }
+                                else
+                                {
+                                    <span class="cat-status off"><span class="cat-status-dot"></span>Passive</span>
+                                }
+                            </td>
+                            <td>
+                                <div style="display:flex;gap:6px;">
+                                    <a href="@Url.Action("UpdateCategory", "AdminCategory", new { id = cat.CategoryId })"
+                                       class="cat-btn edit" title="Edit">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+                                    <a href="@Url.Action("DeleteCategory", "AdminCategory", new { id = cat.CategoryId })"
+                                       class="cat-btn delete" title="Delete"
+                                       onclick="return confirm('Bu kategoriyi silmek istediğinize emin misiniz?')">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        /* ── Filter ──────────────────────────────────────────────── */
+        function applyFilter() {
+            const q      = document.getElementById('searchInput')?.value.toLowerCase().trim() ?? '';
+            const status = document.getElementById('statusFilter')?.value ?? '';
+            const isGrid = !document.getElementById('gridView')?.classList.contains('hidden');
+            let   n      = 0;
+
+            if (isGrid) {
+                document.querySelectorAll('.cat-card').forEach(card => {
+                    const ok = (!q      || card.dataset.name?.includes(q))
+                            && (!status || card.dataset.status === status);
+                    card.dataset.hidden = ok ? 'false' : 'true';
+                    card.style.display  = ok ? '' : 'none';
+                    if (ok) n++;
+                });
+                const nr = document.getElementById('noResults');
+                if (nr) nr.style.display = n === 0 ? 'block' : 'none';
+            } else {
+                document.querySelectorAll('#tableBody tr').forEach(row => {
+                    const ok = (!q      || row.dataset.name?.includes(q))
+                            && (!status || row.dataset.status === status);
+                    row.style.display = ok ? '' : 'none';
+                    if (ok) n++;
+                });
+            }
+
+            const vc = document.getElementById('visibleCount');
+            if (vc) vc.textContent = n;
+        }
+
+        document.getElementById('searchInput')?.addEventListener('input', applyFilter);
+        document.getElementById('statusFilter')?.addEventListener('change', applyFilter);
+
+        /* ── View toggle ─────────────────────────────────────────── */
+        function setView(v) {
+            const grid  = document.getElementById('gridView');
+            const table = document.getElementById('tableView');
+            const btnG  = document.getElementById('btnGrid');
+            const btnT  = document.getElementById('btnTable');
+            if (!grid || !table) return;
+
+            if (v === 'table') {
+                grid.classList.add('hidden');
+                table.classList.add('visible');
+                btnT.classList.add('on'); btnG.classList.remove('on');
+            } else {
+                grid.classList.remove('hidden');
+                table.classList.remove('visible');
+                btnG.classList.add('on'); btnT.classList.remove('on');
+            }
+            applyFilter();
+        }
+    </script>
+}

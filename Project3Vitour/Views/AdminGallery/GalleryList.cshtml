@@ -1,876 +1,942 @@
-﻿@* ﻿@model List<ResultGalleryDto>
+﻿@model IEnumerable<Project3Vitour.Dtos.GalleryDto.ResultGalleryDto>
 @{
-    ViewData["Title"] = "GalleryList";
+    ViewData["Title"] = "Gallery";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    var list = Model?.ToList() ?? new List<Project3Vitour.Dtos.GalleryDto.ResultGalleryDto>();
+    var total = list.Count;
+    var tourGroups = list.GroupBy(g => g.TourName).Count();
+    var tours = list.Select(g => g.TourName).Distinct().OrderBy(t => t).ToList();
 }
 
+<style>
+    /* ══════════════════════════════════════════════════════════
+       GALLERY LIST — MASONRY-INSPIRED GRID
+    ══════════════════════════════════════════════════════════ */
 
-@section Styles {
-    <style>
-        /* ─── Page Header ───────────────────────────────────── */
-        .section-header {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin-bottom: 24px;
+    /* ── FILTER BAR ────────────────────────────────────────── */
+    .gl-filter {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        animation: glIn .3s .05s cubic-bezier(.4,0,.2,1) both;
+    }
+    @@keyframes glIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(8px)
+    }
+
+    to {
+        opacity: 1;
+        transform: none
+    }
+
+    }
+
+    .gl-search {
+        position: relative;
+        flex: 1;
+        max-width: 320px;
+    }
+
+        .gl-search i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 12px;
+            pointer-events: none;
         }
 
-        .page-eyebrow {
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--accent);
-            margin-bottom: 4px;
-        }
-
-        .page-title {
-            margin: 0;
-        }
-
-        .btn-add-gallery {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            padding: 11px 22px;
-            border-radius: 10px;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background .2s, box-shadow .2s, transform .15s;
-            white-space: nowrap;
-            box-shadow: 0 2px 10px rgba(45,156,219,.35);
-            text-decoration: none;
-        }
-
-            .btn-add-gallery:hover {
-                background: var(--accent-dk);
-                box-shadow: 0 4px 18px rgba(45,156,219,.45);
-                transform: translateY(-1px);
-                color: #fff;
-            }
-
-        /* ─── Filter Bar ─────────────────────────────────────── */
-        .filter-bar {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-
-        .filter-search {
-            position: relative;
-            flex: 1;
-            min-width: 200px;
-            max-width: 360px;
-        }
-
-            .filter-search i {
-                position: absolute;
-                left: 13px;
-                top: 50%;
-                transform: translateY(-50%);
-                color: var(--text-muted);
-                font-size: 14px;
-                pointer-events: none;
-            }
-
-            .filter-search input {
-                width: 100%;
-                padding: 10px 14px 10px 38px;
-                border: 1px solid var(--border);
-                border-radius: 10px;
-                background: #fff;
-                font-family: 'DM Sans', sans-serif;
-                font-size: 13.5px;
-                color: var(--text-main);
-                outline: none;
-                transition: border-color .15s, box-shadow .15s;
-            }
-
-                .filter-search input:focus {
-                    border-color: var(--accent);
-                    box-shadow: 0 0 0 3px rgba(45,156,219,.14);
-                }
-
-        .filter-select {
-            padding: 10px 36px 10px 14px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: #fff;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 13.5px;
-            color: var(--text-main);
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2364748b'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-            outline: none;
-            cursor: pointer;
-            transition: border-color .15s, box-shadow .15s;
-            min-width: 180px;
-        }
-
-            .filter-select:focus {
-                border-color: var(--accent);
-                box-shadow: 0 0 0 3px rgba(45,156,219,.14);
-            }
-
-        .filter-count {
-            margin-left: auto;
-            font-size: 13px;
-            color: var(--text-muted);
-            white-space: nowrap;
-        }
-
-        /* ─── Summary Stats Cards ────────────────────────────── */
-        .stats-row {
-            margin-bottom: 24px;
-        }
-
-        .stat-card {
-            background: #fff;
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 20px 22px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            box-shadow: var(--shadow-sm);
-            transition: box-shadow .2s, transform .18s;
-        }
-
-            .stat-card:hover {
-                box-shadow: var(--shadow-md);
-                transform: translateY(-2px);
-            }
-
-        .stat-icon {
-            width: 46px;
-            height: 46px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            flex-shrink: 0;
-        }
-
-        .si-blue {
-            background: #e0f2fe;
-            color: #0369a1;
-        }
-
-        .si-purple {
-            background: #ede9fe;
-            color: #6d28d9;
-        }
-
-        .si-green {
-            background: #dcfce7;
-            color: #15803d;
-        }
-
-        .stat-num {
-            font-family: 'Playfair Display', serif;
-            font-size: 26px;
-            color: var(--navy);
-            line-height: 1;
-            margin-bottom: 2px;
-        }
-
-        .stat-lbl {
-            font-size: 12.5px;
-            color: var(--text-muted);
-        }
-
-        /* ─── Table Card ─────────────────────────────────────── */
-        .table-card {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: var(--shadow-md);
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }
-
-        .gallery-table {
+        .gl-search input {
             width: 100%;
-            border-collapse: collapse;
-        }
-
-            .gallery-table thead th {
-                background: #f8fafc;
-                padding: 13px 16px;
-                font-size: 11px;
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 1.2px;
-                color: var(--text-muted);
-                border-bottom: 1px solid var(--border);
-                white-space: nowrap;
-                position: sticky;
-                top: 0;
-            }
-
-            .gallery-table tbody tr {
-                border-bottom: 1px solid #f1f5f9;
-                transition: background .14s;
-            }
-
-                .gallery-table tbody tr:last-child {
-                    border-bottom: none;
-                }
-
-                .gallery-table tbody tr:hover {
-                    background: #f8fbff;
-                }
-
-            .gallery-table td {
-                padding: 14px 16px;
-                vertical-align: middle;
-                font-size: 13.5px;
-                color: var(--text-main);
-            }
-
-        /* ─── Gallery Image Cell ─────────────────────────────── */
-        .gallery-cell {
-            display: flex;
-            align-items: center;
-            gap: 13px;
-        }
-
-        .gallery-thumb {
-            width: 80px;
-            height: 56px;
+            height: 38px;
+            border: 1px solid #e2e8f0;
             border-radius: 10px;
-            object-fit: cover;
-            flex-shrink: 0;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            transition: transform .18s, box-shadow .18s;
+            background: #fff;
+            padding: 0 14px 0 34px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
+            color: #0f172a;
+            outline: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,.05);
+            transition: all 200ms;
         }
 
-            .gallery-thumb:hover {
-                transform: scale(1.06);
-                box-shadow: 0 4px 16px rgba(0,0,0,.15);
+            .gl-search input:focus {
+                border-color: #6366f1;
+                box-shadow: 0 0 0 3px rgba(99,102,241,.10);
             }
 
-        .gallery-thumb-placeholder {
-            width: 80px;
-            height: 56px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            font-size: 22px;
-            flex-shrink: 0;
-        }
-
-        .gallery-img-url {
-            font-size: 12.5px;
-            color: var(--text-muted);
-            max-width: 260px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            display: block;
-        }
-
-        /* ─── Tour ID Badge ──────────────────────────────────── */
-        .tour-id-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #e0f2fe;
-            color: #0369a1;
-            padding: 4px 11px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            font-family: 'DM Mono', monospace, 'DM Sans', sans-serif;
-            letter-spacing: .3px;
-            cursor: pointer;
-            transition: background .15s;
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-            .tour-id-badge:hover {
-                background: #bae6fd;
+            .gl-search input::placeholder {
+                color: #c4cdd9;
             }
 
-        .no-tour {
-            font-size: 12px;
-            color: var(--text-muted);
+    .gl-tour-filter {
+        height: 38px;
+        padding: 0 32px 0 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background: #fff;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 13px;
+        color: #0f172a;
+        outline: none;
+        box-shadow: 0 1px 3px rgba(0,0,0,.05);
+        appearance: none;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394a3b8'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-color: #fff;
+        transition: border-color 200ms;
+    }
+
+        .gl-tour-filter:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,.10);
         }
 
-        /* ─── Action Buttons ─────────────────────────────────── */
-        .action-group {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+    /* View toggle */
+    .view-toggle {
+        display: flex;
+        align-items: center;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background: #fff;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,.05);
+        margin-left: auto;
+    }
 
-        .btn-action {
-            width: 34px;
-            height: 34px;
-            border: none;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 15px;
-            cursor: pointer;
-            transition: background .15s, transform .12s;
-            text-decoration: none;
-        }
+    .vt-btn {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        cursor: pointer;
+        color: #94a3b8;
+        background: transparent;
+        border: none;
+        transition: all 180ms;
+    }
 
-            .btn-action:hover {
-                transform: scale(1.1);
-            }
-
-        .btn-view {
-            background: #e0f2fe;
-            color: #0369a1;
-        }
-
-        .btn-edit {
-            background: #fef9c3;
-            color: #854d0e;
-        }
-
-        .btn-delete {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .btn-view:hover {
-            background: #bae6fd;
-        }
-
-        .btn-edit:hover {
-            background: #fef08a;
-        }
-
-        .btn-delete:hover {
-            background: #fecaca;
-        }
-
-        /* ─── Empty State ────────────────────────────────────── */
-        .empty-state {
-            text-align: center;
-            padding: 64px 24px;
-        }
-
-        .empty-icon {
-            font-size: 48px;
-            color: #cbd5e1;
-            margin-bottom: 14px;
-        }
-
-        .empty-title {
-            font-size: 17px;
-            font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 6px;
-        }
-
-        .empty-sub {
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        /* ─── Lightbox ───────────────────────────────────────── */
-        .lightbox-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,.82);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(6px);
-        }
-
-            .lightbox-overlay.open {
-                display: flex;
-            }
-
-        .lightbox-img {
-            max-width: 90vw;
-            max-height: 85vh;
-            border-radius: 14px;
-            box-shadow: 0 24px 64px rgba(0,0,0,.6);
-            object-fit: contain;
-            animation: lbFadeIn .2s ease;
-        }
-
-        @@keyframes lbFadeIn {
-            from {
-                opacity: 0;
-                transform: scale(.93);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .lightbox-close {
-            position: fixed;
-            top: 20px;
-            right: 24px;
-            width: 42px;
-            height: 42px;
-            background: rgba(255,255,255,.15);
-            border: 1px solid rgba(255,255,255,.25);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
+        .vt-btn.on {
+            background: #6366f1;
             color: #fff;
-            cursor: pointer;
-            transition: background .15s;
-            z-index: 10000;
         }
 
-            .lightbox-close:hover {
-                background: rgba(255,255,255,.28);
-            }
+        .vt-btn:hover:not(.on) {
+            background: #f5f3ff;
+            color: #6366f1;
+        }
 
-        /* ─── Delete Modal ───────────────────────────────────── */
-        .delete-modal-icon {
-            width: 64px;
-            height: 64px;
-            background: #fee2e2;
+    .gl-count {
+        font-size: 11px;
+        color: #94a3b8;
+        font-family: 'DM Mono', monospace;
+        white-space: nowrap;
+    }
+
+        .gl-count strong {
+            color: #475569;
+        }
+
+    /* ── STAT ROW ──────────────────────────────────────────── */
+    .gl-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin-bottom: 20px;
+        animation: glIn .3s .08s cubic-bezier(.4,0,.2,1) both;
+    }
+    @@media (max-width: 640px) {
+        .gl-stats
+
+    {
+        grid-template-columns: 1fr;
+    }
+
+    }
+
+    .gl-stat {
+        background: #fff;
+        border: 1px solid rgba(226,232,240,.9);
+        border-radius: 14px;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.05), inset 0 1px 0 rgba(255,255,255,.9);
+        transition: transform 200ms, box-shadow 200ms;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .gl-stat::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.95), transparent);
+        }
+
+        .gl-stat:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,.08);
+        }
+
+    .gl-stat-ico {
+        width: 42px;
+        height: 42px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        flex-shrink: 0;
+        position: relative;
+    }
+
+        .gl-stat-ico::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(180deg, rgba(255,255,255,.25) 0%, transparent 60%);
+        }
+
+    .gl-stat-lbl {
+        font-size: 10.5px;
+        font-weight: 600;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        margin-bottom: 2px;
+    }
+
+    .gl-stat-val {
+        font-size: 22px;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -.6px;
+        line-height: 1.1;
+    }
+
+    /* ── GRID VIEW ─────────────────────────────────────────── */
+    .gl-grid {
+        columns: 4;
+        column-gap: 14px;
+        animation: glIn .3s .12s cubic-bezier(.4,0,.2,1) both;
+    }
+    @@media (max-width: 1300px) {
+        .gl-grid
+
+    {
+        columns: 3;
+    }
+
+    }
+    @@media (max-width: 900px) {
+        .gl-grid
+
+    {
+        columns: 2;
+    }
+
+    }
+    @@media (max-width: 560px) {
+        .gl-grid
+
+    {
+        columns: 1;
+    }
+
+    }
+
+    .gl-grid.list-view {
+        columns: 1;
+    }
+
+    /* ── GALLERY ITEM ──────────────────────────────────────── */
+    .gl-item {
+        break-inside: avoid;
+        margin-bottom: 14px;
+        border-radius: 14px;
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid rgba(226,232,240,.8);
+        box-shadow: 0 2px 10px rgba(0,0,0,.06);
+        transition: transform 250ms cubic-bezier(.4,0,.2,1), box-shadow 250ms;
+        position: relative;
+        cursor: pointer;
+    }
+
+        .gl-item:hover {
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 10px 32px rgba(0,0,0,.12);
+            z-index: 2;
+        }
+
+        .gl-item[data-hidden="true"] {
+            display: none;
+        }
+
+    /* Image wrapper */
+    .gl-img-wrap {
+        position: relative;
+        overflow: hidden;
+        background: #f1f5f9;
+    }
+
+        .gl-img-wrap img {
+            width: 100%;
+            display: block;
+            transition: transform 350ms cubic-bezier(.4,0,.2,1);
+            min-height: 120px;
+            object-fit: cover;
+        }
+
+    .gl-item:hover .gl-img-wrap img {
+        transform: scale(1.06);
+    }
+
+    /* Hover overlay */
+    .gl-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,.7) 100%);
+        opacity: 0;
+        transition: opacity 250ms;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 14px;
+    }
+
+    .gl-item:hover .gl-overlay {
+        opacity: 1;
+    }
+
+    .gl-overlay-actions {
+        display: flex;
+        gap: 7px;
+        margin-bottom: 8px;
+    }
+
+    .gl-ov-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 180ms;
+        backdrop-filter: blur(8px);
+        text-decoration: none;
+    }
+
+        .gl-ov-btn.view {
+            background: rgba(255,255,255,.2);
+            color: #fff;
+        }
+
+        .gl-ov-btn.delete {
+            background: rgba(244,63,94,.25);
+            color: #fda4af;
+        }
+
+        .gl-ov-btn:hover {
+            transform: translateY(-1px) scale(1.08);
+        }
+
+        .gl-ov-btn.view:hover {
+            background: rgba(255,255,255,.35);
+        }
+
+        .gl-ov-btn.delete:hover {
+            background: rgba(244,63,94,.4);
+            color: #fff;
+        }
+
+    .gl-overlay-tour {
+        font-size: 11px;
+        font-weight: 700;
+        color: rgba(255,255,255,.85);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Card footer */
+    .gl-item-foot {
+        padding: 10px 13px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        border-top: 1px solid #f0f4f8;
+    }
+
+    .gl-tour-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 20px;
+        background: #f5f3ff;
+        color: #6d28d9;
+        border: 1px solid #ddd6fe;
+        max-width: 160px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .gl-tour-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #8b5cf6;
+        flex-shrink: 0;
+    }
+
+    .gl-item-id {
+        font-size: 9.5px;
+        color: #c4cdd9;
+        font-family: 'DM Mono', monospace;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 80px;
+    }
+
+    /* ── LIST VIEW ITEM ────────────────────────────────────── */
+    .gl-grid.list-view .gl-item {
+        display: flex;
+        align-items: center;
+        border-radius: 12px;
+    }
+
+    .gl-grid.list-view .gl-img-wrap {
+        width: 100px;
+        min-width: 100px;
+        height: 70px;
+        border-radius: 0;
+        flex-shrink: 0;
+    }
+
+        .gl-grid.list-view .gl-img-wrap img {
+            height: 70px;
+            min-height: 70px;
+        }
+
+    .gl-grid.list-view .gl-overlay {
+        border-radius: 0;
+    }
+
+    .gl-grid.list-view .gl-item-foot {
+        flex: 1;
+        border-top: none;
+        border-left: 1px solid #f0f4f8;
+        padding: 0 14px;
+    }
+
+    .gl-grid.list-view .gl-item-id {
+        display: block;
+    }
+
+    /* ── EMPTY STATE ───────────────────────────────────────── */
+    .gl-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 72px 20px;
+        text-align: center;
+        animation: glIn .3s .1s cubic-bezier(.4,0,.2,1) both;
+    }
+
+    .gl-empty-rings {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+    }
+
+        .gl-empty-rings::before, .gl-empty-rings::after {
+            content: '';
+            position: absolute;
+            inset: 0;
             border-radius: 50%;
-            margin: 0 auto 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border: 2px solid rgba(99,102,241,.15);
+            animation: emptyRing 2.8s ease-in-out infinite;
+        }
+
+        .gl-empty-rings::after {
+            animation-delay: 1.4s;
+        }
+    @@keyframes emptyRing {
+        0%,100%
+
+    {
+        transform: scale(1);
+        opacity: .5
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: .1
+    }
+
+    }
+
+    .gl-empty-ic {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        color: #c4cdd9;
+    }
+
+    .gl-empty h3 {
+        font-size: 15px;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 6px;
+    }
+
+    .gl-empty p {
+        font-size: 13px;
+        color: #94a3b8;
+        margin-bottom: 20px;
+    }
+
+    /* ── LIGHTBOX ──────────────────────────────────────────── */
+    .lightbox {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 250ms;
+    }
+
+        .lightbox.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+    .lb-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,.85);
+        backdrop-filter: blur(20px);
+        cursor: pointer;
+    }
+
+    .lb-box {
+        position: relative;
+        z-index: 1;
+        max-width: min(900px, 90vw);
+        max-height: 90vh;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 32px 80px rgba(0,0,0,.6);
+        transform: scale(.9);
+        transition: transform 300ms cubic-bezier(.34,1.56,.64,1);
+    }
+
+    .lightbox.open .lb-box {
+        transform: scale(1);
+    }
+
+    .lb-box img {
+        display: block;
+        max-width: 100%;
+        max-height: calc(90vh - 72px);
+        object-fit: contain;
+        background: #0f172a;
+    }
+
+    .lb-info {
+        background: rgba(15,23,42,.95);
+        backdrop-filter: blur(16px);
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .lb-tour {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+        .lb-tour i {
+            color: #818cf8;
+        }
+
+    .lb-close {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: rgba(255,255,255,.1);
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: #e2e8f0;
+        cursor: pointer;
+        transition: background 180ms;
+    }
+
+        .lb-close:hover {
+            background: rgba(244,63,94,.3);
+            color: #fda4af;
+        }
+
+    .lb-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.12);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: #fff;
+        cursor: pointer;
+        transition: all 200ms;
+        z-index: 2;
+    }
+
+        .lb-nav:hover {
+            background: rgba(255,255,255,.22);
+            transform: translateY(-50%) scale(1.08);
+        }
+
+        .lb-nav.prev {
+            left: -56px;
+        }
+
+        .lb-nav.next {
+            right: -56px;
+        }
+    @@media (max-width: 640px) {
+        .lb-nav.prev
+
+    {
+        left: 8px;
+    }
+
+    .lb-nav.next {
+        right: 8px;
+    }
+
+    }
+
+    /* No results */
+    .no-results {
+        display: none;
+        text-align: center;
+        padding: 48px 20px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #94a3b8;
+    }
+
+        .no-results i {
             font-size: 28px;
-            color: var(--danger);
+            color: #e2e8f0;
+            display: block;
+            margin-bottom: 10px;
         }
+</style>
 
-        /* ─── Responsive ─────────────────────────────────────── */
-        .table-responsive-scroll {
-            overflow-x: auto;
-        }
-
-        /* ─── Row entrance animation ─────────────────────────── */
-        @@keyframes rowSlide {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .gallery-table tbody tr {
-            animation: rowSlide .3s ease both;
-        }
-
-            .gallery-table tbody tr:nth-child(1) {
-                animation-delay: .04s;
-            }
-
-            .gallery-table tbody tr:nth-child(2) {
-                animation-delay: .08s;
-            }
-
-            .gallery-table tbody tr:nth-child(3) {
-                animation-delay: .12s;
-            }
-
-            .gallery-table tbody tr:nth-child(4) {
-                animation-delay: .16s;
-            }
-
-            .gallery-table tbody tr:nth-child(5) {
-                animation-delay: .20s;
-            }
-
-            .gallery-table tbody tr:nth-child(6) {
-                animation-delay: .24s;
-            }
-
-            .gallery-table tbody tr:nth-child(7) {
-                animation-delay: .28s;
-            }
-
-            .gallery-table tbody tr:nth-child(8) {
-                animation-delay: .32s;
-            }
-
-            .gallery-table tbody tr:nth-child(9) {
-                animation-delay: .36s;
-            }
-
-            .gallery-table tbody tr:nth-child(10) {
-                animation-delay: .40s;
-            }
-    </style>
-}
-
-<!-- ═══ PAGE HEADER ═══════════════════════════════════════════════════ -->
-<div class="section-header">
+<!-- Page Header -->
+<div class="ph anim">
     <div>
-        <p class="page-eyebrow">Yönetim Paneli</p>
-        <h1 class="page-title">Galeri Listesi</h1>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/admin" class="text-muted">Admin</a></li>
-                <li class="breadcrumb-item active text-muted">Galeri</li>
-            </ol>
-        </nav>
+        <div class="ph-eye">Collections</div>
+        <h1 class="ph-h1">Gallery</h1>
+        <p class="ph-desc">Tour image gallery management</p>
     </div>
-    <a href="/AdminGallery/CreateGallery" class="btn-add-gallery">
-        <i class="bi bi-plus-lg"></i>
-        Yeni Görsel Ekle
-    </a>
+    <div class="ph-acts">
+        <a href="@Url.Action("CreateGallery", "AdminGallery")" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Add Image
+        </a>
+    </div>
 </div>
 
-<!-- ═══ SUMMARY STATS ════════════════════════════════════════════════ -->
-@if (Model != null)
-{
-    int totalImages = Model.Count;
-    int linkedImages = Model.Count(g => !string.IsNullOrWhiteSpace(g.TourId));
-    int uniqueTours = Model.Select(g => g.TourId).Where(t => !string.IsNullOrWhiteSpace(t)).Distinct().Count();
+<!-- Stat Row -->
+<div class="gl-stats">
+    <div class="gl-stat">
+        <div class="gl-stat-ico" style="background:#f5f3ff;color:#8b5cf6;">
+            <i class="fa-solid fa-images"></i>
+        </div>
+        <div>
+            <div class="gl-stat-lbl">Total Images</div>
+            <div class="gl-stat-val">@total</div>
+        </div>
+    </div>
+    <div class="gl-stat">
+        <div class="gl-stat-ico" style="background:#eff6ff;color:#3b82f6;">
+            <i class="fa-solid fa-map-location-dot"></i>
+        </div>
+        <div>
+            <div class="gl-stat-lbl">Tours Covered</div>
+            <div class="gl-stat-val">@tourGroups</div>
+        </div>
+    </div>
+    <div class="gl-stat">
+        <div class="gl-stat-ico" style="background:#f0fdf4;color:#10b981;">
+            <i class="fa-solid fa-layer-group"></i>
+        </div>
+        <div>
+            <div class="gl-stat-lbl">Avg per Tour</div>
+            <div class="gl-stat-val">@(tourGroups > 0 ? (total / tourGroups).ToString() : "0")</div>
+        </div>
+    </div>
+</div>
 
-    <div class="row stats-row g-3">
-        <div class="col-6 col-lg-4">
-            <div class="stat-card">
-                <div class="stat-icon si-blue"><i class="bi bi-images"></i></div>
-                <div>
-                    <div class="stat-num">@totalImages</div>
-                    <div class="stat-lbl">Toplam Görsel</div>
-                </div>
+@if (!list.Any())
+{
+    <!-- Empty state -->
+    <div class="card" style="background:#fff;">
+        <div class="gl-empty">
+            <div class="gl-empty-rings">
+                <div class="gl-empty-ic"><i class="fa-regular fa-images"></i></div>
             </div>
-        </div>
-        <div class="col-6 col-lg-4">
-            <div class="stat-card">
-                <div class="stat-icon si-green"><i class="bi bi-link-45deg"></i></div>
-                <div>
-                    <div class="stat-num">@linkedImages</div>
-                    <div class="stat-lbl">Tura Bağlı Görseller</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-lg-4">
-            <div class="stat-card">
-                <div class="stat-icon si-purple"><i class="bi bi-map-fill"></i></div>
-                <div>
-                    <div class="stat-num">@uniqueTours</div>
-                    <div class="stat-lbl">Görseli Olan Tur</div>
-                </div>
-            </div>
+            <h3>No images yet</h3>
+            <p>Start building your gallery by uploading the first image.</p>
+            <a href="@Url.Action("CreateGallery", "AdminGallery")" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> Add First Image
+            </a>
         </div>
     </div>
 }
-
-<!-- ═══ FILTER BAR ═══════════════════════════════════════════════════ -->
-<div class="filter-bar">
-    <div class="filter-search">
-        <i class="bi bi-search"></i>
-        <input type="text" id="tableSearch" placeholder="Görsel ID veya URL arayın…" autocomplete="off" />
-    </div>
-
-    <select class="filter-select" id="tourFilter">
-        <option value="">Tüm Turlar</option>
-        @if (Model != null)
-        {
-            foreach (var item in Model
-            .Where(g => !string.IsNullOrWhiteSpace(g.TourName) && g.TourName != "—")
-            .GroupBy(g => g.TourId)
-            .Select(grp => grp.First()))
+else
+{
+    <!-- Filter bar -->
+    <div class="gl-filter">
+        <div class="gl-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="Search by tour name...">
+        </div>
+        <select class="gl-tour-filter" id="tourFilter">
+            <option value="">All Tours</option>
+            @foreach (var t in tours)
             {
-                <option value="@item.TourId">@item.TourName</option>
+                <option value="@t">@t</option>
             }
-        }
-    </select>
-
-    <span class="filter-count" id="filterCount">
-        <strong>@(Model?.Count ?? 0)</strong> görselden
-        <strong id="visibleCount">@(Model?.Count ?? 0)</strong> tanesi gösteriliyor
-    </span>
-</div>
-
-<!-- ═══ TABLE CARD ════════════════════════════════════════════════════ -->
-<div class="table-card">
-    <div class="table-responsive-scroll">
-        <table class="gallery-table" id="galleryTable">
-            <thead>
-                <tr>
-                    <th style="width:80px;">#</th>
-                    <th style="width:360px;">Görsel</th>
-                    <th>Görsel URL</th>
-                    <th>Tur ID</th>
-                    <th style="text-align:center;">İşlemler</th>
-                </tr>
-            </thead>
-            <tbody id="galleryTableBody">
-                @if (Model == null || !Model.Any())
-                {
-                    <tr>
-                        <td colspan="5">
-                            <div class="empty-state">
-                                <div class="empty-icon"><i class="bi bi-images"></i></div>
-                                <div class="empty-title">Hiç görsel bulunamadı!</div>
-                                <p class="empty-sub">Hemen ilk görselinizi ekleyerek başlayın!</p>
-                            </div>
-                        </td>
-                    </tr>
-                }
-                else
-                {
-                    int index = 1;
-                    @foreach (var gallery in Model)
-                    {
-                        <tr data-gallery-id="@gallery.GalleryId"
-                            data-tour-id="@gallery.TourId"
-                            data-url="@gallery.ImageUrl?.ToLower()">
-
-                            <!-- Index -->
-                            <td>
-                                <span style="font-size:13px; font-weight:600; color:var(--text-muted);">@index</span>
-                            </td>
-
-                            <!-- Image -->
-                            <td>
-                                <div class="gallery-cell">
-                                    @if (!string.IsNullOrWhiteSpace(gallery.ImageUrl))
-                                    {
-                                        <img src="@gallery.ImageUrl"
-                                             alt="Galeri Görseli"
-                                             class="gallery-thumb"
-                                             onclick="openLightbox('@gallery.ImageUrl')"
-                                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-                                        <div class="gallery-thumb-placeholder" style="display:none;">
-                                            <i class="bi bi-image-fill"></i>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="gallery-thumb-placeholder">
-                                            <i class="bi bi-image-fill"></i>
-                                        </div>
-                                    }
-                                    <span style="font-size:12px; color:var(--text-muted);">
-                                        <i class="bi bi-zoom-in" style="font-size:11px;"></i> Önizle
-                                    </span>
-                                </div>
-                            </td>
-
-                            <!-- URL -->
-                            <td>
-                                @if (!string.IsNullOrWhiteSpace(gallery.ImageUrl))
-                                {
-                                    <span class="gallery-img-url" title="@gallery.ImageUrl">@gallery.ImageUrl</span>
-                                }
-                                else
-                                {
-                                    <span class="text-muted" style="font-size:12px;">—</span>
-                                }
-                            </td>
-
-                            <!-- Tour Adı -->
-                            <td>
-                                @if (!string.IsNullOrWhiteSpace(gallery.TourName) && gallery.TourName != "—")
-                                {
-                                    <span class="tour-id-badge" title="ID: @gallery.TourId">
-                                        <i class="bi bi-map" style="font-size:11px;"></i>
-                                        @gallery.TourName
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="no-tour">
-                                        <i class="bi bi-dash-circle" style="font-size:11px; margin-right:4px;"></i>
-                                        Bağlı Tur Yok
-                                    </span>
-                                }
-                            </td>
-
-                            <!-- Actions -->
-                            <td>
-                                <div class="action-group" style="justify-content:center;">
-                                    <button class="btn-action btn-view"
-                                            title="Görseli Önizle"
-                                            data-bs-toggle="tooltip"
-                                            onclick="openLightbox('@gallery.ImageUrl')">
-                                        <i class="bi bi-eye-fill"></i>
-                                    </button>
-                                    <a href="/AdminGallery/UpdateGallery/@gallery.GalleryId"
-                                       class="btn-action btn-edit"
-                                       title="Görseli Düzenle"
-                                       data-bs-toggle="tooltip">
-                                        <i class="bi bi-pencil-fill"></i>
-                                    </a>
-                                    <button class="btn-action btn-delete"
-                                            title="Görseli Sil"
-                                            data-bs-toggle="tooltip"
-                                            onclick="openDeleteModal('@gallery.GalleryId')">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        index++;
-                    }
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<!-- ═══ LIGHTBOX ══════════════════════════════════════════════════════ -->
-<div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox(event)">
-    <button class="lightbox-close" onclick="closeLightbox()">
-        <i class="bi bi-x-lg"></i>
-    </button>
-    <img src="" alt="Önizleme" class="lightbox-img" id="lightboxImg" />
-</div>
-
-<!-- ═══ DELETE CONFIRMATION MODAL ════════════════════════════════════ -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content" style="border-radius:16px; border:none; box-shadow:var(--shadow-lg);">
-            <div class="modal-body text-center p-4">
-                <div class="delete-modal-icon">
-                    <i class="bi bi-trash3-fill"></i>
-                </div>
-                <h5 style="font-weight:700; color:var(--navy); margin-bottom:8px;">Emin misiniz?</h5>
-                <p style="font-size:14px; color:var(--text-muted); margin-bottom:20px;">
-                    Bu görsel kalıcı olarak silinecek. Bu işlem geri alınamaz!
-                </p>
-                <p style="font-size:12.5px; color:#ef4444; margin-bottom:24px;">
-                    Bu işlem geri alınamaz!
-                </p>
-                <div class="d-flex gap-2">
-                    <button type="button"
-                            class="btn btn-light flex-fill"
-                            style="border-radius:10px; font-weight:600; font-family:'DM Sans',sans-serif;"
-                            data-bs-dismiss="modal">
-                        İptal Et
-                    </button>
-                    <a href="#" id="deleteConfirmBtn"
-                       class="btn btn-danger flex-fill"
-                       style="border-radius:10px; font-weight:600; font-family:'DM Sans',sans-serif;">
-                        Sil
-                    </a>
-                </div>
-            </div>
+        </select>
+        <span class="gl-count">
+            Showing <strong id="visibleCount">@total</strong> of <strong>@total</strong> images
+        </span>
+        <div class="view-toggle">
+            <button class="vt-btn on" id="btnGrid" onclick="setView('grid')" title="Grid view">
+                <i class="fa-solid fa-grip"></i>
+            </button>
+            <button class="vt-btn" id="btnList" onclick="setView('list')" title="List view">
+                <i class="fa-solid fa-list"></i>
+            </button>
         </div>
     </div>
+
+    <!-- Gallery grid -->
+    <div class="gl-grid" id="glGrid">
+
+        @foreach (var (img, idx) in list.Select((g, i) => (g, i)))
+        {
+            <div class="gl-item"
+                 data-tour="@img.TourName"
+                 data-idx="@idx"
+                 onclick="openLightbox(@idx)">
+
+                <div class="gl-img-wrap">
+                    <img src="@img.ImageUrl"
+                         alt="@img.TourName"
+                         loading="lazy"
+                         onerror="this.style.background='#f1f5f9';this.style.minHeight='140px';" />
+                    <div class="gl-overlay">
+                        <div class="gl-overlay-actions" onclick="event.stopPropagation()">
+                            <a href="@img.ImageUrl" target="_blank"
+                               class="gl-ov-btn view" title="Open image">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </a>
+                            <a href="@Url.Action("DeleteGallery", "AdminGallery", new { id = img.GalleryId })"
+                               class="gl-ov-btn delete" title="Delete"
+                               onclick="return confirm('Bu görseli silmek istediğinize emin misiniz?')">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                        </div>
+                        <div class="gl-overlay-tour">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                            @img.TourName
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gl-item-foot">
+                    <span class="gl-tour-chip">
+                        <span class="gl-tour-dot"></span>
+                        @img.TourName
+                    </span>
+                    <span class="gl-item-id" title="@img.GalleryId">
+                        @(img.GalleryId?.Length > 8 ? img.GalleryId[..8] + "…" : img.GalleryId)
+                    </span>
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+    <div class="no-results" id="noResults">
+        <i class="fa-regular fa-face-frown-open"></i>
+        No images found for this filter.
+    </div>
+}
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+    <div class="lb-backdrop" onclick="closeLightbox()"></div>
+    <button class="lb-nav prev" onclick="lbNav(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+    <div class="lb-box">
+        <img id="lbImg" src="" alt="Gallery" />
+        <div class="lb-info">
+            <div class="lb-tour">
+                <i class="fa-solid fa-map-location-dot"></i>
+                <span id="lbTour">—</span>
+            </div>
+            <button class="lb-close" onclick="closeLightbox()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
+    <button class="lb-nav next" onclick="lbNav(1)"><i class="fa-solid fa-chevron-right"></i></button>
 </div>
 
 @section Scripts {
     <script>
-        // ── Init tooltips ──────────────────────────────────────────────────
-        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
-            new bootstrap.Tooltip(el, { trigger: 'hover' });
-        });
+        /* ── Gallery data for lightbox ───────────────────────────── */
+        const GALLERY = [
+            @foreach (var img in list)
+            {
+                    @Html.Raw($"{{ url: '{img.ImageUrl}', tour: '{img.TourName?.Replace("'", "\\'")}', id: '{img.GalleryId}' }},")
+            }
+        ];
 
-        // ── Lightbox ───────────────────────────────────────────────────────
-        const lightboxOverlay = document.getElementById('lightboxOverlay');
-        const lightboxImg     = document.getElementById('lightboxImg');
+        let currentIdx = 0;
+        let visibleIndices = GALLERY.map((_,i) => i);
 
-        function openLightbox(url) {
-            if (!url) return;
-            lightboxImg.src = url;
-            lightboxOverlay.classList.add('open');
+        /* ── Lightbox ────────────────────────────────────────────── */
+        function openLightbox(idx) {
+            const item = GALLERY[idx];
+            if (!item) return;
+            currentIdx = idx;
+            document.getElementById('lbImg').src  = item.url;
+            document.getElementById('lbTour').textContent = item.tour;
+            document.getElementById('lightbox').classList.add('open');
             document.body.style.overflow = 'hidden';
         }
 
-        function closeLightbox(e) {
-            if (e && e.target !== lightboxOverlay && e.target.closest('.lightbox-close') === null) return;
-            lightboxOverlay.classList.remove('open');
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('open');
             document.body.style.overflow = '';
-            setTimeout(() => { lightboxImg.src = ''; }, 250);
+            setTimeout(() => { document.getElementById('lbImg').src = ''; }, 300);
+        }
+
+        function lbNav(dir) {
+            const pos  = visibleIndices.indexOf(currentIdx);
+            const next = visibleIndices[(pos + dir + visibleIndices.length) % visibleIndices.length];
+            if (next !== undefined) openLightbox(next);
         }
 
         document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') closeLightbox();
+            const lb = document.getElementById('lightbox');
+            if (!lb.classList.contains('open')) return;
+            if (e.key === 'Escape')     closeLightbox();
+            if (e.key === 'ArrowRight') lbNav(1);
+            if (e.key === 'ArrowLeft')  lbNav(-1);
         });
 
-        // ── Delete Modal ───────────────────────────────────────────────────
-        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        /* ── Filter & search ─────────────────────────────────────── */
+        function applyFilter() {
+            const q     = document.getElementById('searchInput')?.value.toLowerCase().trim() ?? '';
+            const tour  = document.getElementById('tourFilter')?.value ?? '';
+            const items = document.querySelectorAll('.gl-item');
+            let   n     = 0;
 
-        function openDeleteModal(galleryId) {
-            document.getElementById('deleteConfirmBtn').href = '/AdminGallery/DeleteGallery/' + galleryId;
-            deleteModal.show();
-        }
-
-        // ── Live Filtering ─────────────────────────────────────────────────
-        const searchInput  = document.getElementById('tableSearch');
-        const tourFilter   = document.getElementById('tourFilter');
-        const visibleCount = document.getElementById('visibleCount');
-        const tableBody    = document.getElementById('galleryTableBody');
-
-        function applyFilters() {
-            const query  = searchInput.value.toLowerCase().trim();
-            const tourId = tourFilter.value;
-
-            const rows = tableBody.querySelectorAll('tr[data-gallery-id]');
-            let visible = 0;
-
-            rows.forEach(row => {
-                const rowUrl    = row.dataset.url    || '';
-                const rowTourId = row.dataset.tourId || '';
-                const rowId     = (row.dataset.galleryId || '').toLowerCase();
-
-                const matchSearch = !query  || rowUrl.includes(query) || rowId.includes(query);
-                const matchTour   = !tourId || rowTourId === tourId;
-
-                if (matchSearch && matchTour) {
-                    row.style.display = '';
-                    visible++;
-                } else {
-                    row.style.display = 'none';
-                }
+            visibleIndices = [];
+            items.forEach(item => {
+                const tName = item.dataset.tour?.toLowerCase() ?? '';
+                const idx   = parseInt(item.dataset.idx);
+                const show  = (!q    || tName.includes(q))
+                           && (!tour || item.dataset.tour === tour);
+                item.dataset.hidden = show ? 'false' : 'true';
+                item.style.display  = show ? '' : 'none';
+                if (show) { n++; visibleIndices.push(idx); }
             });
 
-            visibleCount.textContent = visible;
+            const vc = document.getElementById('visibleCount');
+            if (vc) vc.textContent = n;
 
-            // Empty state
-            let emptyRow = tableBody.querySelector('tr.no-results');
-            if (visible === 0 && rows.length > 0) {
-                if (!emptyRow) {
-                    emptyRow = document.createElement('tr');
-                    emptyRow.className = 'no-results';
-                    emptyRow.innerHTML = `
-                        <td colspan="5">
-                            <div class="empty-state">
-                                <div class="empty-icon"><i class="bi bi-funnel"></i></div>
-                                <div class="empty-title">Filtrenize uygun görsel bulunamadı.</div>
-                                <p class="empty-sub">Aramanızı veya filtrenizi değiştirin.</p>
-                            </div>
-                        </td>`;
-                    tableBody.appendChild(emptyRow);
-                }
-            } else if (emptyRow) {
-                emptyRow.remove();
-            }
+            const nr = document.getElementById('noResults');
+            if (nr) nr.style.display = n === 0 ? 'block' : 'none';
         }
 
-        searchInput.addEventListener('input', applyFilters);
-        tourFilter.addEventListener('change', applyFilters);
+        document.getElementById('searchInput')?.addEventListener('input', applyFilter);
+        document.getElementById('tourFilter')?.addEventListener('change', applyFilter);
+
+        /* ── View toggle ─────────────────────────────────────────── */
+        function setView(v) {
+            const grid  = document.getElementById('glGrid');
+            const btnG  = document.getElementById('btnGrid');
+            const btnL  = document.getElementById('btnList');
+            if (!grid) return;
+            if (v === 'list') {
+                grid.classList.add('list-view');
+                btnL.classList.add('on'); btnG.classList.remove('on');
+            } else {
+                grid.classList.remove('list-view');
+                btnG.classList.add('on'); btnL.classList.remove('on');
+            }
+        }
     </script>
-} *@
+}
