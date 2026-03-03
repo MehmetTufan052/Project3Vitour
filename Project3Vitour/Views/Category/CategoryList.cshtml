@@ -575,7 +575,7 @@
         <p class="ph-desc">Manage tour category taxonomy</p>
     </div>
     <div class="ph-acts">
-        <a href="@Url.Action("CreateCategory", "AdminCategory")" class="btn btn-primary">
+        <a href="@Url.Action("CreateCategory", "Category")" class="btn btn-primary">
             <i class="fa-solid fa-plus"></i> Add Category
         </a>
     </div>
@@ -620,7 +620,7 @@
         </div>
         <h3>No categories yet</h3>
         <p>Create your first category to start organizing tours.</p>
-        <a href="@Url.Action("CreateCategory", "AdminCategory")" class="btn btn-primary">
+        <a href="@Url.Action("CreateCategory", "Category")" class="btn btn-primary">
             <i class="fa-solid fa-plus"></i> Add First Category
         </a>
     </div>
@@ -694,11 +694,11 @@ else
                         </span>
                     }
                     <div class="cat-actions">
-                        <a href="@Url.Action("UpdateCategory", "AdminCategory", new { id = cat.CategoryId })"
+                        <a href="@Url.Action("UpdateCategory", "Category", new { id = cat.CategoryId })"
                            class="cat-btn edit" title="Edit">
                             <i class="fa-solid fa-pen"></i>
                         </a>
-                        <a href="@Url.Action("DeleteCategory", "AdminCategory", new { id = cat.CategoryId })"
+                        <a href="@Url.Action("DeleteCategory", "Category", new { id = cat.CategoryId })"
                            class="cat-btn delete" title="Delete"
                            onclick="return confirm('Bu kategoriyi silmek istediğinize emin misiniz?')">
                             <i class="fa-solid fa-trash"></i>
@@ -764,11 +764,11 @@ else
                             </td>
                             <td>
                                 <div style="display:flex;gap:6px;">
-                                    <a href="@Url.Action("UpdateCategory", "AdminCategory", new { id = cat.CategoryId })"
+                                    <a href="@Url.Action("UpdateCategory", "Category", new { id = cat.CategoryId })"
                                        class="cat-btn edit" title="Edit">
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
-                                    <a href="@Url.Action("DeleteCategory", "AdminCategory", new { id = cat.CategoryId })"
+                                    <a href="@Url.Action("DeleteCategory", "Category", new { id = cat.CategoryId })"
                                        class="cat-btn delete" title="Delete"
                                        onclick="return confirm('Bu kategoriyi silmek istediğinize emin misiniz?')">
                                         <i class="fa-solid fa-trash"></i>

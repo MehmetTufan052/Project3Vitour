@@ -1,52 +1,189 @@
 ﻿@model Project3Vitour.Dtos.CategoryDto.UpdateCategoryDto
 @{
-    ViewData["Title"] = "UpdateCategory";
+    ViewData["Title"] = "Update Category";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <style>
     /* ══════════════════════════════════════════════════════════
-       UPDATE CATEGORY
+       UPDATE CATEGORY — FULL WIDTH, ENHANCED
     ══════════════════════════════════════════════════════════ */
 
     .uc-layout {
         display: grid;
-        grid-template-columns: 1fr 290px;
-        gap: 20px;
+        grid-template-columns: 1fr 320px;
+        gap: 22px;
         align-items: start;
-        max-width: 900px;
+        /* max-width kaldırıldı */
     }
     @@media (max-width: 1024px) {
         .uc-layout
 
     {
         grid-template-columns: 1fr;
-        max-width: 100%;
     }
 
     }
 
-    /* Edit banner */
+    /* ── EDIT BANNER ───────────────────────────────────────── */
     .edit-banner {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 14px;
-        padding: 13px 20px;
-        border-radius: 14px;
-        margin-bottom: 20px;
-        background: linear-gradient(135deg, rgba(99,102,241,.10), rgba(139,92,246,.06));
-        border: 1px solid rgba(99,102,241,.25);
-        backdrop-filter: blur(12px);
-        box-shadow: 0 2px 16px rgba(99,102,241,.08), inset 0 1px 0 rgba(255,255,255,.06);
-        animation: ucIn .4s cubic-bezier(.4,0,.2,1) both;
+        gap: 16px;
+        padding: 16px 22px;
+        border-radius: 16px;
+        margin-bottom: 22px;
+        background: linear-gradient(135deg, rgba(99,102,241,.12) 0%, rgba(139,92,246,.08) 50%, rgba(99,102,241,.05) 100%);
+        border: 1px solid rgba(99,102,241,.28);
+        backdrop-filter: blur(16px);
+        box-shadow: 0 4px 24px rgba(99,102,241,.10), inset 0 1px 0 rgba(255,255,255,.12);
+        animation: bannerIn .5s cubic-bezier(.4,0,.2,1) both;
+        position: relative;
+        overflow: hidden;
     }
-    @@keyframes ucIn {
+
+        .edit-banner::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99,102,241,.18) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .edit-banner::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 60px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(139,92,246,.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+    @@keyframes bannerIn {
         from
 
     {
         opacity: 0;
-        transform: translateY(-8px)
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+
+    }
+
+    .eb-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        z-index: 1;
+    }
+
+    .eb-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        color: #fff;
+        flex-shrink: 0;
+        box-shadow: 0 0 20px rgba(99,102,241,.45), inset 0 1px 0 rgba(255,255,255,.2);
+        position: relative;
+    }
+
+        .eb-icon::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(180deg, rgba(255,255,255,.22) 0%, transparent 60%);
+        }
+
+    .eb-texts {
+    }
+
+    .eb-title {
+        font-size: 14px;
+        font-weight: 800;
+        color: #3730a3;
+        letter-spacing: -.2px;
+    }
+
+    .eb-sub {
+        font-size: 11px;
+        color: #6366f1;
+        opacity: .75;
+        margin-top: 2px;
+    }
+
+    .eb-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 1;
+    }
+
+    .eb-id {
+        font-size: 10px;
+        font-family: 'DM Mono', monospace;
+        color: #6366f1;
+        background: rgba(99,102,241,.12);
+        padding: 5px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(99,102,241,.2);
+        letter-spacing: .5px;
+        white-space: nowrap;
+    }
+
+    .eb-pulse {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #10b981;
+        flex-shrink: 0;
+        box-shadow: 0 0 0 0 rgba(16,185,129,.5);
+        animation: pulse 2s ease-in-out infinite;
+    }
+    @@keyframes pulse {
+        0%,100%
+
+    {
+        box-shadow: 0 0 0 0 rgba(16,185,129,.4);
+    }
+
+    50% {
+        box-shadow: 0 0 0 7px rgba(16,185,129,0);
+    }
+
+    }
+
+    /* ── MAIN CARD ─────────────────────────────────────────── */
+    .uc-card {
+        background: #fff;
+        border: 1px solid rgba(226,232,240,.9);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 4px 24px rgba(0,0,0,.07), inset 0 1px 0 rgba(255,255,255,.95);
+        animation: cardIn .4s .06s cubic-bezier(.4,0,.2,1) both;
+    }
+    @@keyframes cardIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(14px)
     }
 
     to {
@@ -56,90 +193,27 @@
 
     }
 
-    .eb-left {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .eb-icon {
-        width: 38px;
-        height: 38px;
-        border-radius: 10px;
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 15px;
-        color: #fff;
-        flex-shrink: 0;
-        box-shadow: 0 0 16px rgba(99,102,241,.35);
-        position: relative;
-    }
-
-        .eb-icon::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: linear-gradient(180deg, rgba(255,255,255,.2) 0%, transparent 60%);
-        }
-
-    .eb-title {
-        font-size: 13.5px;
-        font-weight: 800;
-        color: #4338ca;
-    }
-
-    .eb-sub {
-        font-size: 11px;
-        color: #6366f1;
-        margin-top: 1px;
-        opacity: .8;
-    }
-
-    .eb-id {
-        font-size: 10px;
-        font-family: 'DM Mono', monospace;
-        color: #6366f1;
-        background: rgba(99,102,241,.10);
-        padding: 4px 10px;
-        border-radius: 8px;
-        border: 1px solid rgba(99,102,241,.18);
-        white-space: nowrap;
-        letter-spacing: .5px;
-    }
-
-    /* ── MAIN CARD ─────────────────────────────────────────── */
-    .uc-card {
-        background: #fff;
-        border: 1px solid rgba(226,232,240,.9);
-        border-radius: 18px;
-        overflow: hidden;
-        box-shadow: 0 2px 16px rgba(0,0,0,.06), inset 0 1px 0 rgba(255,255,255,.95);
-        animation: ucIn .35s .04s cubic-bezier(.4,0,.2,1) both;
-    }
-
     .uc-card-head {
-        padding: 20px 24px 16px;
+        padding: 22px 28px 18px;
         border-bottom: 1px solid #f0f4f8;
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 16px;
+        background: linear-gradient(135deg, #fafbff 0%, #f8f7ff 100%);
     }
 
     .uc-head-icon {
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
+        width: 46px;
+        height: 46px;
+        border-radius: 13px;
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 17px;
+        font-size: 19px;
         color: #fff;
         flex-shrink: 0;
-        box-shadow: 0 0 18px rgba(99,102,241,.35);
+        box-shadow: 0 0 20px rgba(99,102,241,.35), inset 0 1px 0 rgba(255,255,255,.2);
         position: relative;
     }
 
@@ -148,130 +222,231 @@
             position: absolute;
             inset: 0;
             border-radius: inherit;
-            background: linear-gradient(180deg, rgba(255,255,255,.2) 0%, transparent 60%);
+            background: linear-gradient(180deg, rgba(255,255,255,.22) 0%, transparent 60%);
         }
 
     .uc-head-title {
-        font-size: 15px;
+        font-size: 16px;
         font-weight: 800;
         color: #0f172a;
-        letter-spacing: -.3px;
+        letter-spacing: -.4px;
     }
 
     .uc-head-sub {
-        font-size: 11.5px;
+        font-size: 12px;
         color: #94a3b8;
-        margin-top: 2px;
+        margin-top: 3px;
     }
 
     .uc-body {
-        padding: 26px;
+        padding: 28px;
     }
 
-    /* ── CATEGORY PREVIEW ──────────────────────────────────── */
-    .cat-preview-box {
+    /* ── HERO PREVIEW ──────────────────────────────────────── */
+    .hero-preview {
+        border-radius: 16px;
+        margin-bottom: 28px;
+        background: linear-gradient(135deg, #f0f0ff 0%, #f5f3ff 50%, #ede9fe 100%);
+        border: 1px solid #ddd6fe;
+        padding: 24px 28px;
         display: flex;
         align-items: center;
-        gap: 16px;
-        padding: 18px 20px;
-        border-radius: 14px;
-        margin-bottom: 24px;
-        background: linear-gradient(135deg, #fafbff 0%, #f5f3ff 100%);
-        border: 1px solid #e0e7ff;
+        gap: 20px;
         position: relative;
         overflow: hidden;
         transition: all 300ms;
     }
 
-        .cat-preview-box::before {
-            content: '';
-            position: absolute;
-            top: -20px;
-            right: -20px;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(99,102,241,.12) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-    .cat-prev-avatar {
-        width: 52px;
-        height: 52px;
-        border-radius: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-        font-weight: 900;
-        color: #fff;
-        flex-shrink: 0;
-        position: relative;
-        overflow: hidden;
-        transition: all 300ms cubic-bezier(.34,1.56,.64,1);
-        box-shadow: 0 4px 14px rgba(99,102,241,.3);
-    }
-
-        .cat-prev-avatar::after {
+        .hero-preview::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, rgba(255,255,255,.2) 0%, transparent 60%);
+            background: linear-gradient(135deg, rgba(99,102,241,.05) 0%, transparent 60%, rgba(139,92,246,.05) 100%);
+            pointer-events: none;
         }
-
-    .cat-prev-name {
-        font-size: 18px;
-        font-weight: 800;
-        color: #1e1b4b;
-        letter-spacing: -.4px;
-        line-height: 1.2;
-        transition: all 200ms;
+    /* Floating orbs */
+    .hero-orb {
+        position: absolute;
+        border-radius: 50%;
+        pointer-events: none;
+        animation: orbFloat 4s ease-in-out infinite;
     }
 
-        .cat-prev-name.placeholder {
-            color: #c4cdd9;
-            font-weight: 400;
-            font-style: italic;
-            font-size: 15px;
+    .hero-orb-1 {
+        width: 60px;
+        height: 60px;
+        top: -15px;
+        right: 40px;
+        background: radial-gradient(circle, rgba(99,102,241,.15) 0%, transparent 70%);
+        animation-delay: 0s;
+    }
+
+    .hero-orb-2 {
+        width: 40px;
+        height: 40px;
+        bottom: -10px;
+        right: 120px;
+        background: radial-gradient(circle, rgba(139,92,246,.12) 0%, transparent 70%);
+        animation-delay: 2s;
+    }
+    @@keyframes orbFloat {
+        0%,100%
+
+    {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-8px) scale(1.1);
+    }
+
+    }
+
+    .hero-avatar-wrap {
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .hero-avatar {
+        width: 72px;
+        height: 72px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        font-weight: 900;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 28px rgba(99,102,241,.4), 0 0 0 4px rgba(255,255,255,.6), inset 0 2px 0 rgba(255,255,255,.25);
+        transition: all 350ms cubic-bezier(.34,1.56,.64,1);
+        z-index: 1;
+    }
+
+        .hero-avatar:hover {
+            transform: scale(1.06) rotate(-2deg);
         }
 
-    .cat-prev-label {
-        font-size: 9.5px;
+        .hero-avatar::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,.22) 0%, transparent 55%);
+        }
+
+    .hero-avatar-ring {
+        position: absolute;
+        inset: -6px;
+        border-radius: 26px;
+        border: 2px solid rgba(99,102,241,.2);
+        animation: ringRotate 8s linear infinite;
+    }
+    @@keyframes ringRotate {
+        to
+
+    {
+        transform: rotate(360deg);
+    }
+
+    }
+
+    .hero-info {
+        flex: 1;
+        z-index: 1;
+    }
+
+    .hero-eyebrow {
+        font-size: 9px;
         font-weight: 800;
-        letter-spacing: 1.5px;
+        letter-spacing: 2px;
         text-transform: uppercase;
         color: #a5b4fc;
         font-family: 'DM Mono', monospace;
-        margin-bottom: 4px;
+        margin-bottom: 5px;
+    }
+
+    .hero-name {
+        font-size: 24px;
+        font-weight: 900;
+        color: #1e1b4b;
+        letter-spacing: -.6px;
+        line-height: 1.1;
+        transition: all 250ms;
+    }
+
+        .hero-name.placeholder {
+            color: #c4cdd9;
+            font-weight: 400;
+            font-style: italic;
+            font-size: 18px;
+        }
+
+    .hero-status {
+        margin-top: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+    }
+
+        .hero-status.on {
+            background: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .hero-status.off {
+            background: #f8fafc;
+            color: #94a3b8;
+            border: 1px solid #e2e8f0;
+        }
+
+    .hero-status-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+    }
+
+    .hero-status.on .hero-status-dot {
+        background: #10b981;
+    }
+
+    .hero-status.off .hero-status-dot {
+        background: #cbd5e1;
     }
 
     /* ── FIELDS ────────────────────────────────────────────── */
+    .fields-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
     .fg {
         display: flex;
         flex-direction: column;
-        gap: 6px;
-        margin-bottom: 18px;
+        gap: 7px;
     }
-
-        .fg:last-child {
-            margin-bottom: 0;
-        }
 
     .fl {
         font-size: 10.5px;
         font-weight: 800;
         color: #475569;
-        letter-spacing: .6px;
+        letter-spacing: .7px;
         text-transform: uppercase;
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 7px;
     }
 
         .fl i {
             color: #a5b4fc;
             font-size: 11px;
-            width: 13px;
+            width: 14px;
             text-align: center;
         }
 
@@ -288,14 +463,14 @@
 
     .fi-changed-dot {
         position: absolute;
-        right: -18px;
+        right: -20px;
         top: 50%;
         transform: translateY(-50%);
         width: 8px;
         height: 8px;
         border-radius: 50%;
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        box-shadow: 0 0 8px rgba(99,102,241,.5);
+        box-shadow: 0 0 10px rgba(99,102,241,.6);
         opacity: 0;
         transition: opacity 250ms;
         pointer-events: none;
@@ -303,31 +478,44 @@
 
         .fi-changed-dot.show {
             opacity: 1;
+            animation: dotPop .3s cubic-bezier(.34,1.56,.64,1);
         }
+    @@keyframes dotPop {
+        from
+
+    {
+        transform: translateY(-50%) scale(0)
+    }
+
+    to {
+        transform: translateY(-50%) scale(1)
+    }
+
+    }
 
     .fi-ctrl {
         width: 100%;
-        height: 46px;
+        height: 48px;
         border: 1.5px solid #e2e8f0;
-        border-radius: 12px;
+        border-radius: 13px;
         background: #fafbfc;
-        padding: 0 14px;
+        padding: 0 16px;
         font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 13px;
+        font-size: 13.5px;
         color: #0f172a;
         outline: none;
-        transition: all 200ms cubic-bezier(.4,0,.2,1);
-        box-shadow: 0 1px 3px rgba(0,0,0,.04), inset 0 1px 0 rgba(255,255,255,.8);
+        transition: all 220ms cubic-bezier(.4,0,.2,1);
+        box-shadow: 0 1px 4px rgba(0,0,0,.04), inset 0 1px 0 rgba(255,255,255,.9);
     }
 
         .fi-ctrl:focus {
             border-color: #6366f1;
             background: #fff;
-            box-shadow: 0 0 0 3px rgba(99,102,241,.10), 0 1px 3px rgba(0,0,0,.04);
+            box-shadow: 0 0 0 4px rgba(99,102,241,.10), 0 1px 4px rgba(0,0,0,.04);
         }
 
         .fi-ctrl:hover:not(:focus) {
-            border-color: #cbd5e1;
+            border-color: #c7d2fe;
             background: #fff;
         }
 
@@ -337,30 +525,32 @@
 
         .fi-ctrl.changed {
             border-color: #6366f1;
-            background: #fafbff;
-            box-shadow: 0 0 0 3px rgba(99,102,241,.07);
+            background: #fafaff;
+            box-shadow: 0 0 0 3px rgba(99,102,241,.08);
         }
+
+    .fi-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
     .fi-help {
         font-size: 11px;
         color: #94a3b8;
         font-weight: 500;
-        margin-top: 3px;
     }
 
     .fi-error {
         font-size: 11px;
         color: #f43f5e;
         font-weight: 600;
-        margin-top: 3px;
     }
 
     .char-count {
         font-size: 10px;
         color: #c4cdd9;
-        text-align: right;
         font-family: 'DM Mono', monospace;
-        margin-top: 3px;
         transition: color 200ms;
     }
 
@@ -372,45 +562,75 @@
             color: #f43f5e;
         }
 
-    /* Status toggle */
-    .sw-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 13px 16px;
-        border-radius: 12px;
-        background: #fafbfc;
-        border: 1px solid #f1f5f9;
-        transition: all 200ms;
+    /* Status toggle card */
+    .status-card {
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1.5px solid #e2e8f0;
+        transition: all 250ms;
     }
 
-        .sw-row.on {
-            background: #f0fdf4;
-            border-color: #bbf7d0;
+        .status-card.on {
+            border-color: #a7f3d0;
+            background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
         }
 
-        .sw-row.off {
+        .status-card.off {
+            border-color: #e2e8f0;
             background: #fafbfc;
-            border-color: #f1f5f9;
         }
 
-    .sw-info .swn {
-        font-size: 13px;
-        font-weight: 700;
+    .status-card-inner {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 20px;
+    }
+
+    .status-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+        transition: all 250ms;
+    }
+
+    .status-card.on .status-icon {
+        background: #dcfce7;
+        color: #10b981;
+    }
+
+    .status-card.off .status-icon {
+        background: #f1f5f9;
+        color: #94a3b8;
+    }
+
+    .status-texts {
+        flex: 1;
+    }
+
+    .status-name {
+        font-size: 14px;
+        font-weight: 800;
         color: #0f172a;
         transition: color 200ms;
     }
 
-    .sw-info .sws {
-        font-size: 10.5px;
+    .status-desc {
+        font-size: 11px;
         color: #94a3b8;
-        margin-top: 1px;
+        margin-top: 2px;
     }
 
+    /* Toggle switch */
     .sw {
         position: relative;
-        width: 44px;
-        height: 24px;
+        width: 48px;
+        height: 26px;
         flex-shrink: 0;
     }
 
@@ -424,11 +644,12 @@
     .sw-track {
         position: absolute;
         inset: 0;
-        border-radius: 24px;
+        border-radius: 26px;
         background: #e2e8f0;
         cursor: pointer;
-        transition: background 200ms;
+        transition: background 250ms;
         border: 1px solid #d1d5db;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,.1);
     }
 
         .sw-track::after {
@@ -436,39 +657,39 @@
             position: absolute;
             top: 3px;
             left: 3px;
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             background: #fff;
-            box-shadow: 0 1px 4px rgba(0,0,0,.18);
-            transition: transform 200ms cubic-bezier(.34,1.56,.64,1);
+            box-shadow: 0 2px 5px rgba(0,0,0,.2);
+            transition: transform 250ms cubic-bezier(.34,1.56,.64,1);
         }
 
     .sw input:checked ~ .sw-track {
         background: linear-gradient(135deg, #10b981, #06b6d4);
         border-color: transparent;
-        box-shadow: 0 0 12px rgba(16,185,129,.35);
+        box-shadow: 0 0 14px rgba(16,185,129,.4), inset 0 1px 0 rgba(255,255,255,.1);
     }
 
         .sw input:checked ~ .sw-track::after {
-            transform: translateX(20px);
+            transform: translateX(22px);
         }
 
     /* Footer */
     .uc-footer {
-        padding: 16px 24px;
+        padding: 18px 28px;
         border-top: 1px solid #f0f4f8;
-        background: #fafbfc;
+        background: linear-gradient(135deg, #fafbff, #fafbfc);
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
     }
 
     .btn-save {
         flex: 1;
-        height: 48px;
+        height: 50px;
         border: none;
-        border-radius: 12px;
+        border-radius: 13px;
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
         color: #fff;
         font-family: 'Plus Jakarta Sans', sans-serif;
@@ -478,9 +699,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        box-shadow: 0 3px 16px rgba(99,102,241,.38), inset 0 1px 0 rgba(255,255,255,.15);
-        transition: all 250ms;
+        gap: 10px;
+        box-shadow: 0 4px 20px rgba(99,102,241,.4), inset 0 1px 0 rgba(255,255,255,.18);
+        transition: all 280ms cubic-bezier(.4,0,.2,1);
         position: relative;
         overflow: hidden;
     }
@@ -489,12 +710,31 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, rgba(255,255,255,.14) 0%, transparent 55%);
+            background: linear-gradient(180deg, rgba(255,255,255,.15) 0%, transparent 55%);
+        }
+
+        .btn-save::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,.15);
+            border-radius: 50%;
+            transform: translate(-50%,-50%);
+            transition: width .4s, height .4s, opacity .4s;
         }
 
         .btn-save:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 24px rgba(99,102,241,.48);
+            box-shadow: 0 8px 28px rgba(99,102,241,.5);
+        }
+
+        .btn-save:active::after {
+            width: 300px;
+            height: 300px;
+            opacity: 0;
         }
 
         .btn-save:active {
@@ -507,28 +747,38 @@
             transform: none;
         }
 
+    .change-badge {
+        background: rgba(0,0,0,.18);
+        padding: 2px 9px;
+        border-radius: 20px;
+        font-size: 11px;
+        display: none;
+        font-family: 'DM Mono', monospace;
+    }
+
     .btn-cancel {
-        height: 48px;
-        padding: 0 22px;
+        height: 50px;
+        padding: 0 24px;
         border: 1.5px solid #e2e8f0;
-        border-radius: 12px;
+        border-radius: 13px;
         background: #fff;
         color: #475569;
         font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 13.5px;
         font-weight: 700;
         cursor: pointer;
-        transition: all 200ms;
-        box-shadow: 0 1px 3px rgba(0,0,0,.04);
+        transition: all 220ms;
+        box-shadow: 0 1px 4px rgba(0,0,0,.05);
         text-decoration: none;
         display: flex;
         align-items: center;
+        gap: 8px;
     }
 
         .btn-cancel:hover {
             background: #f8fafc;
-            border-color: #cbd5e1;
-            color: #0f172a;
+            border-color: #c7d2fe;
+            color: #3730a3;
         }
 
     /* ── RIGHT PANEL ───────────────────────────────────────── */
@@ -538,7 +788,7 @@
         display: flex;
         flex-direction: column;
         gap: 14px;
-        animation: ucIn .35s .18s cubic-bezier(.4,0,.2,1) both;
+        animation: cardIn .4s .18s cubic-bezier(.4,0,.2,1) both;
     }
 
     .panel-card {
@@ -546,11 +796,11 @@
         border: 1px solid rgba(226,232,240,.9);
         border-radius: 16px;
         overflow: hidden;
-        box-shadow: 0 2px 12px rgba(0,0,0,.05), inset 0 1px 0 rgba(255,255,255,.95);
+        box-shadow: 0 2px 14px rgba(0,0,0,.05), inset 0 1px 0 rgba(255,255,255,.95);
     }
 
     .pc-head {
-        padding: 13px 16px 9px;
+        padding: 13px 16px 10px;
         border-bottom: 1px solid #f0f4f8;
         display: flex;
         align-items: center;
@@ -574,8 +824,8 @@
     .diff-list {
         display: flex;
         flex-direction: column;
-        gap: 6px;
-        min-height: 36px;
+        gap: 7px;
+        min-height: 38px;
     }
 
     .diff-empty {
@@ -590,24 +840,24 @@
     .diff-item {
         display: flex;
         align-items: center;
-        gap: 8px;
-        padding: 7px 10px;
-        border-radius: 8px;
-        background: #fafbff;
+        gap: 9px;
+        padding: 8px 11px;
+        border-radius: 9px;
+        background: linear-gradient(135deg, #fafbff, #f5f3ff);
         border: 1px solid rgba(99,102,241,.15);
-        animation: diffIn .2s cubic-bezier(.34,1.56,.64,1) both;
+        animation: diffSlide .25s cubic-bezier(.34,1.56,.64,1) both;
     }
-    @@keyframes diffIn {
+    @@keyframes diffSlide {
         from
 
     {
         opacity: 0;
-        transform: scale(.92)translateX(-6px)
+        transform: translateX(-8px) scale(.95);
     }
 
     to {
         opacity: 1;
-        transform: none
+        transform: none;
     }
 
     }
@@ -618,7 +868,7 @@
         border-radius: 50%;
         flex-shrink: 0;
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        box-shadow: 0 0 6px rgba(99,102,241,.5);
+        box-shadow: 0 0 8px rgba(99,102,241,.5);
     }
 
     .diff-name {
@@ -627,27 +877,16 @@
         color: #4338ca;
     }
 
-    .diff-badge-count {
-        margin-left: auto;
-        font-size: 10px;
-        font-weight: 800;
-        font-family: 'DM Mono', monospace;
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        color: #fff;
-        padding: 2px 7px;
-        border-radius: 20px;
-    }
-
     /* Color swatches */
     .color-swatches {
         display: grid;
         grid-template-columns: repeat(3,1fr);
-        gap: 6px;
+        gap: 7px;
     }
 
     .swatch {
-        height: 36px;
-        border-radius: 9px;
+        height: 38px;
+        border-radius: 10px;
         cursor: pointer;
         border: 2px solid transparent;
         transition: all 200ms;
@@ -659,11 +898,11 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, rgba(255,255,255,.2) 0%, transparent 60%);
+            background: linear-gradient(180deg, rgba(255,255,255,.22) 0%, transparent 60%);
         }
 
         .swatch:hover {
-            transform: scale(1.06);
+            transform: scale(1.07);
         }
 
         .swatch.selected {
@@ -671,29 +910,73 @@
             box-shadow: 0 0 0 2px #fff, 0 0 0 4px #0f172a;
         }
 
-        .swatch .check-ic {
+        .swatch .ck {
             position: absolute;
             inset: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 12px;
             color: #fff;
             opacity: 0;
             transition: opacity 200ms;
             z-index: 1;
         }
 
-        .swatch.selected .check-ic {
+        .swatch.selected .ck {
             opacity: 1;
         }
+
+    /* Info items */
+    .info-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 12px;
+        border-radius: 10px;
+        background: #f8fafc;
+        border: 1px solid #f0f4f8;
+        margin-bottom: 8px;
+    }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+    .info-row-ic {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        flex-shrink: 0;
+    }
+
+    .info-row-label {
+        font-size: 10px;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+
+    .info-row-val {
+        font-size: 12px;
+        font-weight: 700;
+        color: #0f172a;
+        margin-top: 1px;
+        font-family: 'DM Mono', monospace;
+        word-break: break-all;
+    }
 
     /* Tips */
     .tips-card {
         border-radius: 16px;
         background: linear-gradient(150deg, #0f172a 0%, #1e1b4b 100%);
-        border: 1px solid rgba(99,102,241,.2);
-        box-shadow: 0 4px 20px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.04);
+        border: 1px solid rgba(99,102,241,.22);
+        box-shadow: 0 6px 24px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.04);
         overflow: hidden;
         position: relative;
     }
@@ -701,20 +984,20 @@
         .tips-card::before {
             content: '';
             position: absolute;
-            top: -20px;
-            right: -20px;
-            width: 90px;
-            height: 90px;
+            top: -24px;
+            right: -24px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(99,102,241,.25) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(99,102,241,.28) 0%, transparent 70%);
             pointer-events: none;
         }
 
     .tips-head {
-        padding: 13px 16px 8px;
+        padding: 14px 16px 8px;
         display: flex;
         align-items: center;
-        gap: 7px;
+        gap: 8px;
     }
 
     .tips-title {
@@ -733,7 +1016,7 @@
         margin-top: 9px;
         font-size: 11px;
         line-height: 1.5;
-        color: rgba(226,232,240,.65);
+        color: rgba(226,232,240,.6);
     }
 
     .tip-ic {
@@ -744,36 +1027,38 @@
     }
 </style>
 
-<!-- Hidden color field -->
 <input type="hidden" id="selectedColor" value="linear-gradient(135deg,#3b82f6,#6366f1)" />
 
-<!-- Edit banner -->
+<!-- Edit Banner -->
 <div class="edit-banner">
     <div class="eb-left">
-        <div class="eb-icon"><i class="fa-solid fa-pen-to-square"></i></div>
-        <div>
-            <div class="eb-title">Edit Mode — @Model.CategoryName</div>
-            <div class="eb-sub">Changes won't apply until saved</div>
+        <div class="eb-icon"><i class="fa-solid fa-pen-nib"></i></div>
+        <div class="eb-texts">
+            <div class="eb-title">Edit Mode — <span id="bannerName">@Model.CategoryName</span></div>
+            <div class="eb-sub">Changes are not applied until you save</div>
         </div>
     </div>
-    <div class="eb-id">ID: @Model.CategoryId</div>
+    <div class="eb-right">
+        <div class="eb-id">@Model.CategoryId</div>
+        <div class="eb-pulse"></div>
+    </div>
 </div>
 
-<!-- Page header -->
-<div class="ph anim" style="margin-bottom:20px;">
+<!-- Page Header -->
+<div class="ph anim" style="margin-bottom:22px;">
     <div>
         <div class="ph-eye">Categories</div>
         <h1 class="ph-h1">Update Category</h1>
-        <p class="ph-desc">Edit the category details below</p>
+        <p class="ph-desc">Edit category name and visibility status</p>
     </div>
     <div class="ph-acts">
-        <a href="@Url.Action("CategoryList", "AdminCategory")" class="btn btn-ghost">
+        <a href="@Url.Action("CategoryList", "Category")" class="btn btn-ghost">
             <i class="fa-solid fa-arrow-left"></i> Back
         </a>
     </div>
 </div>
 
-<form asp-action="UpdateCategory" asp-controller="AdminCategory" method="post" id="ucForm">
+<form asp-action="UpdateCategory" asp-controller="Category" method="post" id="ucForm">
     @Html.AntiForgeryToken()
     <input asp-for="CategoryId" type="hidden" />
 
@@ -787,73 +1072,92 @@
                     <div class="uc-head-icon"><i class="fa-solid fa-layer-group"></i></div>
                     <div>
                         <div class="uc-head-title">Category Details</div>
-                        <div class="uc-head-sub">Update name and visibility status</div>
+                        <div class="uc-head-sub">Update the name and publication status</div>
                     </div>
                 </div>
 
                 <div class="uc-body">
 
-                    <!-- Live preview -->
-                    <div class="cat-preview-box" id="previewBox">
-                        <div class="cat-prev-avatar" id="prevAvatar"
-                             style="background:linear-gradient(135deg,#3b82f6,#6366f1);">
-                            <span id="prevInitial">@(Model.CategoryName?.Length > 0 ? char.ToUpper(Model.CategoryName[0]).ToString() : "?")</span>
+                    <!-- Hero preview -->
+                    <div class="hero-preview" id="heroPreview">
+                        <div class="hero-orb hero-orb-1"></div>
+                        <div class="hero-orb hero-orb-2"></div>
+                        <div class="hero-avatar-wrap">
+                            <div class="hero-avatar-ring"></div>
+                            <div class="hero-avatar" id="heroAvatar"
+                                 style="background:linear-gradient(135deg,#3b82f6,#6366f1);">
+                                <span id="heroInitial">@(Model.CategoryName?.Length > 0 ? char.ToUpper(Model.CategoryName[0]).ToString() : "?")</span>
+                            </div>
                         </div>
-                        <div>
-                            <div class="cat-prev-label">Category Name</div>
-                            <div class="cat-prev-name @(string.IsNullOrEmpty(Model.CategoryName) ? "placeholder" : "")" id="prevName">
-                                @(string.IsNullOrEmpty(Model.CategoryName) ? "Enter a name below..." : Model.CategoryName)
+                        <div class="hero-info">
+                            <div class="hero-eyebrow">Category Preview</div>
+                            <div class="hero-name @(string.IsNullOrEmpty(Model.CategoryName) ? "placeholder" : "")" id="heroName">
+                                @(string.IsNullOrEmpty(Model.CategoryName) ? "Start typing a name..." : Model.CategoryName)
+                            </div>
+                            <div class="hero-status @(Model.CategoryStatus ? "on" : "off")" id="heroStatus">
+                                <span class="hero-status-dot"></span>
+                                <span id="heroStatusText">@(Model.CategoryStatus ? "Active" : "Passive")</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- CategoryName -->
-                    <div class="fg">
-                        <label class="fl">
-                            <i class="fa-solid fa-tag"></i>
-                            Category Name <span class="req">*</span>
-                        </label>
-                        <div class="fi-wrap">
-                            <input asp-for="CategoryName" class="fi-ctrl" id="CategoryName"
-                                   placeholder="e.g. Kültür & Tarih"
-                                   maxlength="60"
-                                   data-original="@Model.CategoryName"
-                                   oninput="trackChange(this,'CategoryName');updatePreview()" />
-                            <div class="fi-changed-dot" id="dot-CategoryName"></div>
-                        </div>
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px;">
-                            <span asp-validation-for="CategoryName" class="fi-error"></span>
-                            <div class="char-count" id="nameCount" style="margin-left:auto;">
-                                @(Model.CategoryName?.Length ?? 0) / 60
-                            </div>
-                        </div>
-                    </div>
+                    <div class="fields-grid">
 
-                    <!-- Status -->
-                    <div class="fg">
-                        <label class="fl"><i class="fa-solid fa-toggle-on"></i> Status</label>
-                        <div class="sw-row @(Model.CategoryStatus ? "on" : "off")" id="swRow">
-                            <div class="sw-info">
-                                <div class="swn" id="swLabel">@(Model.CategoryStatus ? "Active" : "Passive")</div>
-                                <div class="sws" id="swDesc">@(Model.CategoryStatus ? "Category is publicly visible" : "Category won't be visible")</div>
-                            </div>
-                            <label class="sw">
-                                <input asp-for="CategoryStatus" type="checkbox" id="CategoryStatus"
-                                       onchange="syncStatus(this)" />
-                                <div class="sw-track"></div>
+                        <!-- CategoryName -->
+                        <div class="fg">
+                            <label class="fl">
+                                <i class="fa-solid fa-tag"></i>
+                                Category Name <span class="req">*</span>
                             </label>
+                            <div class="fi-wrap">
+                                <input asp-for="CategoryName" class="fi-ctrl" id="CategoryName"
+                                       placeholder="e.g. Kültür & Tarih"
+                                       maxlength="60"
+                                       data-original="@Model.CategoryName"
+                                       oninput="trackChange(this,'CategoryName');syncPreview()" />
+                                <div class="fi-changed-dot" id="dot-CategoryName"></div>
+                            </div>
+                            <div class="fi-footer" style="margin-top:4px;">
+                                <span asp-validation-for="CategoryName" class="fi-error"></span>
+                                <div class="char-count" id="nameCount">@(Model.CategoryName?.Length ?? 0) / 60</div>
+                            </div>
                         </div>
+
+                        <!-- Status -->
+                        <div class="fg">
+                            <label class="fl"><i class="fa-solid fa-eye"></i> Visibility Status</label>
+                            <div class="status-card @(Model.CategoryStatus ? "on" : "off")" id="statusCard">
+                                <div class="status-card-inner">
+                                    <div class="status-icon">
+                                        <i class="fa-solid @(Model.CategoryStatus ? "fa-eye" : "fa-eye-slash")" id="statusIcon"></i>
+                                    </div>
+                                    <div class="status-texts">
+                                        <div class="status-name" id="statusName">@(Model.CategoryStatus ? "Active" : "Passive")</div>
+                                        <div class="status-desc" id="statusDesc">
+                                            @(Model.CategoryStatus ? "Category is visible in listings" : "Category is hidden from listings")
+                                        </div>
+                                    </div>
+                                    <label class="sw">
+                                        <input asp-for="CategoryStatus" type="checkbox" id="CategoryStatus"
+                                               onchange="syncStatus(this)" />
+                                        <div class="sw-track"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                 </div>
 
                 <div class="uc-footer">
                     <button type="submit" class="btn-save" id="saveBtn">
-                        <i class="fa-solid fa-floppy-disk"></i> Save Changes
-                        <span id="changeCount" style="background:rgba(0,0,0,.15);padding:2px 8px;border-radius:20px;font-size:11px;display:none;"></span>
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        Save Changes
+                        <span class="change-badge" id="changeBadge"></span>
                     </button>
                     <a href="@Url.Action("CategoryList", "Category")" class="btn-cancel">
-                        Cancel
+                        <i class="fa-solid fa-xmark"></i> Cancel
                     </a>
                 </div>
 
@@ -867,7 +1171,11 @@
             <div class="panel-card">
                 <div class="pc-head">
                     <div class="pc-title">Changed Fields</div>
-                    <div id="diffBadge" style="display:none;font-size:10px;font-weight:800;font-family:'DM Mono',monospace;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:2px 9px;border-radius:20px;box-shadow:0 2px 8px rgba(99,102,241,.3);">0</div>
+                    <div id="diffBadge" style="display:none;font-size:10px;font-weight:800;
+                     font-family:'DM Mono',monospace;background:linear-gradient(135deg,#6366f1,#8b5cf6);
+                     color:#fff;padding:2px 9px;border-radius:20px;box-shadow:0 2px 8px rgba(99,102,241,.3);">
+                        0
+                    </div>
                 </div>
                 <div class="pc-body">
                     <div class="diff-list" id="diffList">
@@ -876,51 +1184,67 @@
                 </div>
             </div>
 
-            <!-- Avatar color picker -->
+            <!-- Color picker -->
             <div class="panel-card">
                 <div class="pc-head"><div class="pc-title">Avatar Color</div></div>
                 <div class="pc-body">
-                    <div class="color-swatches" id="swatches">
-                        <div class="swatch selected" data-grad="linear-gradient(135deg,#3b82f6,#6366f1)"
-                             onclick="pickColor(this)" style="background:linear-gradient(135deg,#3b82f6,#6366f1)">
-                            <div class="check-ic"><i class="fa-solid fa-check"></i></div>
+                    <div class="color-swatches">
+                        <div class="swatch selected" onclick="pickColor(this)"
+                             data-grad="linear-gradient(135deg,#3b82f6,#6366f1)"
+                             style="background:linear-gradient(135deg,#3b82f6,#6366f1)">
+                            <div class="ck"><i class="fa-solid fa-check"></i></div>
                         </div>
-                        <div class="swatch" data-grad="linear-gradient(135deg,#10b981,#06b6d4)"
-                             onclick="pickColor(this)" style="background:linear-gradient(135deg,#10b981,#06b6d4)">
-                            <div class="check-ic"><i class="fa-solid fa-check"></i></div>
+                        <div class="swatch" onclick="pickColor(this)"
+                             data-grad="linear-gradient(135deg,#10b981,#06b6d4)"
+                             style="background:linear-gradient(135deg,#10b981,#06b6d4)">
+                            <div class="ck"><i class="fa-solid fa-check"></i></div>
                         </div>
-                        <div class="swatch" data-grad="linear-gradient(135deg,#f59e0b,#f97316)"
-                             onclick="pickColor(this)" style="background:linear-gradient(135deg,#f59e0b,#f97316)">
-                            <div class="check-ic"><i class="fa-solid fa-check"></i></div>
+                        <div class="swatch" onclick="pickColor(this)"
+                             data-grad="linear-gradient(135deg,#f59e0b,#f97316)"
+                             style="background:linear-gradient(135deg,#f59e0b,#f97316)">
+                            <div class="ck"><i class="fa-solid fa-check"></i></div>
                         </div>
-                        <div class="swatch" data-grad="linear-gradient(135deg,#8b5cf6,#ec4899)"
-                             onclick="pickColor(this)" style="background:linear-gradient(135deg,#8b5cf6,#ec4899)">
-                            <div class="check-ic"><i class="fa-solid fa-check"></i></div>
+                        <div class="swatch" onclick="pickColor(this)"
+                             data-grad="linear-gradient(135deg,#8b5cf6,#ec4899)"
+                             style="background:linear-gradient(135deg,#8b5cf6,#ec4899)">
+                            <div class="ck"><i class="fa-solid fa-check"></i></div>
                         </div>
-                        <div class="swatch" data-grad="linear-gradient(135deg,#f43f5e,#f97316)"
-                             onclick="pickColor(this)" style="background:linear-gradient(135deg,#f43f5e,#f97316)">
-                            <div class="check-ic"><i class="fa-solid fa-check"></i></div>
+                        <div class="swatch" onclick="pickColor(this)"
+                             data-grad="linear-gradient(135deg,#f43f5e,#f97316)"
+                             style="background:linear-gradient(135deg,#f43f5e,#f97316)">
+                            <div class="ck"><i class="fa-solid fa-check"></i></div>
                         </div>
-                        <div class="swatch" data-grad="linear-gradient(135deg,#06b6d4,#6366f1)"
-                             onclick="pickColor(this)" style="background:linear-gradient(135deg,#06b6d4,#6366f1)">
-                            <div class="check-ic"><i class="fa-solid fa-check"></i></div>
+                        <div class="swatch" onclick="pickColor(this)"
+                             data-grad="linear-gradient(135deg,#06b6d4,#6366f1)"
+                             style="background:linear-gradient(135deg,#06b6d4,#6366f1)">
+                            <div class="ck"><i class="fa-solid fa-check"></i></div>
                         </div>
                     </div>
-                    <div class="fi-help" style="margin-top:8px;">Visual only — not saved to database</div>
+                    <div style="font-size:11px;color:#94a3b8;margin-top:9px;">Visual only — not saved</div>
                 </div>
             </div>
 
-            <!-- Status card -->
+            <!-- Category info -->
             <div class="panel-card">
-                <div class="pc-head"><div class="pc-title">Publish Status</div></div>
-                <div class="pc-body" style="padding-top:10px;">
-                    <div class="sw-row @(Model.CategoryStatus ? "on" : "off")" id="swRowPanel">
-                        <div class="sw-info">
-                            <div class="swn" id="swLabelPanel" style="color:@(Model.CategoryStatus ? "#10b981" : "#94a3b8");">
+                <div class="pc-head"><div class="pc-title">Category Info</div></div>
+                <div class="pc-body">
+                    <div class="info-row">
+                        <div class="info-row-ic" style="background:#f5f3ff;color:#6366f1;">
+                            <i class="fa-solid fa-fingerprint"></i>
+                        </div>
+                        <div>
+                            <div class="info-row-label">Category ID</div>
+                            <div class="info-row-val">@(Model.CategoryId?.Length > 14 ? Model.CategoryId[..14] + "…" : Model.CategoryId)</div>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-row-ic" style="background:#f0fdf4;color:#10b981;">
+                            <i class="fa-solid fa-circle-dot"></i>
+                        </div>
+                        <div>
+                            <div class="info-row-label">Current Status</div>
+                            <div class="info-row-val" id="infoStatus" style="color:@(Model.CategoryStatus ? "#10b981" : "#94a3b8")">
                                 @(Model.CategoryStatus ? "Active" : "Passive")
-                            </div>
-                            <div class="sws" id="swDescPanel">
-                                @(Model.CategoryStatus ? "Visible in listings" : "Hidden from listings")
                             </div>
                         </div>
                     </div>
@@ -936,11 +1260,11 @@
                 <div class="tips-body">
                     <div class="tip-row">
                         <i class="fa-solid fa-circle-dot tip-ic"></i>
-                        <span>Category name changes affect all linked tours immediately.</span>
+                        <span>Name changes affect all tours linked to this category.</span>
                     </div>
                     <div class="tip-row">
                         <i class="fa-solid fa-circle-dot tip-ic"></i>
-                        <span>Setting Passive hides the category without deleting it.</span>
+                        <span>Passive hides the category without deleting it.</span>
                     </div>
                     <div class="tip-row">
                         <i class="fa-solid fa-circle-dot tip-ic"></i>
@@ -959,24 +1283,20 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
-        /* ── Originals ───────────────────────────────────────────── */
         const origName   = "@Model.CategoryName";
         const origStatus = @(Model.CategoryStatus ? "true" : "false");
         const changed    = new Set();
+        const LABELS     = { CategoryName: 'Category Name', CategoryStatus: 'Status' };
 
-        const LABELS = { CategoryName: 'Category Name', CategoryStatus: 'Status' };
-
-        /* ── Track change ────────────────────────────────────────── */
+        /* ── Track ───────────────────────────────────────────────── */
         function trackChange(el, key) {
             const orig = el.dataset.original ?? '';
             const dot  = document.getElementById('dot-' + key);
             if (el.value !== orig) {
-                changed.add(key);
-                el.classList.add('changed');
+                changed.add(key); el.classList.add('changed');
                 if (dot) dot.classList.add('show');
             } else {
-                changed.delete(key);
-                el.classList.remove('changed');
+                changed.delete(key); el.classList.remove('changed');
                 if (dot) dot.classList.remove('show');
             }
             if (key === 'CategoryName') updateCC(el.value.length);
@@ -990,49 +1310,46 @@
             el.className = 'char-count' + (n > 50 ? ' warn' : '') + (n >= 60 ? ' over' : '');
         }
 
-        /* ── Live preview ────────────────────────────────────────── */
-        function updatePreview() {
-            const val     = document.getElementById('CategoryName').value.trim();
-            const prevName = document.getElementById('prevName');
-            const prevInit = document.getElementById('prevInitial');
+        /* ── Sync preview ────────────────────────────────────────── */
+        function syncPreview() {
+            const val       = document.getElementById('CategoryName').value.trim();
+            const heroName  = document.getElementById('heroName');
+            const heroInit  = document.getElementById('heroInitial');
+            const bannerN   = document.getElementById('bannerName');
 
             if (val) {
-                prevName.textContent = val;
-                prevName.classList.remove('placeholder');
-                prevInit.textContent = val[0].toUpperCase();
+                heroName.textContent = val;
+                heroName.classList.remove('placeholder');
+                heroInit.textContent = val[0].toUpperCase();
+                if (bannerN) bannerN.textContent = val;
             } else {
-                prevName.textContent = 'Enter a name below...';
-                prevName.classList.add('placeholder');
-                prevInit.textContent = '?';
+                heroName.textContent = 'Start typing a name...';
+                heroName.classList.add('placeholder');
+                heroInit.textContent = '?';
             }
         }
 
         /* ── Status sync ─────────────────────────────────────────── */
         function syncStatus(cb) {
-            const row   = document.getElementById('swRow');
-            const lbl   = document.getElementById('swLabel');
-            const desc  = document.getElementById('swDesc');
-            const panelRow = document.getElementById('swRowPanel');
-            const panelLbl = document.getElementById('swLabelPanel');
-            const panelDesc= document.getElementById('swDescPanel');
+            const on = cb.checked;
+            const card     = document.getElementById('statusCard');
+            const sName    = document.getElementById('statusName');
+            const sDesc    = document.getElementById('statusDesc');
+            const sIcon    = document.getElementById('statusIcon');
+            const hStatus  = document.getElementById('heroStatus');
+            const hStText  = document.getElementById('heroStatusText');
+            const infoSt   = document.getElementById('infoStatus');
 
-            if (cb.checked) {
-                lbl.textContent = 'Active'; lbl.style.color = '#10b981';
-                desc.textContent = 'Category is publicly visible';
-                row.className = 'sw-row on';
-                panelRow.className = 'sw-row on';
-                panelLbl.textContent = 'Active'; panelLbl.style.color = '#10b981';
-                panelDesc.textContent = 'Visible in listings';
-            } else {
-                lbl.textContent = 'Passive'; lbl.style.color = '#94a3b8';
-                desc.textContent = "Category won't be visible";
-                row.className = 'sw-row off';
-                panelRow.className = 'sw-row off';
-                panelLbl.textContent = 'Passive'; panelLbl.style.color = '#94a3b8';
-                panelDesc.textContent = 'Hidden from listings';
-            }
+            card.className  = 'status-card ' + (on ? 'on' : 'off');
+            sName.textContent = on ? 'Active' : 'Passive';
+            sDesc.textContent = on ? 'Category is visible in listings' : 'Category is hidden from listings';
+            sIcon.className   = 'fa-solid ' + (on ? 'fa-eye' : 'fa-eye-slash');
+            hStatus.className = 'hero-status ' + (on ? 'on' : 'off');
+            hStText.textContent = on ? 'Active' : 'Passive';
+            infoSt.textContent  = on ? 'Active' : 'Passive';
+            infoSt.style.color  = on ? '#10b981' : '#94a3b8';
 
-            if (cb.checked !== origStatus) changed.add('CategoryStatus');
+            if (on !== origStatus) changed.add('CategoryStatus');
             else changed.delete('CategoryStatus');
             renderDiff();
         }
@@ -1041,9 +1358,8 @@
         function pickColor(el) {
             document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
             el.classList.add('selected');
-            const grad = el.dataset.grad;
-            document.getElementById('prevAvatar').style.background = grad;
-            document.getElementById('selectedColor').value = grad;
+            document.getElementById('heroAvatar').style.background = el.dataset.grad;
+            document.getElementById('selectedColor').value = el.dataset.grad;
         }
 
         /* ── Diff render ─────────────────────────────────────────── */
@@ -1051,26 +1367,26 @@
             const list  = document.getElementById('diffList');
             const empty = document.getElementById('diffEmpty');
             const badge = document.getElementById('diffBadge');
-            const cc    = document.getElementById('changeCount');
+            const cb    = document.getElementById('changeBadge');
 
             list.querySelectorAll('.diff-item').forEach(e => e.remove());
 
             if (changed.size === 0) {
                 empty.style.display = 'block';
                 badge.style.display = 'none';
-                cc.style.display    = 'none';
+                cb.style.display    = 'none';
                 return;
             }
             empty.style.display = 'none';
             badge.style.display = 'block';
             badge.textContent   = changed.size;
-            cc.style.display    = 'inline-flex';
-            cc.textContent      = changed.size + (changed.size === 1 ? ' change' : ' changes');
+            cb.style.display    = 'inline-flex';
+            cb.textContent      = changed.size + (changed.size === 1 ? ' change' : ' changes');
 
             changed.forEach(key => {
                 const d = document.createElement('div');
                 d.className = 'diff-item';
-                d.innerHTML = `<div class="diff-dot"></div><div class="diff-name">${LABELS[key] || key}</div>`;
+                d.innerHTML = `<div class="diff-dot"></div><div class="diff-name">${LABELS[key]||key}</div>`;
                 list.appendChild(d);
             });
         }
