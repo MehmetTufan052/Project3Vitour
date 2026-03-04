@@ -110,26 +110,67 @@
             </div>
 
             <div class="row">
-                <div class="col-md-12 ">
-                    <ul class="tf-pagination flex-five mt-20">
-                        <li>
-                            <a class="pages-link" href="#"> <i class="icon-29"></i></a>
-                        </li>
-                        <li>
-                            <a class="pages-link" href="#">1</a>
-                        </li>
-                        <li class="pages-item active" aria-current="page">
-                            <a class="pages-link" href="#">2</a>
-                        </li>
-                        <li><a class="pages-link" href="#">3</a></li>
-                        <li>
-                            <a class="pages-link" href="#"><i class=" icon--1"></i></a>
-                        </li>
-                    </ul>
-
+                <div class="col-md-12">
+                    <ul class="tf-pagination flex-five mt-20" id="pagination"></ul>
                 </div>
             </div>
         </div>
 
     </div>
 </section>
+
+<script>
+    (function () {
+        var PAGE_SIZE   = 6;
+        var cards = document.querySelectorAll('.tour-listing');
+        var total       = cards.length;
+        var totalPages  = Math.ceil(total / PAGE_SIZE);
+        var currentPage = 1;
+
+        function showPage(p) {
+            currentPage = p;
+            var start = (p - 1) * PAGE_SIZE;
+            var end   = start + PAGE_SIZE;
+
+            cards.forEach(function (card, i) {
+                card.style.display = (i >= start && i < end) ? '' : 'none';
+            });
+
+            renderPagination();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderPagination() {
+            var ul = document.getElementById('pagination');
+            ul.innerHTML = '';
+
+            // Önceki
+            var prev = document.createElement('li');
+            prev.className = currentPage === 1 ? 'disabled' : '';
+            prev.innerHTML = '<a class="pages-link" href="#"><i class="icon-29"></i></a>';
+            if (currentPage > 1) prev.querySelector('a').onclick = function(e){ e.preventDefault(); showPage(currentPage - 1); };
+            ul.appendChild(prev);
+
+            // Sayfa numaraları
+            for (var i = 1; i <= totalPages; i++) {
+                (function(page) {
+                    var li = document.createElement('li');
+                    li.className = page === currentPage ? 'pages-item active' : '';
+                    if (page === currentPage) li.setAttribute('aria-current', 'page');
+                    li.innerHTML = '<a class="pages-link" href="#">' + page + '</a>';
+                    li.querySelector('a').onclick = function(e){ e.preventDefault(); showPage(page); };
+                    ul.appendChild(li);
+                })(i);
+            }
+
+            // Sonraki
+            var next = document.createElement('li');
+            next.className = currentPage === totalPages ? 'disabled' : '';
+            next.innerHTML = '<a class="pages-link" href="#"><i class="icon--1"></i></a>';
+            if (currentPage < totalPages) next.querySelector('a').onclick = function(e){ e.preventDefault(); showPage(currentPage + 1); };
+            ul.appendChild(next);
+        }
+
+        showPage(1);
+    })();
+</script>

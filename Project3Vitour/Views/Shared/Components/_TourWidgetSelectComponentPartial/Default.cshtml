@@ -1,4 +1,4 @@
-﻿ <!-- Widget Select Form -->
+﻿<!-- Widget Select Form -->
 <div class="mt--82 z-index3 relative">
     <div class="tf-container">
         <div class="row">
@@ -6,181 +6,59 @@
                 <div class="search-form-widget-slider relative">
                     <form action="/" id="search-form-slider">
                         <div class="flex wd-search">
+
+                            <!-- 1. Tur Ara -->
                             <div class="form-group flex">
                                 <i class="icon-18"></i>
                                 <div class="search-bar-group">
-                                    <label>Lokasyonlar</label>
+                                    <label>Tur Ara</label>
+                                    <input type="text" id="tourSearchInput" name="tour-search" placeholder="Tur adı veya şehir...">
+                                </div>
+                            </div>
+
+                            <!-- 2. Süre -->
+                            <div class="form-group flex">
+                                <i class="icon-hiking-1-1"></i>
+                                <div class="search-bar-group">
+                                    <label>Süre</label>
                                     <div class="nice-select" tabindex="0">
-                                        <span class="current">Melborn ,Australia</span>
+                                        <span class="current">Tüm Süreler</span>
                                         <ul class="list">
-                                            <li data-value class="option selected">
-                                                Melborn ,Australia
-                                            </li>
-                                            <li data-value="hanoi" class="option">HaNoi ,Vietnam</li>
-                                            <li data-value="tolyo" class="option">Tokyo , Janpan</li>
-                                            <li data-value="korea" class="option">Seoul , Korea</li>
+                                            <li data-value="" class="option selected">Tüm Süreler</li>
+                                            <li data-value="1-3" class="option">1 – 3 Gece</li>
+                                            <li data-value="4-7" class="option">4 – 7 Gece</li>
+                                            <li data-value="8-14" class="option">8 – 14 Gece</li>
+                                            <li data-value="15+" class="option">15+ Gece</li>
                                         </ul>
                                     </div>
-
                                 </div>
-
-
                             </div>
+
+                            <!-- 3. Fiyat -->
                             <div class="form-group flex">
-                                <i class="icon-hiking-1-1 "></i>
+                                <i class="icon-14"></i>
                                 <div class="search-bar-group">
-                                    <label>Type</label>
+                                    <label>Fiyat</label>
                                     <div class="nice-select" tabindex="0">
-                                        <span class="current">Booking Type</span>
+                                        <span class="current">Fiyata Göre</span>
                                         <ul class="list">
-                                            <li data-value class="option selected">Booking Type</li>
-                                            <li data-value="booking" class="option">Booking Type</li>
-                                            <li data-value="booking" class="option">Booking Type</li>
-                                            <li data-value="booking" class="option">Booking Type</li>
+                                            <li data-value="" class="option selected">Fiyata Göre</li>
+                                            <li data-value="asc" class="option">En Düşük Önce</li>
+                                            <li data-value="desc" class="option">En Yüksek Önce</li>
+                                            <li data-value="0-5000" class="option">₺0 – ₺5.000</li>
+                                            <li data-value="5000-15000" class="option">₺5.000 – ₺15.000</li>
+                                            <li data-value="15000-30000" class="option">₺15.000 – ₺30.000</li>
+                                            <li data-value="30000+" class="option">₺30.000 ve üzeri</li>
                                         </ul>
                                     </div>
-
-                                </div>
-
-
-                            </div>
-                            <div class="form-group flex">
-                                <i class=" icon-time-left "></i>
-                                <div class="search-bar-group">
-                                    <label>Duration</label>
-                                    <div class="nice-select" tabindex="0">
-                                        <span class="current">2-4 days tour</span>
-                                        <ul class="list">
-                                            <li data-value class="option selected">2-4 days tour</li>
-                                            <li data-value="booking" class="option">3-6 days tour</li>
-                                            <li data-value="booking" class="option">4-8 days tour</li>
-                                            <li data-value="booking" class="option">5-10 days tour</li>
-                                        </ul>
-                                    </div>
-
-                                </div>
-
-
-                            </div>
-                            <div class="form-group flex">
-                                <i class="icon-user"></i>
-                                <div class="search-bar-group">
-                                    <label>Guests</label>
-                                    <input type="text" value="0">
                                 </div>
                             </div>
-                            <div class="form-group flex-two">
-                                <div class="icon-icon-filter">
-                                    <i class="icon-14"></i>
-                                </div>
-                                <a href="#" class="btn-search"><i class="icon-Vector5"></i>Search</a>
-                            </div>
-                        </div>
-                        <div class="wd-search-form">
-                            <div class="input-group-grid">
-                                <fieldset class="group-select relative ">
-                                    <label>Filter By Price</label>
-                                    <div class="widget widget-price ">
-                                        <div id="slider-range"></div>
-                                        <div class="slider-labels">
-                                            <div>
-                                                <input type="hidden" name="min-value" value="">
-                                                <input type="hidden" name="max-value" value="">
-                                            </div>
-                                            <div class="caption flex-three">
-                                                <p class="price-range">Price: </p>
-                                                <div class="number-range">
-                                                    <span id="slider-range-value1"></span>
-                                                    <span id="slider-range-value2"></span>
-                                                </div>
-                                            </div>
 
-                                        </div>
-                                    </div><!-- /.widget_price -->
-                                </fieldset>
-                                <fieldset class="group-select relative input-npd ">
-                                    <div class="search-bar-group relative">
-                                        <label>0</label>
-                                        <div class="nice-select" tabindex="0">
-                                            <span class="current">English</span>
-                                            <ul class="list">
-                                                <li data-value="" class="option selected focus">Language</li>
-                                                <li data-value="language1" class="option">Japan</li>
-                                                <li data-value="language2" class="option">Vietnames</li>
-                                                <li data-value="language3" class="option">Korea</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                                <fieldset class="group-select relative input-npd ">
-                                    <div class="search-bar-group relative">
-                                        <label>Any</label>
-                                        <div class="nice-select" tabindex="0">
-                                            <span class="current">Month</span>
-                                            <ul class="list">
-                                                <li data-value="" class="option selected focus">Month</li>
-                                                <li data-value="month1" class="option">1 Month</li>
-                                                <li data-value="month2" class="option">2 Month</li>
-                                                <li data-value="month3" class="option">3 Month</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                                <fieldset class="group-select relative input-npd">
-                                    <div class="search-bar-group relative">
-                                        <label>Any</label>
-                                        <div class="nice-select" tabindex="0">
-                                            <span class="current">Duration</span>
-                                            <ul class="list">
-                                                <li data-value="" class="option selected focus">Duration</li>
-                                                <li data-value="duration1" class="option">10-15 day</li>
-                                                <li data-value="duration2" class="option">15-30 day</li>
-                                                <li data-value="duration3" class="option">20-30 day</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                                <div class="group-check-box-wrap">
-                                    <div class="checkbox">
-                                        <input id="check4" type="checkbox" name="check" value="check">
-                                        <label for="check4">Accepts Credit Cards</label>
-                                    </div>
-                                    <div class="checkbox">
-                                        <input id="check5" type="checkbox" name="check" value="check">
-                                        <label for="check5">Car Parking</label>
-                                    </div>
-                                </div>
-                                <div class="group-check-box-wrap">
-                                    <div class="checkbox">
-                                        <input id="check6" type="checkbox" name="check" value="check">
-                                        <label for="check6">Free Coupons</label>
-                                    </div>
-                                    <div class="checkbox">
-                                        <input id="check7" type="checkbox" name="check" value="check">
-                                        <label for="check7">Laundry Service</label>
-                                    </div>
-                                </div>
-                                <div class="group-check-box-wrap">
-                                    <div class="checkbox">
-                                        <input id="check8" type="checkbox" name="check" value="check">
-                                        <label for="check8">Outdoor Seating</label>
-                                    </div>
-                                    <div class="checkbox">
-                                        <input id="check9" type="checkbox" name="check" value="check">
-                                        <label for="check9">Reservations</label>
-                                    </div>
-                                </div>
-                                <div class="group-check-box-wrap">
-                                    <div class="checkbox">
-                                        <input id="check10" type="checkbox" name="check" value="check">
-                                        <label for="check10">Restaurant</label>
-                                    </div>
-                                    <div class="checkbox">
-                                        <input id="check11" type="checkbox" name="check" value="check">
-                                        <label for="check11">Smoking Allowed</label>
-                                    </div>
-                                </div>
+                            <!-- 4. Ara Butonu -->
+                            <div class="form-group flex-two" style="flex:1;min-width:0;">
+                                <a href="#" class="btn-search" style="width:100%;display:flex;align-items:center;justify-content:center;gap:6px;"><i class="icon-Vector5"></i>Ara</a>
                             </div>
+
                         </div>
                     </form>
                 </div>
@@ -188,4 +66,32 @@
         </div>
     </div>
 </div>
-<!-- Widget Select Form -->
+<!-- /Widget Select Form -->
+
+<script>
+    $(function () {
+        /* TOURS dizisini ViewBag ile dinamik yapabilirsin:
+           var TOURS = @Html.Raw(Json.Serialize(ViewBag.TourNames));
+        */
+        var TOURS = [
+            'İstanbul Kültür Turu', 'Kapadokya Balon Turu', 'Ege Mavi Yolculuk',
+            'Pamukkale & Efes', 'Trabzon & Rize Yaylaları', 'Antalya Kültür Turu',
+            'Bozcaada & Gökçeada', 'Safranbolu Tarihi Turu', 'Nemrut Dağı Turu',
+            'Mardin & Midyat Turu'
+        ];
+
+        $("#tourSearchInput").autocomplete({
+            source: function (req, res) {
+                var q = req.term.toLowerCase();
+                res(TOURS.filter(function (t) {
+                    return t.toLowerCase().indexOf(q) > -1;
+                }));
+            },
+            minLength: 1,
+            select: function (event, ui) {
+                $(this).val(ui.item.value);
+                return false;
+            }
+        });
+    });
+</script>
