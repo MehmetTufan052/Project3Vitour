@@ -1,31 +1,23 @@
-﻿@model Project3Vitour.Dtos.GalleryDto.CreateGalleryDto
+﻿@model CreateGalleryDto
 @{
-    ViewData["Title"] = "Add Gallery Image";
+    ViewData["Title"] = "Galeri Görseli Ekle";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <style>
-    /* ══════════════════════════════════════════════════════════
-       CREATE GALLERY — FULL WIDTH
-    ══════════════════════════════════════════════════════════ */
-
     .cg-layout {
         display: grid;
         grid-template-columns: 1fr 340px;
         gap: 20px;
         align-items: start;
-        /* max-width kaldırıldı — tam genişlik */
     }
+
     @@media (max-width: 1024px) {
-        .cg-layout
-
-    {
-        grid-template-columns: 1fr;
+        .cg-layout {
+            grid-template-columns: 1fr;
+        }
     }
 
-    }
-
-    /* ── FORM CARD ─────────────────────────────────────────── */
     .cg-card {
         background: #fff;
         border: 1px solid rgba(226,232,240,0.9);
@@ -34,19 +26,17 @@
         box-shadow: 0 2px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.95);
         animation: cgIn .35s cubic-bezier(.4,0,.2,1) both;
     }
+
     @@keyframes cgIn {
-        from
+        from {
+            opacity: 0;
+            transform: translateY(12px)
+        }
 
-    {
-        opacity: 0;
-        transform: translateY(12px)
-    }
-
-    to {
-        opacity: 1;
-        transform: none
-    }
-
+        to {
+            opacity: 1;
+            transform: none
+        }
     }
 
     .cg-card-head {
@@ -97,7 +87,6 @@
         padding: 26px;
     }
 
-    /* ── IMAGE STAGE ───────────────────────────────────────── */
     .img-stage {
         border-radius: 14px;
         overflow: hidden;
@@ -193,19 +182,17 @@
         .img-ph-rings::after {
             animation-delay: 1.2s;
         }
+
     @@keyframes ringPulse {
-        0%,100%
+        0%, 100% {
+            transform: scale(1);
+            opacity: .6;
+        }
 
-    {
-        transform: scale(1);
-        opacity: .6;
-    }
-
-    50% {
-        transform: scale(1.18);
-        opacity: .12;
-    }
-
+        50% {
+            transform: scale(1.18);
+            opacity: .12;
+        }
     }
 
     .img-ph-icon {
@@ -231,20 +218,17 @@
         line-height: 1.5;
     }
 
-    /* ── FORM FIELDS ───────────────────────────────────────── */
     .fg-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 18px;
         margin-bottom: 18px;
     }
+
     @@media (max-width: 640px) {
-        .fg-row
-
-    {
-        grid-template-columns: 1fr;
-    }
-
+        .fg-row {
+            grid-template-columns: 1fr;
+        }
     }
 
     .fg {
@@ -355,7 +339,6 @@
             padding-left: 34px;
         }
 
-    /* Tour badge preview */
     .tour-badge-preview {
         display: none;
         margin-top: 8px;
@@ -370,19 +353,17 @@
         gap: 8px;
         animation: fadeUp .2s ease;
     }
+
     @@keyframes fadeUp {
-        from
+        from {
+            opacity: 0;
+            transform: translateY(-4px)
+        }
 
-    {
-        opacity: 0;
-        transform: translateY(-4px)
-    }
-
-    to {
-        opacity: 1;
-        transform: none
-    }
-
+        to {
+            opacity: 1;
+            transform: none
+        }
     }
 
     .tour-badge-preview.show {
@@ -397,7 +378,6 @@
         flex-shrink: 0;
     }
 
-    /* Footer */
     .cg-footer {
         padding: 16px 26px;
         border-top: 1px solid #f0f4f8;
@@ -474,7 +454,6 @@
             color: #0f172a;
         }
 
-    /* ── RIGHT PANEL ───────────────────────────────────────── */
     .cg-panel {
         position: sticky;
         top: 16px;
@@ -547,7 +526,6 @@
         display: none;
     }
 
-    /* Checklist */
     .check-list {
         display: flex;
         flex-direction: column;
@@ -588,7 +566,6 @@
         box-shadow: 0 0 10px rgba(16,185,129,.3);
     }
 
-    /* Tips */
     .tips-card {
         border-radius: 16px;
         background: linear-gradient(150deg, #0f172a 0%, #1e1b4b 100%);
@@ -643,7 +620,6 @@
         flex-shrink: 0;
     }
 
-    /* URL meta box */
     .url-meta {
         display: none;
         margin-top: 10px;
@@ -671,85 +647,74 @@
     }
 </style>
 
-<!-- Page Header -->
+<!-- Sayfa Başlığı -->
 <div class="ph anim" style="margin-bottom:20px;">
     <div>
-        <div class="ph-eye">Gallery</div>
-        <h1 class="ph-h1">Add Gallery Image</h1>
-        <p class="ph-desc">Upload a new image and link it to a tour</p>
+        <div class="ph-eye">Galeri</div>
+        <h1 class="ph-h1">Galeri Görseli Ekle</h1>
+        <p class="ph-desc">Yeni bir görsel yükleyin ve bir tura bağlayın</p>
     </div>
     <div class="ph-acts">
         <a href="@Url.Action("GalleryList", "AdminGallery")" class="btn btn-ghost">
-            <i class="fa-solid fa-arrow-left"></i> Back
+            <i class="fa-solid fa-arrow-left"></i> Geri
         </a>
     </div>
 </div>
 
 <form asp-action="CreateGallery" asp-controller="AdminGallery" method="post" id="cgForm">
     @Html.AntiForgeryToken()
-
     <div class="cg-layout">
 
-        <!-- ══ LEFT ════════════════════════════════════════════ -->
+        <!-- SOL -->
         <div>
             <div class="cg-card">
-
                 <div class="cg-card-head">
                     <div class="cg-head-icon"><i class="fa-solid fa-images"></i></div>
                     <div>
-                        <div class="cg-head-title">Image Details</div>
-                        <div class="cg-head-sub">Paste an image URL and link it to a tour</div>
+                        <div class="cg-head-title">Görsel Bilgileri</div>
+                        <div class="cg-head-sub">Görsel URL'si yapıştırın ve bir tura bağlayın</div>
                     </div>
                 </div>
-
                 <div class="cg-body">
-
-                    <!-- Live preview stage -->
                     <div class="img-stage" id="imgStage">
-                        <img id="stageImg" src="" alt="Preview" />
+                        <img id="stageImg" src="" alt="Önizleme" />
                         <div class="img-stage-overlay">
                             <span class="img-stage-overlay-text">
-                                <i class="fa-solid fa-pen"></i> Update URL to change image
+                                <i class="fa-solid fa-pen"></i> Görseli değiştirmek için URL'yi güncelleyin
                             </span>
                         </div>
                         <div class="img-ph" id="imgPh">
                             <div class="img-ph-rings">
                                 <div class="img-ph-icon"><i class="fa-regular fa-image"></i></div>
                             </div>
-                            <div class="img-ph-title">Live preview will appear here</div>
-                            <div class="img-ph-sub">Paste a valid image URL below<br>to see it instantly</div>
+                            <div class="img-ph-title">Canlı önizleme burada görünecek</div>
+                            <div class="img-ph-sub">Aşağıya geçerli bir görsel URL'si yapıştırın<br>ve anında görüntüleyin</div>
                         </div>
                     </div>
 
-                    <!-- Image URL -->
                     <div class="fg">
                         <label class="fl">
                             <i class="fa-solid fa-link"></i>
-                            Image URL <span class="req">*</span>
+                            Görsel URL <span class="req">*</span>
                         </label>
                         <div class="url-wrap">
                             <i class="url-ic fa-solid fa-globe"></i>
                             <input asp-for="ImageUrl" class="fi-ctrl" id="ImageUrl"
-                                   placeholder="https://example.com/photo.jpg"
-                                   autocomplete="off"
-                                   oninput="debouncedPreview()" />
+                                   placeholder="https://ornek.com/fotograf.jpg"
+                                   autocomplete="off" oninput="debouncedPreview()" />
                         </div>
-                        <div class="fi-help">Direct link ending in .jpg, .png, .webp, .gif etc.</div>
+                        <div class="fi-help">.jpg, .png, .webp, .gif gibi uzantılarla biten doğrudan bağlantı.</div>
                         <span asp-validation-for="ImageUrl" class="fi-error"></span>
                     </div>
 
-                    <!-- Tour + TourName row -->
                     <div class="fg-row">
-
-                        <!-- TourId select -->
                         <div class="fg" style="margin-bottom:0">
                             <label class="fl">
                                 <i class="fa-solid fa-map-location-dot"></i>
-                                Tour <span class="req">*</span>
+                                Tur <span class="req">*</span>
                             </label>
-                            <select asp-for="TourId" class="fi-ctrl" id="TourId"
-                                    onchange="onTourSelect(this)">
-                                <option value="">— Select a tour —</option>
+                            <select asp-for="TourId" class="fi-ctrl" id="TourId" onchange="onTourSelect(this)">
+                                <option value="">— Tur seçin —</option>
                                 @if (ViewBag.Tours != null)
                                 {
                                     foreach (var t in ViewBag.Tours as IEnumerable<Project3Vitour.Dtos.TourDtos.ResultTourDto>)
@@ -764,48 +729,37 @@
                             </div>
                             <span asp-validation-for="TourId" class="fi-error"></span>
                         </div>
-
-                        <!-- TourName (readonly, auto-filled) -->
                         <div class="fg" style="margin-bottom:0">
                             <label class="fl">
                                 <i class="fa-solid fa-tag"></i>
-                                Tour Name
+                                Tur Adı
                             </label>
                             <input asp-for="TourName" class="fi-ctrl" id="TourName"
-                                   placeholder="Auto-filled from selection"
-                                   readonly
+                                   placeholder="Seçimden otomatik dolar" readonly
                                    style="background:#f8fafc;color:#94a3b8;cursor:not-allowed;" />
-                            <div class="fi-help">Filled automatically when tour is selected</div>
+                            <div class="fi-help">Tur seçildiğinde otomatik olarak dolar</div>
                         </div>
-
                     </div>
-
                 </div>
-
                 <div class="cg-footer">
                     <button type="submit" class="btn-save" id="saveBtn">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Upload Image
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Görseli Yükle
                     </button>
-                    <a href="@Url.Action("GalleryList", "AdminGallery")" class="btn-cancel">
-                        Cancel
-                    </a>
+                    <a href="@Url.Action("GalleryList", "AdminGallery")" class="btn-cancel">İptal</a>
                 </div>
-
             </div>
         </div>
 
-        <!-- ══ RIGHT PANEL ══════════════════════════════════════ -->
+        <!-- SAĞ PANEL -->
         <div class="cg-panel">
-
-            <!-- Preview -->
             <div class="panel-card">
-                <div class="pc-head"><div class="pc-title">Image Preview</div></div>
+                <div class="pc-head"><div class="pc-title">Görsel Önizleme</div></div>
                 <div class="pc-body" style="padding:12px;">
                     <div class="panel-preview" id="panelPreview">
-                        <img id="panelImg" src="" alt="preview" />
+                        <img id="panelImg" src="" alt="önizleme" />
                         <div class="panel-preview-ph">
                             <i class="fa-regular fa-image" style="font-size:22px;color:#e2e8f0;"></i>
-                            <span>No image yet</span>
+                            <span>Henüz görsel yok</span>
                         </div>
                     </div>
                     <div class="url-meta" id="urlMeta">
@@ -815,53 +769,38 @@
                 </div>
             </div>
 
-            <!-- Checklist -->
             <div class="panel-card">
-                <div class="pc-head"><div class="pc-title">Checklist</div></div>
+                <div class="pc-head"><div class="pc-title">Kontrol Listesi</div></div>
                 <div class="pc-body">
                     <div class="check-list">
                         <div class="check-row" id="chk-img">
                             <div class="check-ic"><i class="fa-solid fa-check"></i></div>
-                            <span>Image URL provided</span>
+                            <span>Görsel URL girildi</span>
                         </div>
                         <div class="check-row" id="chk-preview">
                             <div class="check-ic"><i class="fa-solid fa-check"></i></div>
-                            <span>Image loads correctly</span>
+                            <span>Görsel başarıyla yüklendi</span>
                         </div>
                         <div class="check-row" id="chk-tour">
                             <div class="check-ic"><i class="fa-solid fa-check"></i></div>
-                            <span>Tour selected</span>
+                            <span>Tur seçildi</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Tips -->
             <div class="tips-card">
                 <div class="tips-head">
                     <i class="fa-solid fa-lightbulb" style="color:#fbbf24;"></i>
-                    <div class="tips-title">Gallery Tips</div>
+                    <div class="tips-title">Galeri İpuçları</div>
                 </div>
                 <div class="tips-body">
-                    <div class="tip-row">
-                        <i class="fa-solid fa-circle-dot tip-ic"></i>
-                        <span>Use landscape 16:9 images for best gallery display.</span>
-                    </div>
-                    <div class="tip-row">
-                        <i class="fa-solid fa-circle-dot tip-ic"></i>
-                        <span>Minimum 1200px wide for sharp rendering on all screens.</span>
-                    </div>
-                    <div class="tip-row">
-                        <i class="fa-solid fa-circle-dot tip-ic"></i>
-                        <span>Link each image to the correct tour for proper filtering.</span>
-                    </div>
-                    <div class="tip-row">
-                        <i class="fa-solid fa-circle-dot tip-ic"></i>
-                        <span>CDN-hosted URLs load significantly faster.</span>
-                    </div>
+                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>En iyi galeri görünümü için yatay 16:9 görseller kullanın.</span></div>
+                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Tüm ekranlarda net görüntü için minimum 1200px genişlik önerilir.</span></div>
+                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Doğru filtreleme için her görseli ilgili tura bağlayın.</span></div>
+                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>CDN üzerinden sunulan URL'ler çok daha hızlı yüklenir.</span></div>
                 </div>
             </div>
-
         </div>
 
     </div>
@@ -873,88 +812,37 @@
     }
     <script>
         let previewTimer;
-
-        function debouncedPreview() {
-            clearTimeout(previewTimer);
-            previewTimer = setTimeout(loadPreview, 500);
-        }
-
+        function debouncedPreview() { clearTimeout(previewTimer); previewTimer = setTimeout(loadPreview, 500); }
         function loadPreview() {
-            const url      = document.getElementById('ImageUrl').value.trim();
-            const stage    = document.getElementById('imgStage');
+            const url = document.getElementById('ImageUrl').value.trim();
+            const stage = document.getElementById('imgStage');
             const stageImg = document.getElementById('stageImg');
-            const panel    = document.getElementById('panelPreview');
+            const panel = document.getElementById('panelPreview');
             const panelImg = document.getElementById('panelImg');
-            const meta     = document.getElementById('urlMeta');
-            const urlDisp  = document.getElementById('urlDisplay');
-
+            const meta = document.getElementById('urlMeta');
+            const urlDisp = document.getElementById('urlDisplay');
             setCheck('chk-img', url.length > 0);
-
-            if (!url) {
-                stage.classList.remove('loaded');
-                panel.classList.remove('has-img');
-                meta.style.display = 'none';
-                setCheck('chk-preview', false);
-                return;
-            }
-
+            if (!url) { stage.classList.remove('loaded'); panel.classList.remove('has-img'); meta.style.display = 'none'; setCheck('chk-preview', false); return; }
             const testImg = new Image();
-            testImg.onload = () => {
-                stageImg.src = url;
-                panelImg.src = url;
-                stage.classList.add('loaded');
-                panel.classList.add('has-img');
-                meta.style.display = 'block';
-                urlDisp.textContent = url;
-                setCheck('chk-preview', true);
-            };
-            testImg.onerror = () => {
-                stage.classList.remove('loaded');
-                panel.classList.remove('has-img');
-                meta.style.display = 'none';
-                setCheck('chk-preview', false);
-            };
+            testImg.onload = () => { stageImg.src = url; panelImg.src = url; stage.classList.add('loaded'); panel.classList.add('has-img'); meta.style.display = 'block'; urlDisp.textContent = url; setCheck('chk-preview', true); };
+            testImg.onerror = () => { stage.classList.remove('loaded'); panel.classList.remove('has-img'); meta.style.display = 'none'; setCheck('chk-preview', false); };
             testImg.src = url;
         }
-
         function onTourSelect(sel) {
-            const opt  = sel.options[sel.selectedIndex];
+            const opt = sel.options[sel.selectedIndex];
             const name = opt.getAttribute('data-name') || opt.text;
-            const val  = sel.value;
-
+            const val = sel.value;
             document.getElementById('TourName').value = val ? name : '';
-
-            const badge     = document.getElementById('tourBadge');
+            const badge = document.getElementById('tourBadge');
             const badgeName = document.getElementById('tourBadgeName');
-
-            if (val) {
-                badgeName.textContent = name;
-                badge.classList.add('show');
-                setCheck('chk-tour', true);
-            } else {
-                badge.classList.remove('show');
-                setCheck('chk-tour', false);
-            }
+            if (val) { badgeName.textContent = name; badge.classList.add('show'); setCheck('chk-tour', true); }
+            else { badge.classList.remove('show'); setCheck('chk-tour', false); }
         }
-
-        function setCheck(id, ok) {
-            const row = document.getElementById(id);
-            if (ok) row.classList.add('ok');
-            else    row.classList.remove('ok');
-        }
-
-        document.getElementById('cgForm').addEventListener('submit', () => {
-            const btn = document.getElementById('saveBtn');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading...';
-            btn.disabled = true;
-        });
-
-        // Init on load (validation fail case)
-        const existingUrl  = document.getElementById('ImageUrl').value;
+        function setCheck(id, ok) { const row = document.getElementById(id); if (ok) row.classList.add('ok'); else row.classList.remove('ok'); }
+        document.getElementById('cgForm').addEventListener('submit', () => { const btn = document.getElementById('saveBtn'); btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Yükleniyor...'; btn.disabled = true; });
+        const existingUrl = document.getElementById('ImageUrl').value;
         const existingTour = document.getElementById('TourId').value;
-        if (existingUrl)  loadPreview();
-        if (existingTour) {
-            onTourSelect(document.getElementById('TourId'));
-        }
+        if (existingUrl) loadPreview();
+        if (existingTour) onTourSelect(document.getElementById('TourId'));
     </script>
 }

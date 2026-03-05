@@ -11675,5 +11675,30 @@ body .dribbble img {
     transition-delay: 0.2s;
   }
 }
+/* ── Tour Detail Blockquote ─────────────────────────── */
+blockquote {
+    margin: 24px 0;
+    padding: 18px 24px;
+    border-left: 4px solid #5dab42;
+    background: #f6fdf3;
+    border-radius: 0 10px 10px 0;
+    font-size: 15px;
+    font-style: italic;
+    color: #2d5a1e;
+    line-height: 1.7;
+    position: relative;
+}
+
+    blockquote::before {
+        content: '\201C';
+        position: absolute;
+        top: -8px;
+        left: 16px;
+        font-size: 52px;
+        color: #5dab42;
+        opacity: 0.25;
+        font-family: Georgia, serif;
+        line-height: 1;
+    }
 
 /*# sourceMappingURL=app.css.map */
