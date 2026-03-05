@@ -1,0 +1,28 @@
+﻿@model List<ResultTourPlanDto>
+
+<div class="tab-pane fade" id="pills-tour-planing" role="tabpanel"
+     aria-labelledby="pills-tour-planing-tab" tabindex="0">
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="planing-content-tour">
+                <h3 class="title-plan">Tur Planı :</h3>
+                @foreach (var item in Model)
+                {
+                    <div class="tour-planing-section flex">
+                        <div class="number-box flex-five">0 @item.NumberOfDay</div>
+                        <div class="content-box">
+                            <h5 class="title">@item.DayTitle</h5>
+                            <p class="des">
+                                @Html.Raw(item.Description)
+                            </p>
+                        </div>
+                    </div>
+                }               
+            </div>
+
+        </div>
+    </div>
+
+</div>
+

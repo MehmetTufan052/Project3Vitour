@@ -1,30 +1,23 @@
-﻿@model Project3Vitour.Dtos.TourPlanDto.CreateTourPlanDto
+﻿@model CreateTourPlanDto
 @{
-    ViewData["Title"] = "Create Tour Plan";
+    ViewData["Title"] = "Tur Planı Oluştur";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <style>
-    /* ══════════════════════════════════════════════════════════
-       CREATE TOUR PLAN
-    ══════════════════════════════════════════════════════════ */
-
     .tp-layout {
         display: grid;
         grid-template-columns: 1fr 310px;
         gap: 20px;
         align-items: start;
     }
+
     @@media (max-width: 1024px) {
-        .tp-layout
-
-    {
-        grid-template-columns: 1fr;
+        .tp-layout {
+            grid-template-columns: 1fr;
+        }
     }
 
-    }
-
-    /* ── MAIN CARD ─────────────────────────────────────────── */
     .tp-card {
         background: #fff;
         border: 1px solid rgba(226,232,240,0.9);
@@ -33,19 +26,17 @@
         box-shadow: 0 2px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.95);
         animation: tpIn .35s cubic-bezier(.4,0,.2,1) both;
     }
+
     @@keyframes tpIn {
-        from
+        from {
+            opacity: 0;
+            transform: translateY(12px)
+        }
 
-    {
-        opacity: 0;
-        transform: translateY(12px)
-    }
-
-    to {
-        opacity: 1;
-        transform: none
-    }
-
+        to {
+            opacity: 1;
+            transform: none
+        }
     }
 
     .tp-card-head {
@@ -96,7 +87,6 @@
         padding: 26px;
     }
 
-    /* ── DAY VISUALIZER ────────────────────────────────────── */
     .day-vis {
         display: flex;
         align-items: center;
@@ -170,7 +160,6 @@
             font-style: italic;
         }
 
-    /* ── FIELDS ────────────────────────────────────────────── */
     .fg {
         display: flex;
         flex-direction: column;
@@ -188,13 +177,11 @@
         gap: 18px;
         margin-bottom: 18px;
     }
+
     @@media (max-width: 640px) {
-        .fg-row
-
-    {
-        grid-template-columns: 1fr;
-    }
-
+        .fg-row {
+            grid-template-columns: 1fr;
+        }
     }
 
     .fl {
@@ -283,7 +270,6 @@
         margin-top: 3px;
     }
 
-    /* Day stepper */
     .day-stepper {
         display: flex;
         align-items: center;
@@ -355,7 +341,6 @@
         text-align: center;
     }
 
-    /* Char counter */
     .char-count {
         font-size: 10px;
         color: #c4cdd9;
@@ -373,7 +358,6 @@
             color: #f43f5e;
         }
 
-    /* Tour badge */
     .tour-badge {
         display: none;
         margin-top: 8px;
@@ -388,19 +372,17 @@
         gap: 8px;
         animation: fadeUp .2s ease;
     }
+
     @@keyframes fadeUp {
-        from
+        from {
+            opacity: 0;
+            transform: translateY(-4px)
+        }
 
-    {
-        opacity: 0;
-        transform: translateY(-4px)
-    }
-
-    to {
-        opacity: 1;
-        transform: none
-    }
-
+        to {
+            opacity: 1;
+            transform: none
+        }
     }
 
     .tour-badge.show {
@@ -415,7 +397,6 @@
         flex-shrink: 0;
     }
 
-    /* Footer */
     .tp-footer {
         padding: 16px 26px;
         border-top: 1px solid #f0f4f8;
@@ -492,7 +473,6 @@
             color: #0f172a;
         }
 
-    /* ── RIGHT PANEL ───────────────────────────────────────── */
     .tp-panel {
         position: sticky;
         top: 16px;
@@ -531,7 +511,6 @@
         padding: 14px 16px;
     }
 
-    /* Plan preview card */
     .plan-preview {
         border-radius: 12px;
         overflow: hidden;
@@ -610,7 +589,6 @@
             font-size: 10px;
         }
 
-    /* Checklist */
     .check-list {
         display: flex;
         flex-direction: column;
@@ -651,7 +629,6 @@
         box-shadow: 0 0 10px rgba(16,185,129,.3);
     }
 
-    /* Tips */
     .tips-card {
         border-radius: 16px;
         background: linear-gradient(150deg, #0f172a 0%, #022c22 100%);
@@ -707,121 +684,99 @@
     }
 </style>
 
-<!-- Page Header -->
+<!-- Sayfa Başlığı -->
 <div class="ph anim" style="margin-bottom:20px;">
     <div>
-        <div class="ph-eye">Tour Plans</div>
-        <h1 class="ph-h1">Create Tour Plan</h1>
-        <p class="ph-desc">Define a daily plan for a tour itinerary</p>
+        <div class="ph-eye">Tur Planları</div>
+        <h1 class="ph-h1">Tur Planı Oluştur</h1>
+        <p class="ph-desc">Bir tur için günlük plan tanımlayın</p>
     </div>
     <div class="ph-acts">
         <a href="@Url.Action("TourPlanList", "AdminTourPlan")" class="btn btn-ghost">
-            <i class="fa-solid fa-arrow-left"></i> Back
+            <i class="fa-solid fa-arrow-left"></i> Geri
         </a>
     </div>
 </div>
 
 <form asp-action="CreateTourPlan" asp-controller="AdminTourPlan" method="post" id="tpForm">
     @Html.AntiForgeryToken()
-
     <div class="tp-layout">
 
-        <!-- ══ LEFT ════════════════════════════════════════════ -->
+        <!-- SOL -->
         <div>
             <div class="tp-card">
-
                 <div class="tp-card-head">
                     <div class="tp-head-icon"><i class="fa-solid fa-calendar-days"></i></div>
                     <div>
-                        <div class="tp-head-title">Daily Plan Details</div>
-                        <div class="tp-head-sub">Fill in the day number, title and description</div>
+                        <div class="tp-head-title">Günlük Plan Detayları</div>
+                        <div class="tp-head-sub">Gün numarası, başlık ve açıklamayı doldurun</div>
                     </div>
                 </div>
 
                 <div class="tp-body">
-
-                    <!-- Day visualizer -->
                     <div class="day-vis" id="dayVis">
                         <div class="day-vis-number" id="dayVisNum">1</div>
                         <div class="day-vis-divider"></div>
                         <div class="day-vis-info">
-                            <div class="day-vis-label">Day Title</div>
-                            <div class="day-vis-title empty" id="dayVisTitle">Enter a title below...</div>
+                            <div class="day-vis-label">Gün Başlığı</div>
+                            <div class="day-vis-title empty" id="dayVisTitle">Aşağıya bir başlık girin...</div>
                         </div>
                     </div>
 
-                    <!-- NumberOfDay + DayTitle row -->
                     <div class="fg-row">
-
-                        <!-- NumberOfDay stepper -->
                         <div class="fg" style="margin-bottom:0">
                             <label class="fl">
                                 <i class="fa-regular fa-calendar"></i>
-                                Day Number <span class="req">*</span>
+                                Gün Numarası <span class="req">*</span>
                             </label>
                             <div class="day-stepper" id="dayStepper">
-                                <button type="button" onclick="stepDay(-1)">
-                                    <i class="fa-solid fa-minus"></i>
-                                </button>
-                                <input asp-for="NumberOfDay" id="NumberOfDay" type="number"
-                                       min="1" max="365" value="1"
-                                       oninput="onDayChange()" />
-                                <button type="button" onclick="stepDay(1)">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
+                                <button type="button" onclick="stepDay(-1)"><i class="fa-solid fa-minus"></i></button>
+                                <input asp-for="NumberOfDay" id="NumberOfDay" type="number" min="1" max="365" value="1" oninput="onDayChange()" />
+                                <button type="button" onclick="stepDay(1)"><i class="fa-solid fa-plus"></i></button>
                             </div>
-                            <div class="day-stepper-lbl">Day (1–365)</div>
+                            <div class="day-stepper-lbl">Gün (1–365)</div>
                             <span asp-validation-for="NumberOfDay" class="fi-error"></span>
                         </div>
 
-                        <!-- DayTitle -->
                         <div class="fg" style="margin-bottom:0">
                             <label class="fl">
                                 <i class="fa-solid fa-heading"></i>
-                                Day Title <span class="req">*</span>
+                                Gün Başlığı <span class="req">*</span>
                             </label>
                             <input asp-for="DayTitle" class="fi-ctrl" id="DayTitle"
-                                   placeholder="e.g. Arrival & City Tour"
-                                   maxlength="100"
-                                   oninput="onTitleChange()" autocomplete="off" />
+                                   placeholder="örn. Varış & Şehir Turu"
+                                   maxlength="100" oninput="onTitleChange()" autocomplete="off" />
                             <div class="char-count" id="titleCount">0 / 100</div>
                             <span asp-validation-for="DayTitle" class="fi-error"></span>
                         </div>
-
                     </div>
 
-                    <!-- Description -->
                     <div class="fg" style="margin-top:18px">
                         <label class="fl">
                             <i class="fa-solid fa-align-left"></i>
-                            Description <span class="req">*</span>
+                            Açıklama <span class="req">*</span>
                         </label>
                         <textarea asp-for="Description" class="fi-ctrl" id="Description"
-                                  placeholder="Describe the activities, places to visit, meals, and schedule for this day..."
-                                  maxlength="1000"
-                                  oninput="onDescChange()"></textarea>
+                                  placeholder="Bu güne ait aktiviteleri, gezilecek yerleri, yemekleri ve programı açıklayın..."
+                                  maxlength="1000" oninput="onDescChange()"></textarea>
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:3px">
                             <span asp-validation-for="Description" class="fi-error"></span>
                             <div class="char-count" id="descCount" style="margin-left:auto">0 / 1000</div>
                         </div>
                     </div>
 
-                    <!-- TourId -->
                     <div class="fg">
                         <label class="fl">
                             <i class="fa-solid fa-map-location-dot"></i>
-                            Tour <span class="req">*</span>
+                            Tur <span class="req">*</span>
                         </label>
-                        <select asp-for="TourId" class="fi-ctrl" id="TourId"
-                                onchange="onTourSelect(this)">
-                            <option value="">— Select a tour —</option>
+                        <select asp-for="TourId" class="fi-ctrl" id="TourId" onchange="onTourSelect(this)">
+                            <option value="">— Tur seçin —</option>
                             @if (ViewBag.Tours != null)
                             {
                                 foreach (var t in ViewBag.Tours as IEnumerable<Project3Vitour.Dtos.TourDtos.ResultTourDto>)
                                 {
-                                    <option value="@t.TourId" data-name="@t.Title" data-days="@t.DayCount">
-                                        @t.Title
-                                    </option>
+                                    <option value="@t.TourId" data-name="@t.Title" data-days="@t.DayCount">@t.Title</option>
                                 }
                             }
                         </select>
@@ -832,40 +787,32 @@
                         </div>
                         <span asp-validation-for="TourId" class="fi-error"></span>
                     </div>
-
                 </div>
 
                 <div class="tp-footer">
                     <button type="submit" class="btn-save" id="saveBtn">
-                        <i class="fa-solid fa-calendar-plus"></i> Create Plan
+                        <i class="fa-solid fa-calendar-plus"></i> Planı Oluştur
                     </button>
-                    <a href="@Url.Action("TourPlanList", "AdminTourPlan")" class="btn-cancel">
-                        Cancel
-                    </a>
+                    <a href="@Url.Action("TourPlanList", "AdminTourPlan")" class="btn-cancel">İptal</a>
                 </div>
-
             </div>
         </div>
 
-        <!-- ══ RIGHT PANEL ══════════════════════════════════════ -->
+        <!-- SAĞ PANEL -->
         <div class="tp-panel">
-
-            <!-- Live plan preview -->
             <div class="panel-card">
-                <div class="pc-head">
-                    <div class="pc-title">Live Preview</div>
-                </div>
+                <div class="pc-head"><div class="pc-title">Canlı Önizleme</div></div>
                 <div class="pc-body" style="padding:12px;">
                     <div class="plan-preview">
                         <div class="pp-day-badge">
                             <div class="pp-day-num" id="ppDayNum">1</div>
                             <div>
-                                <div class="pp-day-label">Day</div>
+                                <div class="pp-day-label">Gün</div>
                                 <div class="pp-day-title" id="ppDayTitle">—</div>
                             </div>
                         </div>
                         <div class="pp-body">
-                            <div class="pp-desc empty" id="ppDesc">Description will appear here...</div>
+                            <div class="pp-desc empty" id="ppDesc">Açıklama burada görünecek...</div>
                             <div class="pp-tour" id="ppTour" style="display:none;">
                                 <i class="fa-solid fa-map-location-dot"></i>
                                 <span id="ppTourName">—</span>
@@ -875,57 +822,42 @@
                 </div>
             </div>
 
-            <!-- Checklist -->
             <div class="panel-card">
-                <div class="pc-head"><div class="pc-title">Checklist</div></div>
+                <div class="pc-head"><div class="pc-title">Kontrol Listesi</div></div>
                 <div class="pc-body">
                     <div class="check-list">
                         <div class="check-row" id="chk-day">
                             <div class="check-ic"><i class="fa-solid fa-check"></i></div>
-                            <span>Day number set</span>
+                            <span>Gün numarası girildi</span>
                         </div>
                         <div class="check-row" id="chk-title">
                             <div class="check-ic"><i class="fa-solid fa-check"></i></div>
-                            <span>Day title provided</span>
+                            <span>Gün başlığı girildi</span>
                         </div>
                         <div class="check-row" id="chk-desc">
                             <div class="check-ic"><i class="fa-solid fa-check"></i></div>
-                            <span>Description added</span>
+                            <span>Açıklama eklendi</span>
                         </div>
                         <div class="check-row" id="chk-tour">
                             <div class="check-ic"><i class="fa-solid fa-check"></i></div>
-                            <span>Tour selected</span>
+                            <span>Tur seçildi</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Tips -->
             <div class="tips-card">
                 <div class="tips-head">
                     <i class="fa-solid fa-lightbulb" style="color:#fbbf24;"></i>
-                    <div class="tips-title">Plan Tips</div>
+                    <div class="tips-title">Plan İpuçları</div>
                 </div>
                 <div class="tips-body">
-                    <div class="tip-row">
-                        <i class="fa-solid fa-circle-dot tip-ic"></i>
-                        <span>Day numbers must be sequential starting from 1.</span>
-                    </div>
-                    <div class="tip-row">
-                        <i class="fa-solid fa-circle-dot tip-ic"></i>
-                        <span>Keep day titles short and destination-focused.</span>
-                    </div>
-                    <div class="tip-row">
-                        <i class="fa-solid fa-circle-dot tip-ic"></i>
-                        <span>Include meals, transport and key activities in description.</span>
-                    </div>
-                    <div class="tip-row">
-                        <i class="fa-solid fa-circle-dot tip-ic"></i>
-                        <span>Total days must match the tour's stated duration.</span>
-                    </div>
+                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Gün numaraları 1'den başlayarak sıralı olmalıdır.</span></div>
+                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Gün başlıklarını kısa ve destinasyon odaklı tutun.</span></div>
+                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Açıklamaya yemek, ulaşım ve temel aktiviteleri ekleyin.</span></div>
+                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Toplam gün sayısı turun belirtilen süresiyle eşleşmelidir.</span></div>
                 </div>
             </div>
-
         </div>
 
     </div>
@@ -936,7 +868,6 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
-        /* ── Day stepper ─────────────────────────────────────────── */
         function stepDay(delta) {
             const inp = document.getElementById('NumberOfDay');
             let v = (parseInt(inp.value) || 1) + delta;
@@ -944,115 +875,59 @@
             inp.value = v;
             onDayChange();
         }
-
         function onDayChange() {
             const v = parseInt(document.getElementById('NumberOfDay').value) || 1;
-            // Clamp
             const clamped = Math.max(1, Math.min(365, v));
             if (v !== clamped) document.getElementById('NumberOfDay').value = clamped;
-
-            // Visualizer
             const numEl = document.getElementById('dayVisNum');
             numEl.style.transform = 'scale(1.15)';
             numEl.textContent = clamped;
             setTimeout(() => numEl.style.transform = 'scale(1)', 200);
-
-            // Preview
             document.getElementById('ppDayNum').textContent = clamped;
-
             setCheck('chk-day', clamped >= 1);
         }
-
-        /* ── Title change ────────────────────────────────────────── */
         function onTitleChange() {
-            const v   = document.getElementById('DayTitle').value;
+            const v = document.getElementById('DayTitle').value;
             const cnt = document.getElementById('titleCount');
             cnt.textContent = v.length + ' / 100';
-            cnt.className   = 'char-count' + (v.length > 85 ? ' warn' : '') + (v.length >= 100 ? ' over' : '');
-
-            // Visualizer
+            cnt.className = 'char-count' + (v.length > 85 ? ' warn' : '') + (v.length >= 100 ? ' over' : '');
             const vis = document.getElementById('dayVisTitle');
-            if (v.trim()) {
-                vis.textContent = v;
-                vis.classList.remove('empty');
-            } else {
-                vis.textContent = 'Enter a title below...';
-                vis.classList.add('empty');
-            }
-
-            // Preview
+            if (v.trim()) { vis.textContent = v; vis.classList.remove('empty'); }
+            else { vis.textContent = 'Aşağıya bir başlık girin...'; vis.classList.add('empty'); }
             document.getElementById('ppDayTitle').textContent = v || '—';
             setCheck('chk-title', v.trim().length > 0);
         }
-
-        /* ── Description change ──────────────────────────────────── */
         function onDescChange() {
-            const v   = document.getElementById('Description').value;
+            const v = document.getElementById('Description').value;
             const cnt = document.getElementById('descCount');
             cnt.textContent = v.length + ' / 1000';
-            cnt.className   = 'char-count' + (v.length > 900 ? ' warn' : '') + (v.length >= 1000 ? ' over' : '');
-
-            // Preview
+            cnt.className = 'char-count' + (v.length > 900 ? ' warn' : '') + (v.length >= 1000 ? ' over' : '');
             const ppDesc = document.getElementById('ppDesc');
-            if (v.trim()) {
-                ppDesc.textContent = v.length > 120 ? v.slice(0, 120) + '…' : v;
-                ppDesc.classList.remove('empty');
-            } else {
-                ppDesc.textContent = 'Description will appear here...';
-                ppDesc.classList.add('empty');
-            }
-
+            if (v.trim()) { ppDesc.textContent = v.length > 120 ? v.slice(0, 120) + '…' : v; ppDesc.classList.remove('empty'); }
+            else { ppDesc.textContent = 'Açıklama burada görünecek...'; ppDesc.classList.add('empty'); }
             setCheck('chk-desc', v.trim().length > 10);
         }
-
-        /* ── Tour select ─────────────────────────────────────────── */
         function onTourSelect(sel) {
-            const opt   = sel.options[sel.selectedIndex];
-            const name  = opt.getAttribute('data-name') || opt.text;
-            const days  = opt.getAttribute('data-days') || '';
-            const val   = sel.value;
-
-            const badge     = document.getElementById('tourBadge');
+            const opt = sel.options[sel.selectedIndex];
+            const name = opt.getAttribute('data-name') || opt.text;
+            const days = opt.getAttribute('data-days') || '';
+            const val = sel.value;
+            const badge = document.getElementById('tourBadge');
             const badgeName = document.getElementById('tourBadgeName');
             const badgeDays = document.getElementById('tourBadgeDays');
-            const ppTour    = document.getElementById('ppTour');
-            const ppTourName= document.getElementById('ppTourName');
-
-            if (val) {
-                badgeName.textContent = name;
-                badgeDays.textContent = days ? days + ' days' : '';
-                badge.classList.add('show');
-                ppTour.style.display = 'flex';
-                ppTourName.textContent = name;
-                setCheck('chk-tour', true);
-            } else {
-                badge.classList.remove('show');
-                ppTour.style.display = 'none';
-                setCheck('chk-tour', false);
-            }
+            const ppTour = document.getElementById('ppTour');
+            const ppTourName = document.getElementById('ppTourName');
+            if (val) { badgeName.textContent = name; badgeDays.textContent = days ? days + ' gün' : ''; badge.classList.add('show'); ppTour.style.display = 'flex'; ppTourName.textContent = name; setCheck('chk-tour', true); }
+            else { badge.classList.remove('show'); ppTour.style.display = 'none'; setCheck('chk-tour', false); }
         }
-
-        /* ── Checklist ───────────────────────────────────────────── */
-        function setCheck(id, ok) {
-            const row = document.getElementById(id);
-            if (ok) row.classList.add('ok');
-            else    row.classList.remove('ok');
-        }
-
-        /* ── Submit ──────────────────────────────────────────────── */
-        document.getElementById('tpForm').addEventListener('submit', () => {
-            const btn = document.getElementById('saveBtn');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating...';
-            btn.disabled = true;
-        });
-
-        /* ── Init ────────────────────────────────────────────────── */
-        setCheck('chk-day', true); // default 1
+        function setCheck(id, ok) { const row = document.getElementById(id); if (ok) row.classList.add('ok'); else row.classList.remove('ok'); }
+        document.getElementById('tpForm').addEventListener('submit', () => { const btn = document.getElementById('saveBtn'); btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Oluşturuluyor...'; btn.disabled = true; });
+        setCheck('chk-day', true);
         const existingTitle = document.getElementById('DayTitle').value;
-        const existingDesc  = document.getElementById('Description').value;
-        const existingTour  = document.getElementById('TourId').value;
+        const existingDesc = document.getElementById('Description').value;
+        const existingTour = document.getElementById('TourId').value;
         if (existingTitle) onTitleChange();
-        if (existingDesc)  onDescChange();
-        if (existingTour)  onTourSelect(document.getElementById('TourId'));
+        if (existingDesc) onDescChange();
+        if (existingTour) onTourSelect(document.getElementById('TourId'));
     </script>
 }

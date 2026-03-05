@@ -1358,8 +1358,8 @@
 
 /*----------------------breadcumb--------------------*/
 .breadcumb-section {
-    padding: 137px 0px 135px 0px;
-    background-image: url(/vitour/assets/images/page/breadcumb.jpg);
+    padding: 137px 0px 135px 0px !important;
+    background-image: url(/vitour/assets/images/page/bg1.png) !important;
     position: relative;
     background-position: center;
     background-repeat: no-repeat;
