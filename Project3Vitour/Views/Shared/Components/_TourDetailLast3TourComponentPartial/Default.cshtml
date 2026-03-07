@@ -1,7 +1,7 @@
 ﻿@model List<ResultTourDto>
 
 <div class="sidebar-widget">
-    <h4 class="block-heading">Recent News</h4>
+    <h4 class="block-heading">Son Eklenen Turlar</h4>
     <div class="recent-post-list">
         @foreach (var x in Model)
         {
@@ -19,7 +19,7 @@
                             @x.Title
                         </a>
                     </h4>
-                    <p><span class="text-main">$@x.Price </span>'dan başlayan fiyatlarla</p>
+                    <p><span class="text-main">@x.Price ₺ </span>'dan başlayan fiyatlarla</p>
                 </div>
             </div>
         }

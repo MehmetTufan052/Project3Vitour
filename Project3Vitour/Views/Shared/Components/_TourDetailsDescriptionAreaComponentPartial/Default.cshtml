@@ -1,10 +1,8 @@
 ﻿<div class="row">
     <div class="col-lg-8">
         <div class="information-content-tour">
-            <div class="description-wrap mb-40">
-                <p class="des">
+            <div class="description-wrap mb-40">               
                     @Html.Raw(Model.Description)
-                </p>
             </div>
             <div class="description-wrap mb-40">
                 <span class="description">Advance Facilities</span>
@@ -184,77 +182,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="sidebar-widget">
-                <h4 class="block-heading">Recent News</h4>
-                <div class="recent-post-list">
-                    <div class="list-recent flex-three">
-                        <a href="blog-details.html" class="recent-image">
-                            <img src="./assets/images/blog/re-blog1.jpg"
-                                 alt="Image">
-                        </a>
-                        <div class="recent-info">
-                            <div class="start">
-                                <i class="icon-Star"></i>
-                                <i class="icon-Star"></i>
-                                <i class="icon-Star"></i>
-                                <i class="icon-Star"></i>
-                                <i class="icon-Star"></i>
-                            </div>
-                            <h4 class="title">
-                                <a href="blog-details.html">
-                                    Walking the Amalfi
-                                    Coast
-                                </a>
-                            </h4>
-                            <p>From <span class="text-main">$129.00</span></p>
-                        </div>
-                    </div>
-                    <div class="list-recent flex-three">
-                        <a href="blog-details.html" class="recent-image">
-                            <img src="./assets/images/blog/re-blog2.jpg"
-                                 alt="Image">
-                        </a>
-                        <div class="recent-info">
-                            <div class="start">
-                                <i class="icon-Star"></i>
-                                <i class="icon-Star"></i>
-                                <i class="icon-Star"></i>
-                                <i class="icon-Star"></i>
-                                <i class="icon-Star"></i>
-                            </div>
-                            <h4 class="title">
-                                <a href="blog-details.html">
-                                    Walking the Amalfi
-                                    Coast
-                                </a>
-                            </h4>
-                            <p>From <span class="text-main">$129.00</span></p>
-                        </div>
-                    </div>
-                    <div class="list-recent flex-three">
-                        <a href="blog-details.html" class="recent-image">
-                            <img src="./assets/images/blog/re-blog3.jpg"
-                                 alt="Image">
-                        </a>
-                        <div class="recent-info">
-                            <div class="start">
-                                <i class="icon-Star"></i>
-                                <i class="icon-Star"></i>
-                                <i class="icon-Star"></i>
-                                <i class="icon-Star"></i>
-                                <i class="icon-Star"></i>
-                            </div>
-                            <h4 class="title">
-                                <a href="blog-details.html">
-                                    Walking the Amalfi
-                                    Coast
-                                </a>
-                            </h4>
-                            <p>From <span class="text-main">$129.00</span></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @await Component.InvokeAsync("_TourDetailLast3TourComponentPartial", new { tourId = Model.TourId })
         </div>
     </div>
 </div>

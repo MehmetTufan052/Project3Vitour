@@ -1,15 +1,10 @@
 ﻿@model UpdateTourDto
 @{
-    ViewData["Title"] = "UpdateTour";
+    ViewData["Title"] = "Turu Güncelle";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <style>
-    /* ═══════════════════════════════════════════════════════════
-           UPDATE TOUR — DARK GLASS EDIT MODE
-        ═══════════════════════════════════════════════════════════ */
-
-    /* Edit mode banner */
     .edit-banner {
         display: flex;
         align-items: center;
@@ -90,7 +85,6 @@
         letter-spacing: .5px;
     }
 
-    /* Page layout */
     .ut-layout {
         display: grid;
         grid-template-columns: 1fr 290px;
@@ -98,20 +92,18 @@
         align-items: start;
     }
 
-    @@media(max - width:1024px) {
+    @@media(max-width:1024px) {
         .ut-layout {
             grid-template-columns: 1fr;
         }
     }
 
-    /* Left steps */
     .ut-steps {
         display: flex;
         flex-direction: column;
         gap: 3px;
     }
 
-    /* Step block */
     .step-block {
         border-radius: 16px;
         overflow: hidden;
@@ -170,7 +162,6 @@
         box-shadow: 0 4px 14px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.95);
     }
 
-    /* Changed indicator on step head */
     .step-head.has-changes::before {
         content: '';
         position: absolute;
@@ -305,7 +296,6 @@
         margin: 0 auto;
     }
 
-    /* ── FORM FIELDS ──────────────────────────────────────────── */
     .fg {
         display: flex;
         flex-direction: column;
@@ -324,7 +314,7 @@
         margin-bottom: 18px;
     }
 
-    @@media(max - width:640px) {
+    @@media(max-width:640px) {
         .fg-row {
             grid-template-columns: 1fr
         }
@@ -356,7 +346,6 @@
             letter-spacing: 0;
         }
 
-    /* Changed field highlight */
     .fi-wrap {
         position: relative;
     }
@@ -433,8 +422,7 @@
         padding-right: 38px;
     }
 
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button {
+    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
         -webkit-appearance: none
     }
 
@@ -475,7 +463,6 @@
             color: #f43f5e
         }
 
-    /* Prefix wrap */
     .pfx-wrap {
         position: relative
     }
@@ -495,7 +482,6 @@
             padding-left: 28px
         }
 
-    /* Stepper */
     .stepper {
         display: flex;
         align-items: center;
@@ -568,7 +554,6 @@
         text-align: center
     }
 
-    /* Image area */
     .img-frame {
         border-radius: 14px;
         overflow: hidden;
@@ -662,7 +647,6 @@
             font-size: 12.5px
         }
 
-    /* ── RIGHT PANEL ─────────────────────────────────────────── */
     .ut-panel {
         position: sticky;
         top: 16px;
@@ -702,7 +686,6 @@
         padding: 14px 16px
     }
 
-    /* Changed fields list */
     .diff-list {
         display: flex;
         flex-direction: column;
@@ -769,7 +752,6 @@
         box-shadow: 0 2px 6px rgba(245,158,11,.3);
     }
 
-    /* Badge picker */
     .badge-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -842,7 +824,6 @@
         transform: scale(1)
     }
 
-    /* Status toggle */
     .sw-row {
         display: flex;
         align-items: center;
@@ -929,66 +910,6 @@
             transform: translateX(20px)
         }
 
-    /* Save button */
-    .save-btn {
-        width: 100%;
-        height: 46px;
-        border: none;
-        border-radius: 12px;
-        background: linear-gradient(135deg,#f59e0b,#f97316);
-        color: #fff;
-        font-family: 'Plus Jakarta Sans',sans-serif;
-        font-size: 13.5px;
-        font-weight: 800;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        box-shadow: 0 3px 16px rgba(245,158,11,.4),inset 0 1px 0 rgba(255,255,255,.18);
-        transition: all 250ms;
-        position: relative;
-        overflow: hidden;
-    }
-
-        .save-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg,rgba(255,255,255,.14) 0%,transparent 55%);
-        }
-
-        .save-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 24px rgba(245,158,11,.5),inset 0 1px 0 rgba(255,255,255,.18)
-        }
-
-        .save-btn:active {
-            transform: translateY(0)
-        }
-
-        .save-btn:disabled {
-            opacity: .55;
-            cursor: not-allowed;
-            transform: none
-        }
-
-    .cancel-link {
-        display: block;
-        text-align: center;
-        margin-top: 9px;
-        font-size: 12.5px;
-        font-weight: 700;
-        color: #94a3b8;
-        transition: color 200ms;
-        cursor: pointer;
-    }
-
-        .cancel-link:hover {
-            color: #f43f5e
-        }
-
-    /* Preview mini card */
     .prev-mini {
         border-radius: 11px;
         overflow: hidden;
@@ -1037,7 +958,6 @@
         margin-left: auto
     }
 
-    /* Tips */
     .tips-card {
         border-radius: 16px;
         background: linear-gradient(150deg,#0f172a 0%,#1c1917 100%);
@@ -1098,31 +1018,30 @@
     }
 </style>
 
-<!-- Hidden inputs synced by JS -->
 <input type="hidden" name="Badge" id="BadgeHidden" value="@Model.Badge" />
 
-<!-- ── Edit mode banner ─────────────────────────────────── -->
+<!-- Düzenleme modu bandı -->
 <div class="edit-banner anim">
     <div class="edit-banner-left">
         <div class="edit-banner-icon"><i class="fa-solid fa-pen-to-square"></i></div>
         <div>
-            <div class="edit-banner-title">Edit Mode — @Model.Title</div>
-            <div class="edit-banner-sub">Changes won't be applied until you save</div>
+            <div class="edit-banner-title">Düzenleme Modu — @Model.Title</div>
+            <div class="edit-banner-sub">Değişiklikler kaydedilene kadar uygulanmaz</div>
         </div>
     </div>
     <div class="edit-banner-id">ID: @Model.TourId</div>
 </div>
 
-<!-- ── Page header ──────────────────────────────────────── -->
+<!-- Sayfa başlığı -->
 <div class="ph anim" style="margin-bottom:20px;">
     <div>
-        <div class="ph-eye">Tours</div>
-        <h1 class="ph-h1">Update Tour</h1>
-        <p class="ph-desc">Edit the details below and save your changes</p>
+        <div class="ph-eye">Turlar</div>
+        <h1 class="ph-h1">Turu Güncelle</h1>
+        <p class="ph-desc">Aşağıdaki bilgileri düzenleyip kaydedin</p>
     </div>
     <div class="ph-acts">
         <a href="@Url.Action("TourList", "AdminTour")" class="btn btn-ghost">
-            <i class="fa-solid fa-arrow-left"></i> Back
+            <i class="fa-solid fa-arrow-left"></i> Geri
         </a>
     </div>
 </div>
@@ -1133,77 +1052,69 @@
 
     <div class="ut-layout">
 
-        <!-- ══ LEFT ═════════════════════════════════════════════ -->
+        <!-- SOL -->
         <div class="ut-steps">
 
-            <!-- Step 1: Basic Info -->
+            <!-- Adım 1: Temel Bilgiler -->
             <div class="step-block open" id="step1">
                 <div class="step-head" id="sh1" onclick="toggleStep(1)">
                     <div class="step-num active" id="snum1">1</div>
                     <div class="step-info">
-                        <div class="step-title">Basic Information</div>
-                        <div class="step-sub">Tour name and description</div>
+                        <div class="step-title">Temel Bilgiler</div>
+                        <div class="step-sub">Tur adı ve açıklaması</div>
                     </div>
                     <div class="step-done-mark"><i class="fa-solid fa-check"></i></div>
                     <i class="fa-solid fa-chevron-down step-chev"></i>
                 </div>
                 <div class="step-body">
-
                     <div class="fg">
-                        <label class="fl"><i class="fa-solid fa-heading"></i> Tour Name <span class="req">*</span></label>
+                        <label class="fl"><i class="fa-solid fa-heading"></i> Tur Adı <span class="req">*</span></label>
                         <div class="fi-wrap">
                             <input asp-for="Title" class="fi-ctrl" id="Title"
-                                   placeholder="Tour name..." maxlength="120"
+                                   placeholder="Tur adını girin..." maxlength="120"
                                    data-original="@Model.Title"
                                    oninput="trackChange(this,'Title')" autocomplete="off" />
                             <div class="fi-changed-dot" id="dot-Title"></div>
                         </div>
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">
                             <span asp-validation-for="Title" class="fi-error"></span>
-                            <div class="char-count" id="titleCount" style="margin-left:auto">
-                                @(Model.Title?.Length ?? 0) / 120
-                            </div>
+                            <div class="char-count" id="titleCount" style="margin-left:auto">@(Model.Title?.Length ?? 0) / 120</div>
                         </div>
                     </div>
-
                     <div class="fg">
-                        <label class="fl"><i class="fa-solid fa-align-left"></i> Description <span class="req">*</span></label>
+                        <label class="fl"><i class="fa-solid fa-align-left"></i> Açıklama <span class="req">*</span></label>
                         <div class="fi-wrap">
                             <textarea asp-for="Description" class="fi-ctrl" id="Description"
-                                      placeholder="Describe this tour..." maxlength="500" rows="5"
+                                      placeholder="Turu açıklayın..." maxlength="500" rows="5"
                                       data-original="@Model.Description"
                                       oninput="trackChange(this,'Description')"></textarea>
                             <div class="fi-changed-dot" id="dot-Description" style="top:18px;"></div>
                         </div>
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">
                             <span asp-validation-for="Description" class="fi-error"></span>
-                            <div class="char-count" id="descCount" style="margin-left:auto">
-                                @(Model.Description?.Length ?? 0) / 500
-                            </div>
+                            <div class="char-count" id="descCount" style="margin-left:auto">@(Model.Description?.Length ?? 0) / 500</div>
                         </div>
                     </div>
-
                 </div>
             </div>
 
             <div class="step-connector"></div>
 
-            <!-- Step 2: Tour Details -->
+            <!-- Adım 2: Tur Detayları -->
             <div class="step-block" id="step2">
                 <div class="step-head" id="sh2" onclick="toggleStep(2)">
                     <div class="step-num idle" id="snum2">2</div>
                     <div class="step-info">
-                        <div class="step-title">Tour Details</div>
-                        <div class="step-sub">Duration, capacity & pricing</div>
+                        <div class="step-title">Tur Detayları</div>
+                        <div class="step-sub">Süre, kapasite ve fiyatlandırma</div>
                     </div>
                     <div class="step-done-mark"><i class="fa-solid fa-check"></i></div>
                     <i class="fa-solid fa-chevron-down step-chev"></i>
                 </div>
                 <div class="step-body">
-
                     <div class="fg-row">
                         <div class="fg" style="margin-bottom:0">
-                            <label class="fl"><i class="fa-regular fa-calendar"></i> Duration <span class="req">*</span></label>
+                            <label class="fl"><i class="fa-regular fa-calendar"></i> Süre <span class="req">*</span></label>
                             <div class="stepper" id="daysStepper">
                                 <button type="button" onclick="stepChange('DayCount',-1)"><i class="fa-solid fa-minus"></i></button>
                                 <input asp-for="DayCount" id="DayCount" type="number" min="1" max="365"
@@ -1211,11 +1122,11 @@
                                        oninput="clampVal(this,1,365);trackChange(this,'DayCount')" />
                                 <button type="button" onclick="stepChange('DayCount',1)"><i class="fa-solid fa-plus"></i></button>
                             </div>
-                            <div class="stepper-lbl">Days (1–365)</div>
+                            <div class="stepper-lbl">Gün (1–365)</div>
                             <span asp-validation-for="DayCount" class="fi-error"></span>
                         </div>
                         <div class="fg" style="margin-bottom:0">
-                            <label class="fl"><i class="fa-solid fa-users"></i> Capacity <span class="req">*</span></label>
+                            <label class="fl"><i class="fa-solid fa-users"></i> Kapasite <span class="req">*</span></label>
                             <div class="stepper" id="capStepper">
                                 <button type="button" onclick="stepChange('Capacity',-5)"><i class="fa-solid fa-minus"></i></button>
                                 <input asp-for="Capacity" id="Capacity" type="number" min="1" max="1000"
@@ -1223,13 +1134,12 @@
                                        oninput="clampVal(this,1,1000);trackChange(this,'Capacity')" />
                                 <button type="button" onclick="stepChange('Capacity',5)"><i class="fa-solid fa-plus"></i></button>
                             </div>
-                            <div class="stepper-lbl">Max persons</div>
+                            <div class="stepper-lbl">Maksimum kişi</div>
                             <span asp-validation-for="Capacity" class="fi-error"></span>
                         </div>
                     </div>
-
                     <div class="fg" style="margin-top:18px">
-                        <label class="fl"><i class="fa-solid fa-turkish-lira-sign"></i> Price per Person <span class="req">*</span></label>
+                        <label class="fl"><i class="fa-solid fa-turkish-lira-sign"></i> Kişi Başı Fiyat <span class="req">*</span></label>
                         <div class="fi-wrap pfx-wrap">
                             <span class="pfx">₺</span>
                             <input asp-for="Price" type="number" class="fi-ctrl" id="Price"
@@ -1238,147 +1148,128 @@
                                    oninput="trackChange(this,'Price');updatePrevPrice()" />
                             <div class="fi-changed-dot" id="dot-Price"></div>
                         </div>
-                        <div class="fi-help">Per person pricing shown to customers</div>
+                        <div class="fi-help">Müşterilere gösterilen kişi başı fiyat</div>
                         <span asp-validation-for="Price" class="fi-error"></span>
                     </div>
-
                 </div>
             </div>
 
             <div class="step-connector"></div>
 
-            <!-- Step 3: Cover Image -->
+            <!-- Adım 3: Kapak Görseli -->
             <div class="step-block" id="step3">
                 <div class="step-head" id="sh3" onclick="toggleStep(3)">
                     <div class="step-num idle" id="snum3">3</div>
                     <div class="step-info">
-                        <div class="step-title">Cover Image</div>
-                        <div class="step-sub">Visual identity of the tour</div>
+                        <div class="step-title">Kapak Görseli</div>
+                        <div class="step-sub">Turun görsel kimliği</div>
                     </div>
                     <div class="step-done-mark"><i class="fa-solid fa-check"></i></div>
                     <i class="fa-solid fa-chevron-down step-chev"></i>
                 </div>
                 <div class="step-body">
-
                     <div class="img-frame @(!string.IsNullOrEmpty(Model.CoverImageUrl) ? "has-img" : "")" id="imgFrame">
-                        <img id="previewImg"
-                             src="@(Model.CoverImageUrl ?? "")"
-                             alt="Cover" onerror="this.style.display='none'" />
+                        <img id="previewImg" src="@(Model.CoverImageUrl ?? "")" alt="Kapak" onerror="this.style.display='none'" />
                         <div class="img-frame-overlay">
-                            <span><i class="fa-solid fa-pen"></i> Change Image</span>
+                            <span><i class="fa-solid fa-pen"></i> Görseli Değiştir</span>
                         </div>
                         <div class="img-frame-ph">
                             <div style="font-size:28px;color:#c4cdd9;margin-bottom:8px"><i class="fa-regular fa-image"></i></div>
-                            <div style="font-size:13px;font-weight:600;color:#94a3b8">Paste image URL to preview</div>
+                            <div style="font-size:13px;font-weight:600;color:#94a3b8">Önizlemek için görsel URL'si yapıştırın</div>
                         </div>
                     </div>
-
                     <div class="img-url-wrap">
                         <i class="fa-solid fa-link"></i>
                         <input asp-for="CoverImageUrl" class="fi-ctrl" id="CoverImageUrl"
-                               placeholder="https://example.com/cover.jpg"
+                               placeholder="https://ornek.com/kapak.jpg"
                                data-original="@Model.CoverImageUrl"
                                oninput="trackChange(this,'CoverImageUrl');debouncedImgLoad()" />
                     </div>
-                    <div class="fi-help" style="margin-top:5px">Use a 16:9 high-res image for best results</div>
+                    <div class="fi-help" style="margin-top:5px">En iyi sonuç için 16:9 oranında yüksek çözünürlüklü görsel kullanın</div>
                     <span asp-validation-for="CoverImageUrl" class="fi-error" style="margin-top:4px"></span>
-
                 </div>
             </div>
 
-            <!-- Submit row -->
+            <!-- Kaydet satırı -->
             <div style="margin-top:4px;padding:16px 20px;background:#fff;border:1px solid rgba(226,232,240,.9);border-radius:16px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);">
                 <button type="submit" id="saveBtn"
-                        style="flex:1;height:46px;border:none;border-radius:12px;
-                           background:linear-gradient(135deg,#f59e0b,#f97316);
-                           color:#fff;font-family:'Plus Jakarta Sans',sans-serif;
-                           font-size:14px;font-weight:800;cursor:pointer;
-                           display:flex;align-items:center;justify-content:center;gap:8px;
-                           box-shadow:0 3px 16px rgba(245,158,11,.4),inset 0 1px 0 rgba(255,255,255,.18);
-                           transition:all 250ms;position:relative;overflow:hidden;">
-                    <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                        style="flex:1;height:46px;border:none;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 3px 16px rgba(245,158,11,.4),inset 0 1px 0 rgba(255,255,255,.18);transition:all 250ms;position:relative;overflow:hidden;">
+                    <i class="fa-solid fa-floppy-disk"></i> Değişiklikleri Kaydet
                     <span id="changeCount" style="background:rgba(0,0,0,.15);padding:2px 8px;border-radius:20px;font-size:11px;display:none;"></span>
                 </button>
                 <a href="@Url.Action("TourList", "AdminTour")"
-                   style="height:46px;padding:0 20px;border:1.5px solid #e2e8f0;border-radius:12px;
-                      background:#fff;color:#475569;font-family:'Plus Jakarta Sans',sans-serif;
-                      font-size:13.5px;font-weight:700;cursor:pointer;transition:all 200ms;
-                      display:flex;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,.04);">
-                    Cancel
+                   style="height:46px;padding:0 20px;border:1.5px solid #e2e8f0;border-radius:12px;background:#fff;color:#475569;font-family:'Plus Jakarta Sans',sans-serif;font-size:13.5px;font-weight:700;cursor:pointer;transition:all 200ms;display:flex;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,.04);">
+                    İptal
                 </a>
             </div>
 
-        </div><!-- /ut-steps -->
-        <!-- ══ RIGHT PANEL ══════════════════════════════════════ -->
+        </div>
+
+        <!-- SAĞ PANEL -->
         <div class="ut-panel">
 
-            <!-- Changed fields tracker -->
+            <!-- Değişen alanlar -->
             <div class="panel-card">
                 <div class="pc-head">
-                    <div class="pc-title">Changed Fields</div>
+                    <div class="pc-title">Değişen Alanlar</div>
                     <div id="diffBadge" style="display:none;font-size:10px;font-weight:800;font-family:'DM Mono',monospace;background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;padding:2px 9px;border-radius:20px;box-shadow:0 2px 8px rgba(245,158,11,.3);">0</div>
                 </div>
                 <div class="pc-body">
                     <div class="diff-list" id="diffList">
-                        <div class="diff-empty" id="diffEmpty">No changes yet</div>
+                        <div class="diff-empty" id="diffEmpty">Henüz değişiklik yok</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Badge picker -->
+            <!-- Rozet seçici -->
             <div class="panel-card">
-                <div class="pc-head"><div class="pc-title">Tour Badge</div></div>
+                <div class="pc-head"><div class="pc-title">Tur Rozeti</div></div>
                 <div class="pc-body" style="padding-top:10px">
                     <div class="badge-grid">
-                        <div class="badge-opt @(string.IsNullOrEmpty(Model.Badge) ? "sel" : "")"
-                             data-val="" onclick="pickBadge(this,'')">
+                        <div class="badge-opt @(string.IsNullOrEmpty(Model.Badge) ? "sel" : "")" data-val="" onclick="pickBadge(this,'')">
                             <div class="badge-dot" style="background:#e2e8f0"></div>
-                            <div><div class="badge-name">None</div><div class="badge-sub">No badge</div></div>
+                            <div><div class="badge-name">Yok</div><div class="badge-sub">Rozetsiz</div></div>
                             <div class="badge-ck"><i class="fa-solid fa-check"></i></div>
                         </div>
-                        <div class="badge-opt @(Model.Badge == "Öne Çıkan" ? "sel" : "")"
-                             data-val="Öne Çıkan" onclick="pickBadge(this,'Öne Çıkan')">
+                        <div class="badge-opt @(Model.Badge == "Öne Çıkan" ? "sel" : "")" data-val="Öne Çıkan" onclick="pickBadge(this,'Öne Çıkan')">
                             <div class="badge-dot" style="background:#3b82f6"></div>
                             <div><div class="badge-name">Öne Çıkan</div><div class="badge-sub">Featured</div></div>
                             <div class="badge-ck"><i class="fa-solid fa-check"></i></div>
                         </div>
-                        <div class="badge-opt @(Model.Badge == "Yeni" ? "sel" : "")"
-                             data-val="Yeni" onclick="pickBadge(this,'Yeni')">
+                        <div class="badge-opt @(Model.Badge == "Yeni" ? "sel" : "")" data-val="Yeni" onclick="pickBadge(this,'Yeni')">
                             <div class="badge-dot" style="background:#10b981"></div>
-                            <div><div class="badge-name">Yeni</div><div class="badge-sub">New arrival</div></div>
+                            <div><div class="badge-name">Yeni</div><div class="badge-sub">Yeni eklendi</div></div>
                             <div class="badge-ck"><i class="fa-solid fa-check"></i></div>
                         </div>
-                        <div class="badge-opt @(Model.Badge == "Fırsat" ? "sel" : "")"
-                             data-val="Fırsat" onclick="pickBadge(this,'Fırsat')">
+                        <div class="badge-opt @(Model.Badge == "Fırsat" ? "sel" : "")" data-val="Fırsat" onclick="pickBadge(this,'Fırsat')">
                             <div class="badge-dot" style="background:#f59e0b"></div>
-                            <div><div class="badge-name">Fırsat</div><div class="badge-sub">Deal / Offer</div></div>
+                            <div><div class="badge-name">Fırsat</div><div class="badge-sub">İndirim / Teklif</div></div>
                             <div class="badge-ck"><i class="fa-solid fa-check"></i></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Status -->
+            <!-- Yayın durumu -->
             <div class="panel-card">
-                <div class="pc-head"><div class="pc-title">Publish Status</div></div>
+                <div class="pc-head"><div class="pc-title">Yayın Durumu</div></div>
                 <div class="pc-body" style="padding-top:10px">
                     <div class="sw-row @(Model.IsStatus ? "on" : "off")" id="swRow">
                         <div class="sw-info">
-                            <div class="swn" id="swLabel">@(Model.IsStatus ? "Active" : "Passive")</div>
-                            <div class="sws" id="swDesc">@(Model.IsStatus ? "Tour is publicly visible" : "Tour won't be visible")</div>
+                            <div class="swn" id="swLabel">@(Model.IsStatus ? "Aktif" : "Pasif")</div>
+                            <div class="sws" id="swDesc">@(Model.IsStatus ? "Tur herkese açık" : "Tur görünmüyor")</div>
                         </div>
                         <label class="sw">
-                            <input asp-for="IsStatus" type="checkbox" id="IsStatus"
-                                   onchange="syncStatus(this)" />
+                            <input asp-for="IsStatus" type="checkbox" id="IsStatus" onchange="syncStatus(this)" />
                             <div class="sw-track"></div>
                         </label>
                     </div>
                 </div>
             </div>
 
-            <!-- Live mini preview -->
+            <!-- Canlı mini önizleme -->
             <div class="panel-card" id="miniPreview">
-                <div class="pc-head"><div class="pc-title">Live Preview</div></div>
+                <div class="pc-head"><div class="pc-title">Canlı Önizleme</div></div>
                 <div class="pc-body" style="padding:0 0 14px">
                     <div class="prev-mini">
                         <img class="prev-mini-img" id="prevMiniImg"
@@ -1388,14 +1279,8 @@
                         <div class="prev-mini-body">
                             <div class="prev-mini-title" id="prevTitle">@(Model.Title ?? "—")</div>
                             <div class="prev-mini-meta">
-                                <span class="prev-meta-chip">
-                                    <i class="fa-regular fa-calendar"></i>
-                                    <span id="prevDays">@Model.DayCount days</span>
-                                </span>
-                                <span class="prev-meta-chip">
-                                    <i class="fa-solid fa-users"></i>
-                                    <span id="prevCap">@Model.Capacity persons</span>
-                                </span>
+                                <span class="prev-meta-chip"><i class="fa-regular fa-calendar"></i><span id="prevDays">@Model.DayCount gün</span></span>
+                                <span class="prev-meta-chip"><i class="fa-solid fa-users"></i><span id="prevCap">@Model.Capacity kişi</span></span>
                                 <span class="prev-price" id="prevPrice">₺@Model.Price.ToString("N0")</span>
                             </div>
                         </div>
@@ -1403,18 +1288,18 @@
                 </div>
             </div>
 
-            <!-- Tips -->
+            <!-- İpuçları -->
             <div class="tips-card">
-                <div class="tips-head"><i class="fa-solid fa-triangle-exclamation"></i><div class="tips-head-title">Update Tips</div></div>
+                <div class="tips-head"><i class="fa-solid fa-triangle-exclamation"></i><div class="tips-head-title">Güncelleme İpuçları</div></div>
                 <div class="tips-body">
-                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Only update the fields you need to change.</span></div>
-                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Price changes will affect new reservations only.</span></div>
-                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Reducing capacity may impact existing bookings.</span></div>
-                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Set Passive before making major edits.</span></div>
+                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Yalnızca değiştirmek istediğiniz alanları güncelleyin.</span></div>
+                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Fiyat değişiklikleri yalnızca yeni rezervasyonları etkiler.</span></div>
+                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Kapasiteyi düşürmek mevcut rezervasyonları etkileyebilir.</span></div>
+                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Büyük değişiklikler yapmadan önce turu Pasif yapın.</span></div>
                 </div>
             </div>
 
-        </div><!-- /ut-panel -->
+        </div>
 
     </div>
 </form>
@@ -1424,206 +1309,73 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
-        /* ── original values snapshot ────────────────────────────── */
         const origBadge = "@Model.Badge";
-        let   curBadge  = origBadge;
-        const changed   = new Set();
+        let curBadge = origBadge;
+        const changed = new Set();
 
         const FIELD_LABELS = {
-            Title:         'Tour Name',
-            Description:   'Description',
-            DayCount:      'Duration',
-            Capacity:      'Capacity',
-            Price:         'Price',
-            CoverImageUrl: 'Cover Image',
-            Badge:         'Badge',
-            IsStatus:      'Status',
+            Title: 'Tur Adı', Description: 'Açıklama', DayCount: 'Süre',
+            Capacity: 'Kapasite', Price: 'Fiyat', CoverImageUrl: 'Kapak Görseli',
+            Badge: 'Rozet', IsStatus: 'Durum',
         };
 
-        /* ── Track field changes ─────────────────────────────────── */
         function trackChange(el, key) {
-            const orig = el.dataset.original ?? '';
-            const cur  = el.value ?? '';
-            const dot  = document.getElementById('dot-'+key);
-
-            if (cur !== orig) {
-                changed.add(key);
-                el.classList.add('changed');
-                if (dot) dot.classList.add('show');
-                // stepper highlight
-                if (key==='DayCount') document.getElementById('daysStepper').classList.add('changed');
-                if (key==='Capacity') document.getElementById('capStepper').classList.add('changed');
-            } else {
-                changed.delete(key);
-                el.classList.remove('changed');
-                if (dot) dot.classList.remove('show');
-                if (key==='DayCount') document.getElementById('daysStepper').classList.remove('changed');
-                if (key==='Capacity') document.getElementById('capStepper').classList.remove('changed');
-            }
-
-            // char counters
-            if (key==='Title')       updateCC('titleCount', el.value.length, 120);
-            if (key==='Description') updateCC('descCount',  el.value.length, 500);
-
-            renderDiff();
-            updatePreview();
-            markStepHeads();
+            const orig = el.dataset.original ?? ''; const cur = el.value ?? '';
+            const dot = document.getElementById('dot-' + key);
+            if (cur !== orig) { changed.add(key); el.classList.add('changed'); if (dot) dot.classList.add('show'); if (key === 'DayCount') document.getElementById('daysStepper').classList.add('changed'); if (key === 'Capacity') document.getElementById('capStepper').classList.add('changed'); }
+            else { changed.delete(key); el.classList.remove('changed'); if (dot) dot.classList.remove('show'); if (key === 'DayCount') document.getElementById('daysStepper').classList.remove('changed'); if (key === 'Capacity') document.getElementById('capStepper').classList.remove('changed'); }
+            if (key === 'Title') updateCC('titleCount', el.value.length, 120);
+            if (key === 'Description') updateCC('descCount', el.value.length, 500);
+            renderDiff(); updatePreview(); markStepHeads();
         }
 
-        function updateCC(id, n, max) {
-            const el = document.getElementById(id);
-            el.textContent = n+' / '+max;
-            el.className = 'char-count'+(n>max*.9?' warn':'')+(n>=max?' over':'');
-        }
+        function updateCC(id, n, max) { const el = document.getElementById(id); el.textContent = n + ' / ' + max; el.className = 'char-count' + (n > max * .9 ? ' warn' : '') + (n >= max ? ' over' : ''); }
 
-        /* ── Badge pick ──────────────────────────────────────────── */
-        function pickBadge(el, val) {
-            document.querySelectorAll('.badge-opt').forEach(o=>o.classList.remove('sel'));
-            el.classList.add('sel');
-            document.getElementById('BadgeHidden').value = val;
-            curBadge = val;
-            if (val !== origBadge) changed.add('Badge'); else changed.delete('Badge');
-            renderDiff();
-            markStepHeads();
-        }
+        function pickBadge(el, val) { document.querySelectorAll('.badge-opt').forEach(o => o.classList.remove('sel')); el.classList.add('sel'); document.getElementById('BadgeHidden').value = val; curBadge = val; if (val !== origBadge) changed.add('Badge'); else changed.delete('Badge'); renderDiff(); markStepHeads(); }
 
-        /* ── Render diff list ────────────────────────────────────── */
         function renderDiff() {
-            const list  = document.getElementById('diffList');
-            const empty = document.getElementById('diffEmpty');
-            const badge = document.getElementById('diffBadge');
-            const cc    = document.getElementById('changeCount');
-
-            list.querySelectorAll('.diff-item').forEach(e=>e.remove());
-
-            if (changed.size === 0) {
-                empty.style.display = 'block';
-                badge.style.display = 'none';
-                cc.style.display    = 'none';
-                return;
-            }
-            empty.style.display = 'none';
-            badge.style.display = 'block';
-            badge.textContent   = changed.size;
-            cc.style.display    = 'inline-flex';
-            cc.textContent      = changed.size + (changed.size===1?' change':' changes');
-
-            changed.forEach(key => {
-                const d = document.createElement('div');
-                d.className = 'diff-item';
-                d.innerHTML = `<div class="diff-item-dot"></div><div class="diff-item-name">${FIELD_LABELS[key]||key}</div>`;
-                list.appendChild(d);
-            });
+            const list = document.getElementById('diffList'); const empty = document.getElementById('diffEmpty');
+            const badge = document.getElementById('diffBadge'); const cc = document.getElementById('changeCount');
+            list.querySelectorAll('.diff-item').forEach(e => e.remove());
+            if (changed.size === 0) { empty.style.display = 'block'; badge.style.display = 'none'; cc.style.display = 'none'; return; }
+            empty.style.display = 'none'; badge.style.display = 'block'; badge.textContent = changed.size;
+            cc.style.display = 'inline-flex'; cc.textContent = changed.size + (changed.size === 1 ? ' değişiklik' : ' değişiklik');
+            changed.forEach(key => { const d = document.createElement('div'); d.className = 'diff-item'; d.innerHTML = `<div class="diff-item-dot"></div><div class="diff-item-name">${FIELD_LABELS[key] || key}</div>`; list.appendChild(d); });
         }
 
-        /* ── Mark step heads with change indicator ───────────────── */
         function markStepHeads() {
-            const s1keys = ['Title','Description'];
-            const s2keys = ['DayCount','Capacity','Price'];
-            const s3keys = ['CoverImageUrl'];
-
-            [['sh1',s1keys],['sh2',s2keys],['sh3',s3keys]].forEach(([id,keys])=>{
-                const h = document.getElementById(id);
-                const hasChange = keys.some(k=>changed.has(k)) || (id==='sh1'&&changed.has('Badge'));
-                h.classList.toggle('has-changes', hasChange);
-            });
+            const s1keys = ['Title', 'Description']; const s2keys = ['DayCount', 'Capacity', 'Price']; const s3keys = ['CoverImageUrl'];
+            [['sh1', s1keys], ['sh2', s2keys], ['sh3', s3keys]].forEach(([id, keys]) => { const h = document.getElementById(id); const hasChange = keys.some(k => changed.has(k)) || (id === 'sh1' && changed.has('Badge')); h.classList.toggle('has-changes', hasChange); });
         }
 
-        /* ── Status sync ─────────────────────────────────────────── */
         function syncStatus(cb) {
-            const row  = document.getElementById('swRow');
-            const lbl  = document.getElementById('swLabel');
-            const desc = document.getElementById('swDesc');
-            if (cb.checked) {
-                lbl.textContent = 'Active'; lbl.style.color = '#10b981';
-                desc.textContent = 'Tour is publicly visible';
-                row.className = 'sw-row on';
-            } else {
-                lbl.textContent = 'Passive'; lbl.style.color = '#94a3b8';
-                desc.textContent = "Tour won't be visible";
-                row.className = 'sw-row off';
-            }
+            const row = document.getElementById('swRow'); const lbl = document.getElementById('swLabel'); const desc = document.getElementById('swDesc');
+            if (cb.checked) { lbl.textContent = 'Aktif'; lbl.style.color = '#10b981'; desc.textContent = 'Tur herkese açık'; row.className = 'sw-row on'; }
+            else { lbl.textContent = 'Pasif'; lbl.style.color = '#94a3b8'; desc.textContent = 'Tur görünmüyor'; row.className = 'sw-row off'; }
             const origStatus = '@Model.IsStatus'.toLowerCase() === 'true';
             if (cb.checked !== origStatus) changed.add('IsStatus'); else changed.delete('IsStatus');
             renderDiff(); markStepHeads();
         }
 
-        /* ── Stepper ─────────────────────────────────────────────── */
-        function stepChange(id, delta) {
-            const inp = document.getElementById(id);
-            const min = parseInt(inp.min)||1, max=parseInt(inp.max)||9999;
-            let v = (parseInt(inp.value)||0)+delta;
-            v = Math.max(min,Math.min(max,v));
-            inp.value = v;
-            inp.dispatchEvent(new Event('input'));
-        }
-        function clampVal(inp,min,max){
-            let v=parseInt(inp.value)||0;
-            if(v<min)inp.value=min; if(v>max)inp.value=max;
-        }
+        function stepChange(id, delta) { const inp = document.getElementById(id); const min = parseInt(inp.min) || 1, max = parseInt(inp.max) || 9999; let v = (parseInt(inp.value) || 0) + delta; v = Math.max(min, Math.min(max, v)); inp.value = v; inp.dispatchEvent(new Event('input')); }
+        function clampVal(inp, min, max) { let v = parseInt(inp.value) || 0; if (v < min) inp.value = min; if (v > max) inp.value = max; }
 
-        /* ── Live preview ────────────────────────────────────────── */
         function updatePreview() {
-            const t = document.getElementById('Title').value||'—';
-            const d = document.getElementById('DayCount').value;
-            const c = document.getElementById('Capacity').value;
-            const p = document.getElementById('Price').value;
-            document.getElementById('prevTitle').textContent = t;
-            document.getElementById('prevDays').textContent  = d ? d+' days' : '—';
-            document.getElementById('prevCap').textContent   = c ? c+' persons' : '—';
-            document.getElementById('prevPrice').textContent = p ? '₺'+Number(p).toLocaleString('tr-TR') : '—';
+            const t = document.getElementById('Title').value || '—'; const d = document.getElementById('DayCount').value; const c = document.getElementById('Capacity').value; const p = document.getElementById('Price').value;
+            document.getElementById('prevTitle').textContent = t; document.getElementById('prevDays').textContent = d ? d + ' gün' : '—'; document.getElementById('prevCap').textContent = c ? c + ' kişi' : '—'; document.getElementById('prevPrice').textContent = p ? '₺' + Number(p).toLocaleString('tr-TR') : '—';
         }
         function updatePrevPrice() { updatePreview(); }
 
-        /* ── Image preview ───────────────────────────────────────── */
         let imgTimer;
-        function debouncedImgLoad() {
-            clearTimeout(imgTimer);
-            imgTimer = setTimeout(() => {
-                const v = document.getElementById('CoverImageUrl').value.trim();
-                const frame = document.getElementById('imgFrame');
-                const img   = document.getElementById('previewImg');
-                const mini  = document.getElementById('prevMiniImg');
-                if (!v) { frame.classList.remove('has-img'); return; }
-                img.onload  = () => { frame.classList.add('has-img'); };
-                img.onerror = () => { frame.classList.remove('has-img'); };
-                img.src = v;
-                mini.src = v;
-                mini.style.display = 'block';
-            }, 450);
-        }
+        function debouncedImgLoad() { clearTimeout(imgTimer); imgTimer = setTimeout(() => { const v = document.getElementById('CoverImageUrl').value.trim(); const frame = document.getElementById('imgFrame'); const img = document.getElementById('previewImg'); const mini = document.getElementById('prevMiniImg'); if (!v) { frame.classList.remove('has-img'); return; } img.onload = () => { frame.classList.add('has-img'); }; img.onerror = () => { frame.classList.remove('has-img'); }; img.src = v; mini.src = v; mini.style.display = 'block'; }, 450); }
 
-        /* ── Step accordion ──────────────────────────────────────── */
-        function toggleStep(n) {
-            const b = document.getElementById('step'+n);
-            const wasOpen = b.classList.contains('open');
-            [1,2,3].forEach(i => {
-                document.getElementById('step'+i).classList.remove('open');
-                const sn = document.getElementById('snum'+i);
-                if (!sn.classList.contains('done')) sn.className='step-num idle';
-            });
-            if (!wasOpen) {
-                b.classList.add('open');
-                const sn = document.getElementById('snum'+n);
-                if (!sn.classList.contains('done')) sn.className='step-num active';
-            }
-        }
+        function toggleStep(n) { const b = document.getElementById('step' + n); const wasOpen = b.classList.contains('open'); [1, 2, 3].forEach(i => { document.getElementById('step' + i).classList.remove('open'); const sn = document.getElementById('snum' + i); if (!sn.classList.contains('done')) sn.className = 'step-num idle'; }); if (!wasOpen) { b.classList.add('open'); const sn = document.getElementById('snum' + n); if (!sn.classList.contains('done')) sn.className = 'step-num active'; } }
 
-        /* ── Submit ──────────────────────────────────────────────── */
-        document.getElementById('utForm').addEventListener('submit', () => {
-            const btn = document.getElementById('saveBtn');
-            btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-            btn.disabled=true;
-        });
+        document.getElementById('utForm').addEventListener('submit', () => { const btn = document.getElementById('saveBtn'); btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Kaydediliyor...'; btn.disabled = true; });
 
-        /* ── Init ────────────────────────────────────────────────── */
         updatePreview();
-        // init char counts
-        const titleEl = document.getElementById('Title');
-        const descEl  = document.getElementById('Description');
-        updateCC('titleCount', titleEl.value.length, 120);
-        updateCC('descCount',  descEl.value.length,  500);
-        // wire inputs
-        ['DayCount','Capacity'].forEach(id=>document.getElementById(id).addEventListener('input',updatePreview));
+        const titleEl = document.getElementById('Title'); const descEl = document.getElementById('Description');
+        updateCC('titleCount', titleEl.value.length, 120); updateCC('descCount', descEl.value.length, 500);
+        ['DayCount', 'Capacity'].forEach(id => document.getElementById(id).addEventListener('input', updatePreview));
     </script>
 }
