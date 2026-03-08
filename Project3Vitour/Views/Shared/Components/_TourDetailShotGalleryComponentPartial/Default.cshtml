@@ -1,0 +1,25 @@
+﻿@model List<ResultGalleryDto>
+
+<div class="gallery-content-tour" style="display:flex;flex-direction:column;gap:18px;">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            <div class="image" style="width:100%;">
+                <img src="@item.ImageUrl" alt="image" style="width:100%;height:340px;object-fit:cover;border-radius:12px;display:block;">
+            </div>
+        }
+    }
+    else
+    {
+        <div class="image" style="width:100%;">
+            <img src="/vitour/assets/images/gallery/gallery.jpg" alt="image" style="width:100%;height:340px;object-fit:cover;border-radius:12px;display:block;">
+        </div>
+        <div class="image" style="width:100%;">
+            <img src="/vitour/assets/images/gallery/gallery2.jpg" alt="image" style="width:100%;height:340px;object-fit:cover;border-radius:12px;display:block;">
+        </div>
+        <div class="image" style="width:100%;">
+            <img src="/vitour/assets/images/gallery/gallery3.jpg" alt="image" style="width:100%;height:340px;object-fit:cover;border-radius:12px;display:block;">
+        </div>
+    }
+</div>

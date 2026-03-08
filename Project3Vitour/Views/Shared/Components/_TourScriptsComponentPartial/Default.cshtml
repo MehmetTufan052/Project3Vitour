@@ -1,4 +1,4 @@
-﻿﻿<a id="scroll-top" class="button-go"></a>
+﻿<a id="scroll-top" class="button-go"></a>
 <script src="/vitour/app/js/jquery.min.js"></script>
 <script src="/vitour/app/js/jquery.nice-select.min.js"></script>
 <script src="/vitour/app/js/bootstrap.min.js"></script>
@@ -8,4 +8,16 @@
 <script src="/vitour/app/js/jquery.fancybox.js"></script>
 <script src="/vitour/app/js/price-ranger.js"></script>
 <script src="/vitour/app/js/shortcodes.js"></script>
-<script src="/vitour/app/js/main.js"></script>t>
+<script src="/vitour/app/js/main.js"></script><script id="tourlist-breadcrumb-force">
+    document.addEventListener("DOMContentLoaded", function () {
+        var path = (window.location.pathname || "").toLowerCase();
+        if (path.indexOf("/tour/tourlist") === -1) return;
+
+        document.querySelectorAll(".breadcumb-section").forEach(function (el) {
+            el.style.setProperty("background-image", "url('/vitour/assets/images/page/breakcrumb.jpg')", "important");
+            el.style.setProperty("background-position", "center", "important");
+            el.style.setProperty("background-repeat", "no-repeat", "important");
+            el.style.setProperty("background-size", "cover", "important");
+        });
+    });
+</script>

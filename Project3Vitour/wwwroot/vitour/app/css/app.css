@@ -1,4 +1,4 @@
-@charset "UTF-8";
+﻿@charset "UTF-8";
 /**
   * Name: Vitour - Travel & Tour Booking HTML Template
   * Version: 1.0.2
@@ -1359,7 +1359,7 @@
 /*----------------------breadcumb--------------------*/
 .breadcumb-section {
     padding: 137px 0px 135px 0px !important;
-    background-image: url(/vitour/assets/images/page/bg1.png) !important;
+    background-image: url(/vitour/assets/images/page/breakcrumb.jpg) !important;
     position: relative;
     background-position: center;
     background-repeat: no-repeat;
@@ -11715,3 +11715,11 @@ blockquote {
     }
 
 /*# sourceMappingURL=app.css.map */
+
+/* TourList-specific hero override */
+.breadcumb-section.tourlist-hero {
+  background-image: url(/vitour/assets/images/page/breakcrumb.jpg) !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+}

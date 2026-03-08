@@ -35,7 +35,7 @@
                     <div class="tf-container full">
                         <div class="row">
                             <div class="col-md-12">
-                                <img src="https://themesflat.co/html/vitour/assets/images/page/breakcrumb2.jpg" alt="image">
+                                <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=2400&q=80" alt="image" style="width:100%;height:431px;object-fit:cover;display:block;">
                             </div>
                         </div>
                     </div>
@@ -94,7 +94,7 @@
                                        
                                         @await Component.InvokeAsync("_TourDetailDestinationSmallGalleryComponentPartial", new { tourId = Model.TourId })
                                         
-                                        @await Component.InvokeAsync("_TourDetailsDescriptionAreaComponentPartial", new { tourId = Model.TourId })")
+                                        @await Component.InvokeAsync("_TourDetailsDescriptionAreaComponentPartial", new { tourId = Model.TourId })
                                       
 
                                     </div>
@@ -462,37 +462,7 @@
                                          aria-labelledby="pills-shot-gallery-tab" tabindex="0">
                                         <div class="row">
                                             <div class="col-lg-8">
-                                                <div class="gallery-content-tour">
-                                                    <div class="image-gallery1 image">
-                                                        <img src="./assets/images/gallery/gallery.jpg" alt="image"
-                                                             class="item1">
-                                                    </div>
-
-                                                    <div class="image-gallery2 image">
-                                                        <img src="./assets/images/gallery/gallery2.jpg" alt="image"
-                                                             class="item2">
-                                                    </div>
-
-                                                    <div class="image-gallery3 image">
-                                                        <img src="./assets/images/gallery/gallery3.jpg" alt="image"
-                                                             class="item1">
-                                                    </div>
-
-                                                    <div class="image-gallery4 image">
-                                                        <img src="./assets/images/gallery/gallery4.jpg" alt="image"
-                                                             class="item2">
-                                                    </div>
-
-                                                    <div class="image-gallery5 image">
-                                                        <img src="./assets/images/gallery/gallery5.jpg" alt="image"
-                                                             class="item1">
-                                                    </div>
-
-                                                    <div class="image-gallery6 image">
-                                                        <img src="./assets/images/gallery/gallery6.jpg" alt="image"
-                                                             class="item2">
-                                                    </div>
-                                                </div>
+                                                @await Component.InvokeAsync("_TourDetailShotGalleryComponentPartial", new { tourId = Model.TourId })
 
                                             </div>
                                             <div class="col-lg-4">

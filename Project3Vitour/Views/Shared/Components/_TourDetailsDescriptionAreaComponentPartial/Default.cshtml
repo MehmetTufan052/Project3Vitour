@@ -1,8 +1,12 @@
 ﻿<div class="row">
     <div class="col-lg-8">
         <div class="information-content-tour">
-            <div class="description-wrap mb-40">               
-                    @Html.Raw(Model.Description)
+<div class="description-wrap mb-40">
+                @{
+                    var formattedDescription = (Model.Description ?? string.Empty)
+                        .Replace("Dünyanın Başka Hiçbir Yerinde Göremeyeceğiniz Bir Sabah", "<span class=\"description\">Dünyanın Başka Hiçbir Yerinde Göremeyeceğiniz Bir Sabah</span>");
+                }
+                @Html.Raw(formattedDescription)
             </div>
             <div class="description-wrap mb-40">
                 <span class="description">Advance Facilities</span>
