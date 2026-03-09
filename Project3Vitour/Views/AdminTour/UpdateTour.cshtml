@@ -122,6 +122,10 @@
             animation-delay: .12s
         }
 
+        .step-block:nth-child(7) {
+            animation-delay: .16s
+        }
+
     @@keyframes sbIn {
         from {
             opacity: 0;
@@ -1085,7 +1089,7 @@
                         <label class="fl"><i class="fa-solid fa-align-left"></i> Açıklama <span class="req">*</span></label>
                         <div class="fi-wrap">
                             <textarea asp-for="Description" class="fi-ctrl" id="Description"
-                                      placeholder="Turu açıklayın..." maxlength="500" rows="5"
+                                      placeholder="Turu açıklayın..." maxlength="1500" rows="5"
                                       data-original="@Model.Description"
                                       oninput="trackChange(this,'Description')"></textarea>
                             <div class="fi-changed-dot" id="dot-Description" style="top:18px;"></div>
@@ -1187,6 +1191,79 @@
                     </div>
                     <div class="fi-help" style="margin-top:5px">En iyi sonuç için 16:9 oranında yüksek çözünürlüklü görsel kullanın</div>
                     <span asp-validation-for="CoverImageUrl" class="fi-error" style="margin-top:4px"></span>
+                </div>
+            </div>
+
+            <div class="step-connector"></div>
+
+            <!-- Adım 4: Lokasyon Bilgileri -->
+            <div class="step-block" id="step4">
+                <div class="step-head" id="sh4" onclick="toggleStep(4)">
+                    <div class="step-num idle" id="snum4">4</div>
+                    <div class="step-info">
+                        <div class="step-title">Lokasyon Bilgileri</div>
+                        <div class="step-sub">Hedef detayları ve öne çıkan noktalar</div>
+                    </div>
+                    <div class="step-done-mark"><i class="fa-solid fa-check"></i></div>
+                    <i class="fa-solid fa-chevron-down step-chev"></i>
+                </div>
+                <div class="step-body">
+                    <!-- Lokasyon Başlığı -->
+                    <div class="fg">
+                        <label class="fl"><i class="fa-solid fa-location-dot"></i> Lokasyon Başlığı <span class="req">*</span></label>
+                        <div class="fi-wrap">
+                            <input asp-for="LocationPageTitle" class="fi-ctrl" id="LocationPageTitle"
+                                   placeholder="Örn. Kapadokya: Masalların Ülkesini Keşfedin" maxlength="150"
+                                   data-original="@Model.LocationPageTitle"
+                                   oninput="trackChange(this,'LocationPageTitle')" autocomplete="off" />
+                            <div class="fi-changed-dot" id="dot-LocationPageTitle"></div>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">
+                            <span asp-validation-for="LocationPageTitle" class="fi-error"></span>
+                            <div class="char-count" id="locTitleCount" style="margin-left:auto">@(Model.LocationPageTitle?.Length ?? 0) / 150</div>
+                        </div>
+                    </div>
+
+                    <!-- Lokasyon Açıklaması -->
+                    <div class="fg">
+                        <label class="fl"><i class="fa-solid fa-align-left"></i> Lokasyon Açıklaması <span class="req">*</span></label>
+                        <div class="fi-wrap">
+                            <textarea asp-for="LocationPageDescription" class="fi-ctrl" id="LocationPageDescription"
+                                      placeholder="Destinasyonu, tarihini, kültürünü, sehenswürdigkeiten, iklimini, en iyi ziyaret dönemini açıklayın..."
+                                      maxlength="800" rows="5"
+                                      data-original="@Model.LocationPageDescription"
+                                      oninput="trackChange(this,'LocationPageDescription')"></textarea>
+                            <div class="fi-changed-dot" id="dot-LocationPageDescription" style="top:18px;"></div>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">
+                            <span asp-validation-for="LocationPageDescription" class="fi-error"></span>
+                            <div class="char-count" id="locDescCount" style="margin-left:auto">@(Model.LocationPageDescription?.Length ?? 0) / 800</div>
+                        </div>
+                    </div>
+
+                    <!-- Lokasyon Resmi -->
+                    <div class="fg">
+                        <label class="fl"><i class="fa-solid fa-image"></i> Lokasyon Resmi URL'si <span class="req">*</span></label>
+                        <div class="img-frame @(!string.IsNullOrEmpty(Model.LocationPageImageUrl) ? "has-img" : "")" id="locImgFrame">
+                            <img id="locPreviewImg" src="@(Model.LocationPageImageUrl ?? "")" alt="Lokasyon" onerror="this.style.display='none'" />
+                            <div class="img-frame-overlay">
+                                <span><i class="fa-solid fa-pen"></i> Görseli Değiştir</span>
+                            </div>
+                            <div class="img-frame-ph">
+                                <div style="font-size:28px;color:#c4cdd9;margin-bottom:8px"><i class="fa-regular fa-image"></i></div>
+                                <div style="font-size:13px;font-weight:600;color:#94a3b8">Lokasyon resmi URL'sini yapıştırın</div>
+                            </div>
+                        </div>
+                        <div class="img-url-wrap">
+                            <i class="fa-solid fa-link"></i>
+                            <input asp-for="LocationPageImageUrl" class="fi-ctrl" id="LocationPageImageUrl"
+                                   placeholder="https://ornek.com/lokasyon.jpg"
+                                   data-original="@Model.LocationPageImageUrl"
+                                   oninput="trackChange(this,'LocationPageImageUrl');debouncedLocImgLoad()" />
+                        </div>
+                        <div class="fi-help" style="margin-top:5px">Destinasyonu temsil eden yüksek kaliteli 16:9 oranında görsel</div>
+                        <span asp-validation-for="LocationPageImageUrl" class="fi-error" style="margin-top:4px"></span>
+                    </div>
                 </div>
             </div>
 
@@ -1296,6 +1373,7 @@
                     <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Fiyat değişiklikleri yalnızca yeni rezervasyonları etkiler.</span></div>
                     <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Kapasiteyi düşürmek mevcut rezervasyonları etkileyebilir.</span></div>
                     <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Büyük değişiklikler yapmadan önce turu Pasif yapın.</span></div>
+                    <div class="tip-row"><i class="fa-solid fa-circle-dot tip-ic"></i><span>Lokasyon bilgileri, müşterilerin destinasyonu daha iyi anlamalarına yardımcı olur.</span></div>
                 </div>
             </div>
 
@@ -1316,7 +1394,8 @@
         const FIELD_LABELS = {
             Title: 'Tur Adı', Description: 'Açıklama', DayCount: 'Süre',
             Capacity: 'Kapasite', Price: 'Fiyat', CoverImageUrl: 'Kapak Görseli',
-            Badge: 'Rozet', IsStatus: 'Durum',
+            LocationPageTitle: 'Lokasyon Başlığı', LocationPageDescription: 'Lokasyon Açıklaması',
+            LocationPageImageUrl: 'Lokasyon Resmi', Badge: 'Rozet', IsStatus: 'Durum',
         };
 
         function trackChange(el, key) {
@@ -1325,7 +1404,9 @@
             if (cur !== orig) { changed.add(key); el.classList.add('changed'); if (dot) dot.classList.add('show'); if (key === 'DayCount') document.getElementById('daysStepper').classList.add('changed'); if (key === 'Capacity') document.getElementById('capStepper').classList.add('changed'); }
             else { changed.delete(key); el.classList.remove('changed'); if (dot) dot.classList.remove('show'); if (key === 'DayCount') document.getElementById('daysStepper').classList.remove('changed'); if (key === 'Capacity') document.getElementById('capStepper').classList.remove('changed'); }
             if (key === 'Title') updateCC('titleCount', el.value.length, 120);
-            if (key === 'Description') updateCC('descCount', el.value.length, 500);
+            if (key === 'Description') updateCC('descCount', el.value.length, 1500);
+            if (key === 'LocationPageTitle') updateCC('locTitleCount', el.value.length, 150);
+            if (key === 'LocationPageDescription') updateCC('locDescCount', el.value.length, 800);
             renderDiff(); updatePreview(); markStepHeads();
         }
 
@@ -1344,8 +1425,8 @@
         }
 
         function markStepHeads() {
-            const s1keys = ['Title', 'Description']; const s2keys = ['DayCount', 'Capacity', 'Price']; const s3keys = ['CoverImageUrl'];
-            [['sh1', s1keys], ['sh2', s2keys], ['sh3', s3keys]].forEach(([id, keys]) => { const h = document.getElementById(id); const hasChange = keys.some(k => changed.has(k)) || (id === 'sh1' && changed.has('Badge')); h.classList.toggle('has-changes', hasChange); });
+            const s1keys = ['Title', 'Description']; const s2keys = ['DayCount', 'Capacity', 'Price']; const s3keys = ['CoverImageUrl']; const s4keys = ['LocationPageTitle', 'LocationPageDescription', 'LocationPageImageUrl'];
+            [['sh1', s1keys], ['sh2', s2keys], ['sh3', s3keys], ['sh4', s4keys]].forEach(([id, keys]) => { const h = document.getElementById(id); const hasChange = keys.some(k => changed.has(k)) || (id === 'sh1' && changed.has('Badge')); h.classList.toggle('has-changes', hasChange); });
         }
 
         function syncStatus(cb) {
@@ -1366,16 +1447,18 @@
         }
         function updatePrevPrice() { updatePreview(); }
 
-        let imgTimer;
+        let imgTimer, locImgTimer;
         function debouncedImgLoad() { clearTimeout(imgTimer); imgTimer = setTimeout(() => { const v = document.getElementById('CoverImageUrl').value.trim(); const frame = document.getElementById('imgFrame'); const img = document.getElementById('previewImg'); const mini = document.getElementById('prevMiniImg'); if (!v) { frame.classList.remove('has-img'); return; } img.onload = () => { frame.classList.add('has-img'); }; img.onerror = () => { frame.classList.remove('has-img'); }; img.src = v; mini.src = v; mini.style.display = 'block'; }, 450); }
 
-        function toggleStep(n) { const b = document.getElementById('step' + n); const wasOpen = b.classList.contains('open'); [1, 2, 3].forEach(i => { document.getElementById('step' + i).classList.remove('open'); const sn = document.getElementById('snum' + i); if (!sn.classList.contains('done')) sn.className = 'step-num idle'; }); if (!wasOpen) { b.classList.add('open'); const sn = document.getElementById('snum' + n); if (!sn.classList.contains('done')) sn.className = 'step-num active'; } }
+        function debouncedLocImgLoad() { clearTimeout(locImgTimer); locImgTimer = setTimeout(() => { const v = document.getElementById('LocationPageImageUrl').value.trim(); const frame = document.getElementById('locImgFrame'); const img = document.getElementById('locPreviewImg'); if (!v) { frame.classList.remove('has-img'); return; } img.onload = () => { frame.classList.add('has-img'); }; img.onerror = () => { frame.classList.remove('has-img'); }; img.src = v; }, 450); }
+
+        function toggleStep(n) { const b = document.getElementById('step' + n); const wasOpen = b.classList.contains('open'); [1, 2, 3, 4].forEach(i => { document.getElementById('step' + i).classList.remove('open'); const sn = document.getElementById('snum' + i); if (!sn.classList.contains('done')) sn.className = 'step-num idle'; }); if (!wasOpen) { b.classList.add('open'); const sn = document.getElementById('snum' + n); if (!sn.classList.contains('done')) sn.className = 'step-num active'; } }
 
         document.getElementById('utForm').addEventListener('submit', () => { const btn = document.getElementById('saveBtn'); btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Kaydediliyor...'; btn.disabled = true; });
 
         updatePreview();
         const titleEl = document.getElementById('Title'); const descEl = document.getElementById('Description');
-        updateCC('titleCount', titleEl.value.length, 120); updateCC('descCount', descEl.value.length, 500);
+        updateCC('titleCount', titleEl.value.length, 120); updateCC('descCount', descEl.value.length, 1500);
         ['DayCount', 'Capacity'].forEach(id => document.getElementById(id).addEventListener('input', updatePreview));
     </script>
 }

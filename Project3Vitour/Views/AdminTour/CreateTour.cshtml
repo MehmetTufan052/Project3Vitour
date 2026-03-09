@@ -1,13 +1,13 @@
 ﻿@model CreateTourDto
 @{
-    ViewData["Title"] = "CreateTour";
+    ViewData["Title"] = "Tur Oluştur";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <style>
     /* ═══════════════════════════════════════════════════════════
-       CREATE TOUR — PREMIUM GLASSMORPHISM FORM
-    ═══════════════════════════════════════════════════════════ */
+           CREATE TOUR — PREMIUM GLASSMORPHISM FORM
+        ═══════════════════════════════════════════════════════════ */
 
     /* Page layout: two-column sticky */
     .ct-layout {
@@ -16,13 +16,11 @@
         gap: 20px;
         align-items: start;
     }
+
     @@media (max-width: 1024px) {
-        .ct-layout
-
-    {
-        grid-template-columns: 1fr;
-    }
-
+        .ct-layout {
+            grid-template-columns: 1fr;
+        }
     }
 
     /* ── LEFT: Steps ─────────────────────────────────────────── */
@@ -202,13 +200,11 @@
         .fg-row:last-child {
             margin-bottom: 0;
         }
+
     @@media (max-width:640px) {
-        .fg-row
-
-    {
-        grid-template-columns: 1fr;
-    }
-
+        .fg-row {
+            grid-template-columns: 1fr;
+        }
     }
 
     .fl {
@@ -592,17 +588,15 @@
         transition: width 400ms cubic-bezier(.4,0,.2,1);
         width: 0%;
     }
+
     @@keyframes progShimmer {
-        0%
+        0% {
+            background-position: 100%
+        }
 
-    {
-        background-position: 100%
-    }
-
-    100% {
-        background-position: -100%
-    }
-
+        100% {
+            background-position: -100%
+        }
     }
 
     .prog-pct {
@@ -965,22 +959,24 @@
             animation-delay: .16s;
         }
 
+        .step-block:nth-child(9) {
+            animation-delay: .20s;
+        }
+
     .ct-panel {
-        animation: sbIn .35s .20s cubic-bezier(.4,0,.2,1) both;
+        animation: sbIn .35s .24s cubic-bezier(.4,0,.2,1) both;
     }
+
     @@keyframes sbIn {
-        from
+        from {
+            opacity: 0;
+            transform: translateY(12px)
+        }
 
-    {
-        opacity: 0;
-        transform: translateY(12px)
-    }
-
-    to {
-        opacity: 1;
-        transform: none
-    }
-
+        to {
+            opacity: 1;
+            transform: none
+        }
     }
 
     /* Micro-focus ring on step-head hover */
@@ -1005,13 +1001,13 @@
 <!-- Page Header -->
 <div class="ph anim" style="margin-bottom:20px;">
     <div>
-        <div class="ph-eye">Tours</div>
-        <h1 class="ph-h1">Create New Tour</h1>
-        <p class="ph-desc">Fill in each section to publish a new tour package</p>
+        <div class="ph-eye">Turlar</div>
+        <h1 class="ph-h1">Yeni Tur Oluştur</h1>
+        <p class="ph-desc">Her bölümü doldurarak yeni bir tur paketi yayınlayın</p>
     </div>
     <div class="ph-acts">
         <a href="@Url.Action("TourList", "AdminTour")" class="btn btn-ghost">
-            <i class="fa-solid fa-arrow-left"></i> Back
+            <i class="fa-solid fa-arrow-left"></i> Geri
         </a>
     </div>
 </div>
@@ -1029,8 +1025,8 @@
                 <div class="step-head" onclick="toggleStep(1)">
                     <div class="step-num active" id="snum1">1</div>
                     <div class="step-info">
-                        <div class="step-title">Basic Information</div>
-                        <div class="step-sub">Tour name and description</div>
+                        <div class="step-title">Temel Bilgiler</div>
+                        <div class="step-sub">Tur adı ve açıklaması</div>
                     </div>
                     <div class="step-done-mark"><i class="fa-solid fa-check"></i></div>
                     <i class="fa-solid fa-chevron-down step-chevron"></i>
@@ -1039,10 +1035,10 @@
                     <!-- Title -->
                     <div class="fg">
                         <label class="fl" for="Title">
-                            <i class="fa-solid fa-heading"></i> Tour Name <span class="req">*</span>
+                            <i class="fa-solid fa-heading"></i> Tur Adı <span class="req">*</span>
                         </label>
                         <input asp-for="Title" class="fi-ctrl" id="Title"
-                               placeholder="e.g. Kapadokya Masalı: Balonlu 3 Günlük Tur"
+                               placeholder="Örn. Kapadokya Masalı: Balonlu 3 Günlük Tur"
                                maxlength="120" autocomplete="off" />
                         <div style="display:flex;justify-content:space-between;align-items:center;">
                             <span asp-validation-for="Title" class="fi-error"></span>
@@ -1053,10 +1049,10 @@
                     <!-- Description -->
                     <div class="fg">
                         <label class="fl" for="Description">
-                            <i class="fa-solid fa-align-left"></i> Description <span class="req">*</span>
+                            <i class="fa-solid fa-align-left"></i> Açıklama <span class="req">*</span>
                         </label>
                         <textarea asp-for="Description" class="fi-ctrl" id="Description"
-                                  placeholder="Describe what makes this tour unique, what's included, key highlights..."
+                                  placeholder="Bu turu özel kılan nedir, neler dahil, ana özellikler..."
                                   maxlength="500" rows="5"></textarea>
                         <div style="display:flex;justify-content:space-between;align-items:center;">
                             <span asp-validation-for="Description" class="fi-error"></span>
@@ -1073,8 +1069,8 @@
                 <div class="step-head" onclick="toggleStep(2)">
                     <div class="step-num idle" id="snum2">2</div>
                     <div class="step-info">
-                        <div class="step-title">Tour Details</div>
-                        <div class="step-sub">Duration, capacity & price</div>
+                        <div class="step-title">Tur Detayları</div>
+                        <div class="step-sub">Süre, kapasite ve fiyat</div>
                     </div>
                     <div class="step-done-mark"><i class="fa-solid fa-check"></i></div>
                     <i class="fa-solid fa-chevron-down step-chevron"></i>
@@ -1084,7 +1080,7 @@
                         <!-- DayCount stepper -->
                         <div class="fg" style="margin-bottom:0;">
                             <label class="fl">
-                                <i class="fa-regular fa-calendar"></i> Duration <span class="req">*</span>
+                                <i class="fa-regular fa-calendar"></i> Süre <span class="req">*</span>
                             </label>
                             <div class="stepper" id="daysStepper">
                                 <button type="button" onclick="stepChange('DayCount',-1)">
@@ -1097,14 +1093,14 @@
                                     <i class="fa-solid fa-plus"></i>
                                 </button>
                             </div>
-                            <div class="stepper-label">Days (1–365)</div>
+                            <div class="stepper-label">Gün (1–365)</div>
                             <span asp-validation-for="DayCount" class="fi-error"></span>
                         </div>
 
                         <!-- Capacity stepper -->
                         <div class="fg" style="margin-bottom:0;">
                             <label class="fl">
-                                <i class="fa-solid fa-users"></i> Capacity <span class="req">*</span>
+                                <i class="fa-solid fa-users"></i> Kapasite <span class="req">*</span>
                             </label>
                             <div class="stepper" id="capStepper">
                                 <button type="button" onclick="stepChange('Capacity',-5)">
@@ -1117,7 +1113,7 @@
                                     <i class="fa-solid fa-plus"></i>
                                 </button>
                             </div>
-                            <div class="stepper-label">Max persons</div>
+                            <div class="stepper-label">Max kişi</div>
                             <span asp-validation-for="Capacity" class="fi-error"></span>
                         </div>
                     </div>
@@ -1125,7 +1121,7 @@
                     <!-- Price -->
                     <div class="fg" style="margin-top:18px;">
                         <label class="fl" for="Price">
-                            <i class="fa-solid fa-turkish-lira-sign"></i> Price per Person <span class="req">*</span>
+                            <i class="fa-solid fa-turkish-lira-sign"></i> Kişi Başı Fiyat <span class="req">*</span>
                         </label>
                         <div class="prefix-wrap">
                             <span class="pfx">₺</span>
@@ -1133,7 +1129,7 @@
                                    placeholder="0.00" min="0" step="0.01"
                                    oninput="updatePricePrev(this.value)" />
                         </div>
-                        <div class="fi-help">Price shown to customers per person</div>
+                        <div class="fi-help">Müşterilere gösterilecek kişi başı fiyat</div>
                         <span asp-validation-for="Price" class="fi-error"></span>
                     </div>
                 </div>
@@ -1146,42 +1142,112 @@
                 <div class="step-head" onclick="toggleStep(3)">
                     <div class="step-num idle" id="snum3">3</div>
                     <div class="step-info">
-                        <div class="step-title">Cover Image</div>
-                        <div class="step-sub">Tour's visual identity</div>
+                        <div class="step-title">Kapak Resmi</div>
+                        <div class="step-sub">Turun görsel kimliği</div>
                     </div>
                     <div class="step-done-mark"><i class="fa-solid fa-check"></i></div>
                     <i class="fa-solid fa-chevron-down step-chevron"></i>
                 </div>
                 <div class="step-body">
                     <div class="img-drop" id="imgDrop" onclick="document.getElementById('CoverImageUrl').focus()">
-                        <img id="previewImg" src="" alt="Preview" />
+                        <img id="previewImg" src="" alt="Önizleme" />
                         <div class="img-drop-overlay">
-                            <span><i class="fa-solid fa-pen"></i> Change Image</span>
+                            <span><i class="fa-solid fa-pen"></i> Resmi Değiştir</span>
                         </div>
                         <div class="drop-placeholder">
                             <div class="drop-icon"><i class="fa-regular fa-image"></i></div>
-                            <div class="drop-text">Paste image URL below to preview</div>
-                            <div class="drop-sub">JPG, PNG, WEBP — 16:9 recommended</div>
+                            <div class="drop-text">Aşağıya resim URL'si yapıştırarak önizleyin</div>
+                            <div class="drop-sub">JPG, PNG, WEBP — 16:9 oran önerilir</div>
                         </div>
                     </div>
                     <div class="img-url-wrap">
                         <i class="fa-solid fa-link"></i>
                         <input asp-for="CoverImageUrl" class="fi-ctrl" id="CoverImageUrl"
-                               placeholder="https://example.com/tour-cover.jpg"
+                               placeholder="https://example.com/tur-kapak.jpg"
                                autocomplete="off" />
                     </div>
-                    <div class="fi-help" style="margin-top:6px;">Use a high-resolution landscape image for best results</div>
+                    <div class="fi-help" style="margin-top:6px;">En iyi sonuç için yüksek çözünürlüklü yatay resim kullanın</div>
                     <span asp-validation-for="CoverImageUrl" class="fi-error" style="margin-top:4px;"></span>
+                </div>
+            </div>
+
+            <div class="step-connector"></div>
+
+            <!-- ── Step 4: Location Information ────────────────── -->
+            <div class="step-block" id="step4" data-step="4">
+                <div class="step-head" onclick="toggleStep(4)">
+                    <div class="step-num idle" id="snum4">4</div>
+                    <div class="step-info">
+                        <div class="step-title">Lokasyon Bilgileri</div>
+                        <div class="step-sub">Hedef detayları ve öne çıkan noktalar</div>
+                    </div>
+                    <div class="step-done-mark"><i class="fa-solid fa-check"></i></div>
+                    <i class="fa-solid fa-chevron-down step-chevron"></i>
+                </div>
+                <div class="step-body">
+                    <!-- Location Page Title -->
+                    <div class="fg">
+                        <label class="fl" for="LocationPageTitle">
+                            <i class="fa-solid fa-location-dot"></i> Lokasyon Başlığı <span class="req">*</span>
+                        </label>
+                        <input asp-for="LocationPageTitle" class="fi-ctrl" id="LocationPageTitle"
+                               placeholder="Örn. Kapadokya: Masalların Ülkesini Keşfedin"
+                               maxlength="150" autocomplete="off" />
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span asp-validation-for="LocationPageTitle" class="fi-error"></span>
+                            <div class="char-count" id="locTitleCount" style="margin-left:auto;">0 / 150</div>
+                        </div>
+                    </div>
+
+                    <!-- Location Page Description -->
+                    <div class="fg">
+                        <label class="fl" for="LocationPageDescription">
+                            <i class="fa-solid fa-align-left"></i> Lokasyon Açıklaması <span class="req">*</span>
+                        </label>
+                        <textarea asp-for="LocationPageDescription" class="fi-ctrl" id="LocationPageDescription"
+                                  placeholder="Destinasyonu, tarihini, kültürünü, sehenswürdigkeiten, iklimini, en iyi ziyaret dönemini açıklayın..."
+                                  maxlength="800" rows="6"></textarea>
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span asp-validation-for="LocationPageDescription" class="fi-error"></span>
+                            <div class="char-count" id="locDescCount" style="margin-left:auto;">0 / 800</div>
+                        </div>
+                    </div>
+
+                    <!-- Location Page Image -->
+                    <div class="fg">
+                        <label class="fl" for="LocationPageImageUrl">
+                            <i class="fa-solid fa-image"></i> Lokasyon Resmi URL'si <span class="req">*</span>
+                        </label>
+                        <div class="img-drop" id="locImgDrop" onclick="document.getElementById('LocationPageImageUrl').focus()">
+                            <img id="locPreviewImg" src="" alt="Lokasyon Önizlemesi" />
+                            <div class="img-drop-overlay">
+                                <span><i class="fa-solid fa-pen"></i> Resmi Değiştir</span>
+                            </div>
+                            <div class="drop-placeholder">
+                                <div class="drop-icon"><i class="fa-regular fa-image"></i></div>
+                                <div class="drop-text">Lokasyon resmi URL'sini yapıştırın</div>
+                                <div class="drop-sub">Destinasyonu gösterir — 16:9 oran önerilir</div>
+                            </div>
+                        </div>
+                        <div class="img-url-wrap">
+                            <i class="fa-solid fa-link"></i>
+                            <input asp-for="LocationPageImageUrl" class="fi-ctrl" id="LocationPageImageUrl"
+                                   placeholder="https://example.com/lokasyon.jpg"
+                                   autocomplete="off" />
+                        </div>
+                        <div class="fi-help" style="margin-top:6px;">Destinasyonu temsil eden yüksek kaliteli resim</div>
+                        <span asp-validation-for="LocationPageImageUrl" class="fi-error" style="margin-top:4px;"></span>
+                    </div>
                 </div>
             </div>
 
             <!-- Submit row -->
             <div class="submit-area" style="margin-top:4px;border:1px solid rgba(226,232,240,.9);border-radius:16px;">
                 <button type="submit" class="btn-submit" id="submitBtn">
-                    <i class="fa-solid fa-rocket"></i> Publish Tour
+                    <i class="fa-solid fa-rocket"></i> Turu Yayınla
                 </button>
                 <a href="@Url.Action("TourList", "AdminTour")" class="btn-cancel">
-                    Cancel
+                    İptal
                 </a>
             </div>
 
@@ -1192,31 +1258,35 @@
             <!-- Progress -->
             <div class="panel-card">
                 <div class="panel-card-head">
-                    <div class="panel-card-title">Form Progress</div>
+                    <div class="panel-card-title">Form İlerleme</div>
                 </div>
                 <div class="panel-card-body">
                     <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:4px;">
                         <div>
                             <div class="prog-pct" id="progPct">0%</div>
-                            <div class="prog-label">completed</div>
+                            <div class="prog-label">tamamlandı</div>
                         </div>
                         <div style="text-align:right;">
-                            <div style="font-size:11px;color:#94a3b8;font-family:'DM Mono',monospace;" id="progSteps">0 / 3 steps</div>
+                            <div style="font-size:11px;color:#94a3b8;font-family:'DM Mono',monospace;" id="progSteps">0 / 4 adım</div>
                         </div>
                     </div>
                     <div class="prog-bar-wrap"><div class="prog-bar-fill" id="progFill"></div></div>
                     <div class="step-checks" style="margin-top:14px;">
                         <div class="step-check" id="chk1">
                             <div class="step-check-ic"><i class="fa-solid fa-check"></i></div>
-                            <span>Basic info</span>
+                            <span>Temel bilgiler</span>
                         </div>
                         <div class="step-check" id="chk2">
                             <div class="step-check-ic"><i class="fa-solid fa-check"></i></div>
-                            <span>Tour details</span>
+                            <span>Tur detayları</span>
                         </div>
                         <div class="step-check" id="chk3">
                             <div class="step-check-ic"><i class="fa-solid fa-check"></i></div>
-                            <span>Cover image</span>
+                            <span>Kapak resmi</span>
+                        </div>
+                        <div class="step-check" id="chk4">
+                            <div class="step-check-ic"><i class="fa-solid fa-check"></i></div>
+                            <span>Lokasyon bilgisi</span>
                         </div>
                     </div>
                 </div>
@@ -1225,15 +1295,15 @@
             <!-- Badge picker -->
             <div class="panel-card">
                 <div class="panel-card-head">
-                    <div class="panel-card-title">Tour Badge</div>
+                    <div class="panel-card-title">Tur Rozeti</div>
                 </div>
                 <div class="panel-card-body" style="padding-top:12px;">
                     <div class="badge-picker">
                         <div class="badge-opt selected" data-val="" onclick="pickBadge(this,'')">
                             <div class="badge-dot-pick" style="background:#e2e8f0;"></div>
                             <div>
-                                <div class="badge-opt-name">None</div>
-                                <div class="badge-opt-sub">No badge</div>
+                                <div class="badge-opt-name">Yok</div>
+                                <div class="badge-opt-sub">Rozet yok</div>
                             </div>
                             <div class="check-mark"><i class="fa-solid fa-check"></i></div>
                         </div>
@@ -1241,7 +1311,7 @@
                             <div class="badge-dot-pick" style="background:#3b82f6;"></div>
                             <div>
                                 <div class="badge-opt-name">Öne Çıkan</div>
-                                <div class="badge-opt-sub">Featured</div>
+                                <div class="badge-opt-sub">Öne Çıkan</div>
                             </div>
                             <div class="check-mark"><i class="fa-solid fa-check"></i></div>
                         </div>
@@ -1249,7 +1319,7 @@
                             <div class="badge-dot-pick" style="background:#10b981;"></div>
                             <div>
                                 <div class="badge-opt-name">Yeni</div>
-                                <div class="badge-opt-sub">New arrival</div>
+                                <div class="badge-opt-sub">Yeni geliş</div>
                             </div>
                             <div class="check-mark"><i class="fa-solid fa-check"></i></div>
                         </div>
@@ -1257,7 +1327,7 @@
                             <div class="badge-dot-pick" style="background:#f59e0b;"></div>
                             <div>
                                 <div class="badge-opt-name">Fırsat</div>
-                                <div class="badge-opt-sub">Deal / Offer</div>
+                                <div class="badge-opt-sub">Anlaşma / Teklif</div>
                             </div>
                             <div class="check-mark"><i class="fa-solid fa-check"></i></div>
                         </div>
@@ -1268,13 +1338,13 @@
             <!-- Status toggle -->
             <div class="panel-card">
                 <div class="panel-card-head">
-                    <div class="panel-card-title">Publish Status</div>
+                    <div class="panel-card-title">Yayın Durumu</div>
                 </div>
                 <div class="panel-card-body" style="padding-top:10px;">
                     <div class="toggle-row" id="statusRow">
                         <div class="toggle-row-info">
-                            <div class="trn" id="statusLabel">Passive</div>
-                            <div class="trs" id="statusDesc">Tour won't be visible</div>
+                            <div class="trn" id="statusLabel">Pasif</div>
+                            <div class="trs" id="statusDesc">Tur görünür olmayacak</div>
                         </div>
                         <label class="sw">
                             <input asp-for="IsStatus" type="checkbox" id="IsStatus"
@@ -1288,7 +1358,7 @@
             <!-- Preview summary -->
             <div class="panel-card" id="previewCard" style="display:none;">
                 <div class="panel-card-head">
-                    <div class="panel-card-title">Preview</div>
+                    <div class="panel-card-title">Önizleme</div>
                 </div>
                 <div class="panel-card-body" style="padding-top:10px;">
                     <div style="border-radius:10px;overflow:hidden;margin-bottom:10px;display:none;" id="prevImgSmall">
@@ -1312,24 +1382,28 @@
             <!-- Tips -->
             <div class="tips-card">
                 <div class="tips-head">
-                    <div class="tips-title"><i class="fa-solid fa-lightbulb"></i> Pro Tips</div>
+                    <div class="tips-title"><i class="fa-solid fa-lightbulb"></i> Pro İpuçları</div>
                 </div>
                 <div class="tips-body">
                     <div class="tip-item">
                         <i class="fa-solid fa-circle-dot tip-ic"></i>
-                        <span>Keep the tour name short, memorable, and destination-focused.</span>
+                        <span>Tur adını kısa, akılda kalıcı ve destinasyon odaklı tutun.</span>
                     </div>
                     <div class="tip-item">
                         <i class="fa-solid fa-circle-dot tip-ic"></i>
-                        <span>High-res 16:9 landscape images perform significantly better.</span>
+                        <span>Yüksek çözünürlüklü 16:9 yatay resimler önemli ölçüde daha iyi performans gösterir.</span>
                     </div>
                     <div class="tip-item">
                         <i class="fa-solid fa-circle-dot tip-ic"></i>
-                        <span>The <strong style="color:#818cf8;">"Öne Çıkan"</strong> badge boosts visibility on listings.</span>
+                        <span><strong style="color:#818cf8;">"Öne Çıkan"</strong> rozeti listelerde görünürlüğü artırır.</span>
                     </div>
                     <div class="tip-item">
                         <i class="fa-solid fa-circle-dot tip-ic"></i>
-                        <span>Set status to Passive while editing — activate when ready.</span>
+                        <span>Lokasyon detayları müşterilerin destinasyonu daha iyi anlamalarına yardımcı olur.</span>
+                    </div>
+                    <div class="tip-item">
+                        <i class="fa-solid fa-circle-dot tip-ic"></i>
+                        <span>Düzenleme sırasında durumu Pasif olarak ayarlayın — hazır olduğunda etkinleştirin.</span>
                     </div>
                 </div>
             </div>
@@ -1349,7 +1423,7 @@
             const block = document.getElementById('step'+n);
             const isOpen = block.classList.contains('open');
             // close all
-            [1,2,3].forEach(i => {
+            [1,2,3,4].forEach(i => {
                 const b = document.getElementById('step'+i);
                 b.classList.remove('open');
             });
@@ -1370,12 +1444,15 @@
             let v = parseInt(inp.value)||0;
             if (v<min) inp.value=min;
             if (v>max) inp.value=max;
-            updatePreview();
+            updatePricePrev(document.getElementById('Price').value);
+            updateProgress();
         }
 
         /* ── Char counters ───────────────────────────────────────── */
         const titleEl = document.getElementById('Title');
         const descEl  = document.getElementById('Description');
+        const locTitleEl = document.getElementById('LocationPageTitle');
+        const locDescEl = document.getElementById('LocationPageDescription');
 
         function updateCharCount(el, countEl, max) {
             const n = el.value.length;
@@ -1392,8 +1469,16 @@
             updateCharCount(descEl, document.getElementById('descCount'), 500);
             updateProgress();
         });
+        locTitleEl.addEventListener('input', () => {
+            updateCharCount(locTitleEl, document.getElementById('locTitleCount'), 150);
+            updateProgress();
+        });
+        locDescEl.addEventListener('input', () => {
+            updateCharCount(locDescEl, document.getElementById('locDescCount'), 800);
+            updateProgress();
+        });
 
-        /* ── Image preview ───────────────────────────────────────── */
+        /* ── Image preview (Cover) ───────────────────────────────── */
         const urlInp = document.getElementById('CoverImageUrl');
         const drop   = document.getElementById('imgDrop');
         const prev   = document.getElementById('previewImg');
@@ -1407,12 +1492,28 @@
                 prev.onload  = () => { drop.classList.add('has-img'); updateProgress(); updatePreview(); };
                 prev.onerror = () => { drop.classList.remove('has-img'); };
                 prev.src = v;
-                // small preview
                 const si = document.getElementById('prevImgSmallImg');
                 si.src = v;
                 si.onload = () => {
                     document.getElementById('prevImgSmall').style.display='block';
                 };
+            }, 500);
+        });
+
+        /* ── Image preview (Location) ────────────────────────────── */
+        const locUrlInp = document.getElementById('LocationPageImageUrl');
+        const locDrop   = document.getElementById('locImgDrop');
+        const locPrev   = document.getElementById('locPreviewImg');
+        let   locImgTimer;
+
+        locUrlInp.addEventListener('input', () => {
+            clearTimeout(locImgTimer);
+            locImgTimer = setTimeout(() => {
+                const v = locUrlInp.value.trim();
+                if (!v) { locDrop.classList.remove('has-img'); updateProgress(); return; }
+                locPrev.onload  = () => { locDrop.classList.add('has-img'); updateProgress(); };
+                locPrev.onerror = () => { locDrop.classList.remove('has-img'); };
+                locPrev.src = v;
             }, 500);
         });
 
@@ -1429,15 +1530,15 @@
             const desc = document.getElementById('statusDesc');
             const row  = document.getElementById('statusRow');
             if (cb.checked) {
-                lbl.textContent  = 'Active';
+                lbl.textContent  = 'Aktif';
                 lbl.style.color  = '#10b981';
-                desc.textContent = 'Tour will be publicly visible';
+                desc.textContent = 'Tur herkese açık olacak';
                 row.style.background = '#f0fdf4';
                 row.style.borderColor = '#bbf7d0';
             } else {
-                lbl.textContent  = 'Passive';
+                lbl.textContent  = 'Pasif';
                 lbl.style.color  = '#94a3b8';
-                desc.textContent = "Tour won't be visible";
+                desc.textContent = 'Tur görünür olmayacak';
                 row.style.background = '#fafbfc';
                 row.style.borderColor = '#f1f5f9';
             }
@@ -1469,6 +1570,9 @@
                     && parseInt(document.getElementById('Capacity').value)>0
                     && parseFloat(document.getElementById('Price').value)>0;
             const c3 = document.getElementById('imgDrop').classList.contains('has-img');
+            const c4 = locTitleEl.value.trim().length>2
+                    && locDescEl.value.trim().length>10
+                    && document.getElementById('locImgDrop').classList.contains('has-img');
 
             function mark(chkId, numId, stepId, isDone) {
                 const chk  = document.getElementById(chkId);
@@ -1491,11 +1595,12 @@
             mark('chk1','snum1','step1',c1);
             mark('chk2','snum2','step2',c2);
             mark('chk3','snum3','step3',c3);
+            mark('chk4','snum4','step4',c4);
 
-            const pct = Math.round(done/3*100);
+            const pct = Math.round(done/4*100);
             document.getElementById('progPct').textContent   = pct+'%';
             document.getElementById('progFill').style.width  = pct+'%';
-            document.getElementById('progSteps').textContent = done+' / 3 steps';
+            document.getElementById('progSteps').textContent = done+' / 4 steps';
         }
 
         // Wire all detail inputs to progress
@@ -1506,7 +1611,7 @@
         /* ── Submit state ────────────────────────────────────────── */
         document.getElementById('ctForm').addEventListener('submit', function() {
             const btn = document.getElementById('submitBtn');
-            btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Publishing...';
+            btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Yayınlanıyor...';
             btn.disabled=true;
         });
 

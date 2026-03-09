@@ -1,0 +1,73 @@
+﻿@model GetTourByIdDto
+<div class="tab-pane fade" id="pills-location-share" role="tabpanel"
+     aria-labelledby="pills-location-share-tab" tabindex="0">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="localtion-content-tour">
+                <div class="location-photo mb-32">
+                    <img src="@Model.LocationPageImageUrl" alt="Location Photo" style="width:100%;height:auto;display:block;border-radius:12px;" />
+                </div>
+                <div class="flex-three map-list mb-50">
+                    <i class="icon-18"></i>
+                    <p>1421 San Pedro St, Los Angeles, CA</p>
+                </div>
+                <h3 class="title-location">@Model.LocationPageTitle</h3>
+                <p class="des mb-22">
+                    Description It is a long established fact that
+                    a reader will be distrac by any websites look for ways mornings
+                    even
+                    of spring prevent AdBlock from blocking annoying ads. As a
+                    result, we've focused on improving our funct walk
+                    so that we can overcome these anti-ad blocking attempts. Of
+                    course, you can help us continue improve our
+                    ad blocking ability by reporting any time you run into a website
+                    that won't allow you to block the readable dine
+                    content of a page when looking at its layout. It is a long
+                    established fact
+                </p>
+                <ul class="listing-des">
+                    <li>
+                        <p>View the City Walls</p>
+                    </li>
+                    <li>
+                        <p>Hiking in the forest</p>
+                    </li>
+                    <li>
+                        <p>Discover the famous view point “The Lark”</p>
+                    </li>
+                    <li>
+                        <p>Sunset on the cruise</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="side-bar-right">
+
+                <div class="sidebar-widget">
+                    <h6 class="block-heading">Book With Confidence</h6>
+                    <ul class="category-confidence">
+                        <li class="flex-three">
+                            <i class="icon-customer-service-1"></i>
+                            <span>Customer care available 24/7</span>
+                        </li>
+                        <li class="flex-three">
+                            <i class="icon-Vector-6"></i>
+                            <span>Hand-picked Tours & Activities</span>
+                        </li>
+                        <li class="flex-three">
+                            <i class="icon-insurance-1"></i>
+                            <span>Free Travel Insureance</span>
+                        </li>
+                        <li class="flex-three">
+                            <i class="icon-price-tag-1-1"></i>
+                            <span>No-hassle best price guarantee</span>
+                        </li>
+                    </ul>
+                </div>
+                @await Component.InvokeAsync("_TourDetailLast3TourComponentPartial", new { tourId = Model.TourId })
+            </div>
+        </div>
+    </div>
+
+</div>

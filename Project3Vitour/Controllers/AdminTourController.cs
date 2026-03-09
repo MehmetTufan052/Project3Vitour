@@ -44,8 +44,23 @@ namespace Project3Vitour.Controllers
         [HttpGet]
         public async Task<IActionResult> UpdateTour(string id)
         {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return RedirectToAction("TourList");
+            }
+
             var value = await _tourService.GetTourByIdAsync(id);
+            if (value == null)
+            {
+                return NotFound("Güncellenecek tur bulunamadı.");
+            }
+
             var updateDto = _mapper.Map<UpdateTourDto>(value);
+            if (updateDto == null)
+            {
+                return NotFound("Tur verisi güncelleme modeline dönüştürülemedi.");
+            }
+
             return View(updateDto);
         }
         
@@ -57,3 +72,5 @@ namespace Project3Vitour.Controllers
         }
     }
 }
+
+

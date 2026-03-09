@@ -50,7 +50,14 @@
                                 <span class="media"><i class="icon-Group-1000002910"></i>2</span>
                             </div>
                         </div>
-                        <img src="@item.CoverImageUrl" alt="Image Listing">
+                        @{
+                            var cardImageUrl = item.CoverImageUrl;
+                            if (!string.IsNullOrWhiteSpace(item.Title) && item.Title.Contains("Paris & Alsace"))
+                            {
+                                cardImageUrl = "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1200&q=80";
+                            }
+                        }
+                        <img src="@cardImageUrl" alt="Image Listing">
 
                     </a>
                     <div class="tour-listing-content">

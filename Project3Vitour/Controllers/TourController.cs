@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Project3Vitour.Dtos.TourDtos;
 using Project3Vitour.Services.TourServices.ITourService;
 
@@ -7,6 +8,8 @@ namespace Project3Vitour.Controllers
     public class TourController : Controller
     {
         private readonly ITourService _tourService;
+
+
 
         public TourController(ITourService tourService)
         {
