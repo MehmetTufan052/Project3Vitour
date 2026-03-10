@@ -1,5 +1,13 @@
 ﻿@model List<ResultReviewDto>
 
+@{
+    var reviewCount = Model?.Count ?? 0;
+    var reviewSource = Model ?? new List<ResultReviewDto>();
+    var avgRating = reviewCount > 0 ? reviewSource.Average(x => x.Score) : 0;
+    var avgRounded = (int)Math.Round(avgRating, MidpointRounding.AwayFromZero);
+    var percent = (int)Math.Round((avgRating / 5.0) * 100);
+}
+
 <div class="col-lg-8">
     <div class="review-content-tour">
         <div class="custom-review mb-80">
@@ -9,13 +17,25 @@
                     <div class="percent">
                         <svg>
                             <circle cx="105" cy="105" r="100"></circle>
-                            <circle cx="105" cy="105" r="100"
-                                    style="--percent: 30"></circle>
+                            <circle cx="105" cy="105" r="100" style="--percent: @percent"></circle>
                         </svg>
                         <div class="number center">
                             <span>overall Ratings</span>
-                            <h5 class="number-reating">4.8</h5>
+                            <h5 class="number-reating">@avgRating.ToString("0.0")</h5>
                             <span>Out of 5</span>
+                            <div class="start mt-2">
+                                @for (var i = 1; i <= 5; i++)
+                                {
+                                    if (i <= avgRounded)
+                                    {
+                                        <i class="icon-Star"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="icon-Star empty-star"></i>
+                                    }
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -33,11 +53,8 @@
                                 <span>5.0</span>
                             </div>
                         </div>
-                        <div class="progress" role="progressbar"
-                             aria-label="example" aria-valuenow="25"
-                             aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar" style="width: 70%">
-                            </div>
+                        <div class="progress" role="progressbar" aria-label="example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar" style="width: 70%"></div>
                         </div>
                     </div>
                     <div class="review-list-item mb-40">
@@ -53,11 +70,8 @@
                                 <span>5.0</span>
                             </div>
                         </div>
-                        <div class="progress" role="progressbar"
-                             aria-label="example" aria-valuenow="25"
-                             aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar" style="width: 80%">
-                            </div>
+                        <div class="progress" role="progressbar" aria-label="example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar" style="width: 80%"></div>
                         </div>
                     </div>
                     <div class="review-list-item mb-40">
@@ -73,11 +87,8 @@
                                 <span>5.0</span>
                             </div>
                         </div>
-                        <div class="progress" role="progressbar"
-                             aria-label="example" aria-valuenow="25"
-                             aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar" style="width: 60%">
-                            </div>
+                        <div class="progress" role="progressbar" aria-label="example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar" style="width: 60%"></div>
                         </div>
                     </div>
                     <div class="review-list-item mb-40">
@@ -93,199 +104,238 @@
                                 <span>5.0</span>
                             </div>
                         </div>
-                        <div class="progress" role="progressbar"
-                             aria-label="example" aria-valuenow="25"
-                             aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar" style="width: 90%">
-                            </div>
+                        <div class="progress" role="progressbar" aria-label="example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar" style="width: 90%"></div>
                         </div>
                     </div>
                 </div>
-
             </div>
-
-
         </div>
+
         <div class="client-review mb-80">
             <div class="flex-two mb-50 inner-header">
                 <h4 class="title-review">Client’s Review</h4>
                 <div class="client-review flex">
-                    <span>6 Reviews</span>
+                    <span>@reviewCount Reviews</span>
                     <div class="start">
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
+                        @for (var i = 1; i <= 5; i++)
+                        {
+                            if (i <= avgRounded)
+                            {
+                                <i class="icon-Star"></i>
+                            }
+                            else
+                            {
+                                <i class="icon-Star empty-star"></i>
+                            }
+                        }
                     </div>
-                    <span>(5 out of 5)</span>
+                    <span>(@avgRating.ToString("0.0") out of 5)</span>
                 </div>
-
             </div>
 
             <div class="client-review-list">
-                @foreach (var x in Model)
+                @foreach (var x in reviewSource)
                 {
                     <div class="client-review-item flex">
                         <div class="avata">
-                            <img src="https://cdn-icons-png.flaticon.com/512/6596/6596121.png"
-                                 alt="image">
+                            <img src="https://cdn-icons-png.flaticon.com/512/6596/6596121.png" alt="image">
                         </div>
                         <div class="content">
                             <span class="name">@x.NameSurname</span>
-                            <p class="des">
-                                @x.Detail
-                            </p>
+                            <p class="des">@x.Detail</p>
                             <div class="start">
-                                @if (x.Score == 5)
+                                @for (var i = 1; i <= 5; i++)
                                 {
-                                    <i class=" icon-Star"></i>
-                                    <i class=" icon-Star"></i>
-                                    <i class=" icon-Star"></i>
-                                    <i class=" icon-Star"></i>
-                                    <i class=" icon-Star"></i>
-                                    <span>5.0</span>
+                                    if (i <= x.Score)
+                                    {
+                                        <i class="icon-Star"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="icon-Star empty-star"></i>
+                                    }
                                 }
-                                else if (x.Score == 4)
-                                {
-                                    <i class=" icon-Star"></i>
-                                    <i class=" icon-Star"></i>
-                                    <i class=" icon-Star"></i>
-                                    <i class=" icon-Star"></i>
-                                    <i class="icon-Star empty-star"></i>
-                                    <span>4.0</span>
-                                }
-                                else if (x.Score == 3)
-                                {
-                                    <i class=" icon-Star"></i>
-                                    <i class=" icon-Star"></i>
-                                    <i class=" icon-Star"></i>
-                                    <i class="icon-Star empty-star"></i>
-                                    <i class="icon-Star empty-star"></i>
-                                    <span>3.0</span>
-                                }
-                                else if (x.Score == 2)
-                                {
-                                    <i class=" icon-Star"></i>
-                                    <i class=" icon-Star"></i>
-                                    <i class="icon-Star empty-star"></i>
-                                    <i class="icon-Star empty-star"></i>
-                                    <i class="icon-Star empty-star"></i>
-                                    <span>2.0</span>
-                                }
-                                else if (x.Score == 1)
-                                {
-                                    <i class=" icon-Star"></i>
-                                    <i class="icon-Star empty-star"></i>
-                                    <i class="icon-Star empty-star"></i>
-                                    <i class="icon-Star empty-star"></i>
-                                    <i class="icon-Star empty-star"></i>
-                                    <span>1.0</span>
-                                }
+                                <span>@x.Score.ToString("0.0")</span>
                             </div>
                             <span class="date">@x.ReviewDate.ToString("dd MMM yyyy")</span>
-
                         </div>
-
                     </div>
-                }              
+                }
             </div>
-
         </div>
+
         <div class="form-review bg-1">
             <h4 class="title-review mb-60">leave a comment</h4>
-            <div class="inner-review flex-one mb-50">
-                <div class="inner-review-item">
+
+
+            @if (TempData["ReviewError"] != null)
+            {
+                <div class="alert alert-danger mb-4">@TempData["ReviewError"]</div>
+            }
+            @if (TempData["ReviewSuccess"] != null)
+            {
+                <div class="alert alert-success mb-4">@TempData["ReviewSuccess"]</div>
+            }
+
+            <style>
+                .compact-rating-grid {
+                    display: grid;
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                    gap: 16px 22px;
+                }
+
+                .compact-rating-item .text-review {
+                    display: block;
+                    margin-bottom: 8px;
+                    font-weight: 600;
+                    font-size: 15px;
+                }
+
+                .compact-stars {
+                    display: inline-flex;
+                    gap: 4px;
+                    padding: 4px 0;
+                }
+
+                .star-btn {
+                    border: 0;
+                    background: transparent;
+                    color: #cfd7de;
+                    padding: 0;
+                    line-height: 1;
+                    font-size: 18px;
+                    cursor: pointer;
+                    transition: color .2s ease, transform .2s ease;
+                }
+
+                .star-btn:hover {
+                    color: #ffb400;
+                    transform: translateY(-1px);
+                }
+
+                .star-btn.is-active {
+                    color: #ffb400;
+                }
+
+                @@media (max-width: 767px) {
+                    .compact-rating-grid {
+                        grid-template-columns: 1fr;
+                    }
+                }
+            </style>
+
+            <form asp-controller="Review" asp-action="CreateFromTour" method="post" id="form-review">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="TourId" value="@ViewBag.TourId" />
+
+            <div class="compact-rating-grid mb-50">
+                <div class="compact-rating-item" data-field="ValueForMoneyScore">
                     <span class="text-review">Value for Money*</span>
-                    <div class="start">
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
+                    <input type="hidden" name="ValueForMoneyScore" value="0" />
+                    <div class="compact-stars" role="radiogroup" aria-label="Value for Money">
+                        <button type="button" class="star-btn" data-value="1"><i class="icon-Star"></i></button>
+                        <button type="button" class="star-btn" data-value="2"><i class="icon-Star"></i></button>
+                        <button type="button" class="star-btn" data-value="3"><i class="icon-Star"></i></button>
+                        <button type="button" class="star-btn" data-value="4"><i class="icon-Star"></i></button>
+                        <button type="button" class="star-btn" data-value="5"><i class="icon-Star"></i></button>
                     </div>
-
                 </div>
-                <div class="inner-review-item">
+                <div class="compact-rating-item" data-field="DestinationScore">
                     <span class="text-review">Destination*</span>
-                    <div class="start">
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
+                    <input type="hidden" name="DestinationScore" value="0" />
+                    <div class="compact-stars" role="radiogroup" aria-label="Destination">
+                        <button type="button" class="star-btn" data-value="1"><i class="icon-Star"></i></button>
+                        <button type="button" class="star-btn" data-value="2"><i class="icon-Star"></i></button>
+                        <button type="button" class="star-btn" data-value="3"><i class="icon-Star"></i></button>
+                        <button type="button" class="star-btn" data-value="4"><i class="icon-Star"></i></button>
+                        <button type="button" class="star-btn" data-value="5"><i class="icon-Star"></i></button>
                     </div>
-
                 </div>
-                <div class="inner-review-item">
+                <div class="compact-rating-item" data-field="AccommodationScore">
                     <span class="text-review">Accommodation*</span>
-                    <div class="start">
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
+                    <input type="hidden" name="AccommodationScore" value="0" />
+                    <div class="compact-stars" role="radiogroup" aria-label="Accommodation">
+                        <button type="button" class="star-btn" data-value="1"><i class="icon-Star"></i></button>
+                        <button type="button" class="star-btn" data-value="2"><i class="icon-Star"></i></button>
+                        <button type="button" class="star-btn" data-value="3"><i class="icon-Star"></i></button>
+                        <button type="button" class="star-btn" data-value="4"><i class="icon-Star"></i></button>
+                        <button type="button" class="star-btn" data-value="5"><i class="icon-Star"></i></button>
                     </div>
-
                 </div>
-                <div class="inner-review-item">
+                <div class="compact-rating-item" data-field="TransportScore">
                     <span class="text-review">Transport*</span>
-                    <div class="start">
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
-                        <i class=" icon-Star"></i>
+                    <input type="hidden" name="TransportScore" value="0" />
+                    <div class="compact-stars" role="radiogroup" aria-label="Transport">
+                        <button type="button" class="star-btn" data-value="1"><i class="icon-Star"></i></button>
+                        <button type="button" class="star-btn" data-value="2"><i class="icon-Star"></i></button>
+                        <button type="button" class="star-btn" data-value="3"><i class="icon-Star"></i></button>
+                        <button type="button" class="star-btn" data-value="4"><i class="icon-Star"></i></button>
+                        <button type="button" class="star-btn" data-value="5"><i class="icon-Star"></i></button>
                     </div>
-
                 </div>
-
             </div>
-            <form action="/" id="form-review">
+
+
                 <div class="row">
                     <div class="col-md-6">
                         <fieldset class="relative input-wrap mb-37">
                             <i class="icon-user-1-1"></i>
-                            <input type="text" placeholder="First name"
-                                   name="name">
+                            <input type="text" placeholder="Ad Soyad" name="NameSurname" required>
                         </fieldset>
                     </div>
                     <div class="col-md-6">
                         <fieldset class="relative input-wrap mb-37">
                             <i class="icon-Group-51"></i>
-                            <input type="email" placeholder="Email Address"
-                                   name="email">
+                            <input type="email" placeholder="Rezervasyondaki E-mail" name="Email" required>
                         </fieldset>
                     </div>
                     <div class="col-lg-12">
                         <fieldset class="relative input-wrap mb-37">
                             <i class="icon-content"></i>
-                            <textarea name="review" rows="10" cols="50"
-                                      placeholder="Write Review"></textarea>
+                            <textarea name="Detail" rows="10" cols="50" placeholder="Yorumunuzu yazın" required></textarea>
                         </fieldset>
                     </div>
                     <div class="col-lg-12">
                         <div class="checkbox mb-60">
-                            <input id="check-review" type="checkbox"
-                                   name="check" value="check">
-                            <label for="check-review">
-                                I agree to Terms &
-                                Conditions, Refund Policy and Privacy Policy
-                                of Fabrilife.
-                            </label>
+                            <input id="check-review" type="checkbox" name="AcceptTerms" value="true" required>
+                            <label for="check-review">Şartlar, iade ve gizlilik politikasını kabul ediyorum.</label>
                         </div>
                     </div>
-                    <div class="cok-lg-12">
-                        <button type="submit" class="submit">
-                            Post
-                            Comment
-                        </button>
+                    <div class="col-lg-12">
+                        <button type="submit" class="submit">Post Comment</button>
                     </div>
                 </div>
-
             </form>
+
+            <script>
+                (function () {
+                    var groups = document.querySelectorAll('.compact-rating-item');
+                    groups.forEach(function (group) {
+                        var hidden = group.querySelector('input[type="hidden"]');
+                        var buttons = group.querySelectorAll('.star-btn');
+
+                        function paint(score) {
+                            buttons.forEach(function (btn) {
+                                var value = parseInt(btn.getAttribute('data-value') || '0');
+                                if (value <= score) {
+                                    btn.classList.add('is-active');
+                                } else {
+                                    btn.classList.remove('is-active');
+                                }
+                            });
+                        }
+
+                        buttons.forEach(function (btn) {
+                            btn.addEventListener('click', function () {
+                                var score = parseInt(btn.getAttribute('data-value') || '0');
+                                hidden.value = score.toString();
+                                paint(score);
+                            });
+                        });
+                    });
+                })();
+            </script>
         </div>
-
     </div>
-
 </div>

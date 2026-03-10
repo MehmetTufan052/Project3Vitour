@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Project3Vitour.Entities;
 using Project3Vitour.Services.ReviewService;
-using Project3Vitour.Services.TourServices.ITourService;
 
 namespace Project3Vitour.ViewComponents.TourViewComponents
 {
     public class _TourDetailReviewsComponentPartial : ViewComponent
     {
-        IReviewService _reviewService;
+        private readonly IReviewService _reviewService;
 
         public _TourDetailReviewsComponentPartial(IReviewService reviewService)
         {
@@ -18,6 +16,7 @@ namespace Project3Vitour.ViewComponents.TourViewComponents
         {
             var values = await _reviewService.GetAllReviewAsync();
             var filtered = values.Where(x => x.TourId == tourId).ToList();
+            ViewBag.TourId = tourId;
             return View(filtered);
         }
     }

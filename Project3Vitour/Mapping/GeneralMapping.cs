@@ -30,6 +30,12 @@ namespace Project3Vitour.Mapping
             CreateMap<Review, GetReviewByIdDto>().ReverseMap();
             CreateMap<Review, ResultReviewDto>().ReverseMap();
             CreateMap<Review, ResultReviewByTourIdDto>().ReverseMap();
+            CreateMap<CreateReviewFormDto, CreateReviewDto>()
+                .ForMember(d => d.NameSurname, o => o.MapFrom(s => string.IsNullOrWhiteSpace(s.NameSurname) ? s.NameSurname : s.NameSurname.Trim()))
+                .ForMember(d => d.Detail, o => o.MapFrom(s => string.IsNullOrWhiteSpace(s.Detail) ? s.Detail : s.Detail.Trim()))
+                .ForMember(d => d.Score, o => o.MapFrom(s => (int)Math.Round((s.ValueForMoneyScore + s.DestinationScore + s.AccommodationScore + s.TransportScore) / 4.0)))
+                .ForMember(d => d.ReviewDate, o => o.MapFrom(_ => DateTime.UtcNow))
+                .ForMember(d => d.Status, o => o.MapFrom(_ => true));
 
             CreateMap<Gallery, CreateGalleryDto>().ReverseMap();
             CreateMap<Gallery, UpdateGalleryDto>().ReverseMap();
@@ -45,3 +51,8 @@ namespace Project3Vitour.Mapping
         
     }
 }
+
+
+
+
+

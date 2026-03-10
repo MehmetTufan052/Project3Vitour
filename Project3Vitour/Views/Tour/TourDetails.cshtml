@@ -10,8 +10,7 @@
 
 @await Component.InvokeAsync("_TourHeadComponentPartial")
 
-<body class="body header-fixed ">
-
+<body class="body header-fixed wrapper-style">
     <div class="preload preload-container">
         <svg class="pl" width="240" height="240" viewBox="0 0 240 240">
             <circle class="pl__ring pl__ring--a" cx="120" cy="120" r="105" fill="none" stroke="#000" stroke-width="20" stroke-dasharray="0 660" stroke-dashoffset="-330" stroke-linecap="round"></circle>
@@ -26,22 +25,20 @@
     <div id="wrapper">
         <div id="pagee" class="clearfix">
 
-          
-           @await Component.InvokeAsync("_TourHeaderComponentPartial")
-          
-            <main id="main">
 
+            @await Component.InvokeAsync("_TourHeaderComponentPartial")
+
+            <main id="main">
                 <section>
                     <div class="tf-container full">
                         <div class="row">
                             <div class="col-md-12">
-                                <img src="/vitour/assets/images/page/breakcrumb.jpg" alt="image" style="width:100%;height:431px;object-fit:cover;display:block;">
+                                <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=2400&q=80" alt="Tour Details Background" style="width:100%;height:431px;object-fit:cover;display:block;">
                             </div>
                         </div>
                     </div>
                 </section>
-
-                <section class="tour-single">
+                <section class="tour-single" style="background-color:#ffffff !important;">
                     <div class="tf-container">
                         <div class="row">
                             <div class="col-lg-12">
@@ -88,154 +85,64 @@
                             <div class="col-lg-12">
                                 <div class="tab-content" id="pills-tabContent">
                                     <div class="tab-pane fade show active" id="pills-information" role="tabpanel"
-                                         aria-labelledby="pills-information-tab" tabindex="0">                                        
-                                       
-                                         @await Component.InvokeAsync("_TourDetailInformationComponentPartial")
-                                       
+                                         aria-labelledby="pills-information-tab" tabindex="0">
+
+                                        @await Component.InvokeAsync("_TourDetailInformationComponentPartial")
+
                                         @await Component.InvokeAsync("_TourDetailDestinationSmallGalleryComponentPartial", new { tourId = Model.TourId })
-                                        
+
                                         @await Component.InvokeAsync("_TourDetailsDescriptionAreaComponentPartial", new { tourId = Model.TourId })
-                                      
+
 
                                     </div>
 
-                                    @await Component.InvokeAsync("_TourDetailTourPlaningComponentPartial",new { tourId = Model.TourId })
-                                   
-                                    <div class="tab-pane fade" id="pills-location-share" role="tabpanel"
-                                         aria-labelledby="pills-location-share-tab" tabindex="0">
+                                    @await Component.InvokeAsync("_TourDetailTourPlaningComponentPartial", new { tourId = Model.TourId })
+
+
+                                    @await Component.InvokeAsync("_TourDetailLocationShareComponentPartial", new { tourId = Model.TourId })
+
+                                    <div class="tab-pane fade" id="pills-reviews" role="tabpanel"
+                                         aria-labelledby="pills-reviews-tab" tabindex="0">
                                         <div class="row">
-                                            <div class="col-lg-8">
-                                                <div class="localtion-content-tour">
-                                                    <div class="map2 relative mb-32">
-                                                        <div id="map2"></div>
-                                                    </div>
-                                                    <div class="flex-three map-list mb-50">
-                                                        <i class="icon-18"></i>
-                                                        <p>1421 San Pedro St, Los Angeles, CA</p>
-                                                    </div>
-                                                    <h3 class="title-location">Description:</h3>
-                                                    <p class="des mb-22">
-                                                        Description It is a long established fact that
-                                                        a reader will be distrac by any websites look for ways mornings
-                                                        even
-                                                        of spring prevent AdBlock from blocking annoying ads. As a
-                                                        result, we've focused on improving our funct walk
-                                                        so that we can overcome these anti-ad blocking attempts. Of
-                                                        course, you can help us continue improve our
-                                                        ad blocking ability by reporting any time you run into a website
-                                                        that won't allow you to block the readable dine
-                                                        content of a page when looking at its layout. It is a long
-                                                        established fact
-                                                    </p>
-                                                    <ul class="listing-des">
-                                                        <li>
-                                                            <p>View the City Walls</p>
-                                                        </li>
-                                                        <li>
-                                                            <p>Hiking in the forest</p>
-                                                        </li>
-                                                        <li>
-                                                            <p>Discover the famous view point “The Lark”</p>
-                                                        </li>
-                                                        <li>
-                                                            <p>Sunset on the cruise</p>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
+                                            @await Component.InvokeAsync("_TourDetailReviewsComponentPartial", new { tourId = Model.TourId })
+
                                             <div class="col-lg-4">
                                                 <div class="side-bar-right">
                                                     <div class="sidebar-widget">
-                                                        <h6 class="block-heading">Book This Tour</h6>
-                                                        <form action="/" id="form-book-tour">
-                                                            <div class="input-wrap mb-30">
-                                                                <input type="date">
-                                                            </div>
-                                                            <div class="flex-two mb-30">
-                                                                <span class="label">Time:</span>
-                                                                <div class="radio">
-                                                                    <input id="first" type="radio" name="numbers"
-                                                                           value="first" checked>
-                                                                    <label for="first">14.00</label>
-                                                                    <input id="second" type="radio" name="numbers"
-                                                                           value="second">
-                                                                    <label for="second">16.00</label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="input-wrap-sellect mb-30">
-                                                                <span class="label">Tickets:</span>
-                                                                <div class="flex-two mb-15">
-                                                                    <p>Children (0-12 years)$129.00</p>
-                                                                    <div class="nice-select" tabindex="0">
-                                                                        <span class="current">1</span>
-                                                                        <ul class="list">
-                                                                            <li data-value=""
-                                                                                class="option selected focus">1</li>
-                                                                            <li data-value="2" class="option">2</li>
-                                                                            <li data-value="3" class="option">3</li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="flex-two mb-15">
-                                                                    <p>Youth (13-17 years)$169.00</p>
-                                                                    <div class="nice-select" tabindex="0">
-                                                                        <span class="current">1</span>
-                                                                        <ul class="list">
-                                                                            <li data-value=""
-                                                                                class="option selected focus">1</li>
-                                                                            <li data-value="2" class="option">2</li>
-                                                                            <li data-value="3" class="option">3</li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="flex-two">
-                                                                    <p>Adult (18+ years)$189.00</p>
-                                                                    <div class="nice-select" tabindex="0">
-                                                                        <span class="current">1</span>
-                                                                        <ul class="list">
-                                                                            <li data-value=""
-                                                                                class="option selected focus">1</li>
-                                                                            <li data-value="2" class="option">2</li>
-                                                                            <li data-value="3" class="option">3</li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="input-wrap-checkbox mb-30">
-                                                                <span class="label">Add Extra</span>
-                                                                <div class="checkbox">
-                                                                    <input id="check" type="checkbox" name="check"
-                                                                           value="check">
-                                                                    <label for="check">Service per booking</label>
-                                                                </div>
-                                                                <div class="checkbox">
-                                                                    <input id="check1" type="checkbox" name="check"
-                                                                           value="check">
-                                                                    <label for="check1">Service per person</label>
-                                                                </div>
-                                                                <div class="extra">
-                                                                    <div class="flex-three">
-                                                                        <span class="name">Adult:</span>
-                                                                        <span class="price">$18.00</span>
-                                                                    </div>
-                                                                    <div class="flex-three">
-                                                                        <span class="name">Youth:</span>
-                                                                        <span class="price">$16.00</span>
-                                                                    </div>
-                                                                    <div class="flex-three">
-                                                                        <span class="name">Children:</span>
-                                                                        <span class="price">$16.00</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="flex-two mb-40">
-                                                                <span class="label">Total:</span>
-                                                                <span class="total text-main">$130.00</span>
-                                                            </div>
-                                                            <button type="submit">Procced Booking</button>
-
-                                                        </form>
+                                                        <h6 class="block-heading">Book With Confidence</h6>
+                                                        <ul class="category-confidence">
+                                                            <li class="flex-three">
+                                                                <i class="icon-customer-service-1"></i>
+                                                                <span>Customer care available 24/7</span>
+                                                            </li>
+                                                            <li class="flex-three">
+                                                                <i class="icon-Vector-6"></i>
+                                                                <span>Hand-picked Tours & Activities</span>
+                                                            </li>
+                                                            <li class="flex-three">
+                                                                <i class="icon-insurance-1"></i>
+                                                                <span>Free Travel Insureance</span>
+                                                            </li>
+                                                            <li class="flex-three">
+                                                                <i class="icon-price-tag-1-1"></i>
+                                                                <span>No-hassle best price guarantee</span>
+                                                            </li>
+                                                        </ul>
                                                     </div>
+                                                    @await Component.InvokeAsync("_TourDetailLast3TourComponentPartial")
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="tab-pane fade" id="pills-shot-gallery" role="tabpanel"
+                                         aria-labelledby="pills-shot-gallery-tab" tabindex="0">
+                                        <div class="row">
+                                            <div class="col-lg-8">
+                                                @await Component.InvokeAsync("_TourDetailShotGalleryComponentPartial", new { tourId = Model.TourId })
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="side-bar-right">
                                                     <div class="sidebar-widget">
                                                         <h6 class="block-heading">Book With Confidence</h6>
                                                         <ul class="category-confidence">
@@ -258,398 +165,6 @@
                                                         </ul>
                                                     </div>
                                                     @await Component.InvokeAsync("_TourDetailLast3TourComponentPartial", new { tourId = Model.TourId })
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <div class="tab-pane fade" id="pills-reviews" role="tabpanel"
-                                         aria-labelledby="pills-reviews-tab" tabindex="0">
-                                        <div class="row">
-                                            @await Component.InvokeAsync("_TourDetailReviewsComponentPartial", new { tourId = Model.TourId })
-                                           
-                                            <div class="col-lg-4">
-                                                <div class="side-bar-right">
-                                                    <div class="sidebar-widget">
-                                                        <h6 class="block-heading">Book This Tour</h6>
-                                                        <form action="/" id="form-book-tour">
-                                                            <div class="input-wrap mb-30">
-                                                                <input type="date">
-                                                            </div>
-                                                            <div class="flex-two mb-30">
-                                                                <span class="label">Time:</span>
-                                                                <div class="radio">
-                                                                    <input id="first" type="radio" name="numbers"
-                                                                           value="first" checked>
-                                                                    <label for="first">14.00</label>
-                                                                    <input id="second" type="radio" name="numbers"
-                                                                           value="second">
-                                                                    <label for="second">16.00</label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="input-wrap-sellect mb-30">
-                                                                <span class="label">Tickets:</span>
-                                                                <div class="flex-two mb-15">
-                                                                    <p>Children (0-12 years)$129.00</p>
-                                                                    <div class="nice-select" tabindex="0">
-                                                                        <span class="current">1</span>
-                                                                        <ul class="list">
-                                                                            <li data-value=""
-                                                                                class="option selected focus">1</li>
-                                                                            <li data-value="2" class="option">2</li>
-                                                                            <li data-value="3" class="option">3</li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="flex-two mb-15">
-                                                                    <p>Youth (13-17 years)$169.00</p>
-                                                                    <div class="nice-select" tabindex="0">
-                                                                        <span class="current">1</span>
-                                                                        <ul class="list">
-                                                                            <li data-value=""
-                                                                                class="option selected focus">1</li>
-                                                                            <li data-value="2" class="option">2</li>
-                                                                            <li data-value="3" class="option">3</li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="flex-two">
-                                                                    <p>Adult (18+ years)$189.00</p>
-                                                                    <div class="nice-select" tabindex="0">
-                                                                        <span class="current">1</span>
-                                                                        <ul class="list">
-                                                                            <li data-value=""
-                                                                                class="option selected focus">1</li>
-                                                                            <li data-value="2" class="option">2</li>
-                                                                            <li data-value="3" class="option">3</li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="input-wrap-checkbox mb-30">
-                                                                <span class="label">Add Extra</span>
-                                                                <div class="checkbox">
-                                                                    <input id="check" type="checkbox" name="check"
-                                                                           value="check">
-                                                                    <label for="check">Service per booking</label>
-                                                                </div>
-                                                                <div class="checkbox">
-                                                                    <input id="check1" type="checkbox" name="check"
-                                                                           value="check">
-                                                                    <label for="check1">Service per person</label>
-                                                                </div>
-                                                                <div class="extra">
-                                                                    <div class="flex-three">
-                                                                        <span class="name">Adult:</span>
-                                                                        <span class="price">$18.00</span>
-                                                                    </div>
-                                                                    <div class="flex-three">
-                                                                        <span class="name">Youth:</span>
-                                                                        <span class="price">$16.00</span>
-                                                                    </div>
-                                                                    <div class="flex-three">
-                                                                        <span class="name">Children:</span>
-                                                                        <span class="price">$16.00</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="flex-two mb-40">
-                                                                <span class="label">Total:</span>
-                                                                <span class="total text-main">$130.00</span>
-                                                            </div>
-                                                            <button type="submit">Procced Booking</button>
-
-                                                        </form>
-                                                    </div>
-                                                    <div class="sidebar-widget">
-                                                        <h6 class="block-heading">Book With Confidence</h6>
-                                                        <ul class="category-confidence">
-                                                            <li class="flex-three">
-                                                                <i class="icon-customer-service-1"></i>
-                                                                <span>Customer care available 24/7</span>
-                                                            </li>
-                                                            <li class="flex-three">
-                                                                <i class="icon-Vector-6"></i>
-                                                                <span>Hand-picked Tours & Activities</span>
-                                                            </li>
-                                                            <li class="flex-three">
-                                                                <i class="icon-insurance-1"></i>
-                                                                <span>Free Travel Insureance</span>
-                                                            </li>
-                                                            <li class="flex-three">
-                                                                <i class="icon-price-tag-1-1"></i>
-                                                                <span>No-hassle best price guarantee</span>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                    <div class="sidebar-widget">
-                                                        <h4 class="block-heading">Recent News</h4>
-                                                        <div class="recent-post-list">
-                                                            <div class="list-recent flex-three">
-                                                                <a href="blog-details.html" class="recent-image">
-                                                                    <img src="./assets/images/blog/re-blog1.jpg"
-                                                                         alt="Image">
-                                                                </a>
-                                                                <div class="recent-info">
-                                                                    <div class="start">
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                    </div>
-                                                                    <h4 class="title">
-                                                                        <a href="blog-details.html">
-                                                                            Walking the Amalfi
-                                                                            Coast
-                                                                        </a>
-                                                                    </h4>
-                                                                    <p>From <span class="text-main">$129.00</span></p>
-                                                                </div>
-                                                            </div>
-                                                            <div class="list-recent flex-three">
-                                                                <a href="blog-details.html" class="recent-image">
-                                                                    <img src="./assets/images/blog/re-blog2.jpg"
-                                                                         alt="Image">
-                                                                </a>
-                                                                <div class="recent-info">
-                                                                    <div class="start">
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                    </div>
-                                                                    <h4 class="title">
-                                                                        <a href="blog-details.html">
-                                                                            Walking the Amalfi
-                                                                            Coast
-                                                                        </a>
-                                                                    </h4>
-                                                                    <p>From <span class="text-main">$129.00</span></p>
-                                                                </div>
-                                                            </div>
-                                                            <div class="list-recent flex-three">
-                                                                <a href="blog-details.html" class="recent-image">
-                                                                    <img src="./assets/images/blog/re-blog3.jpg"
-                                                                         alt="Image">
-                                                                </a>
-                                                                <div class="recent-info">
-                                                                    <div class="start">
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                    </div>
-                                                                    <h4 class="title">
-                                                                        <a href="blog-details.html">
-                                                                            Walking the Amalfi
-                                                                            Coast
-                                                                        </a>
-                                                                    </h4>
-                                                                    <p>From <span class="text-main">$129.00</span></p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <div class="tab-pane fade" id="pills-shot-gallery" role="tabpanel"
-                                         aria-labelledby="pills-shot-gallery-tab" tabindex="0">
-                                        <div class="row">
-                                            <div class="col-lg-8">
-                                                @await Component.InvokeAsync("_TourDetailShotGalleryComponentPartial", new { tourId = Model.TourId })
-
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <div class="side-bar-right">
-                                                    <div class="sidebar-widget">
-                                                        <h6 class="block-heading">Book This Tour</h6>
-                                                        <form action="/" id="form-book-tour">
-                                                            <div class="input-wrap mb-30">
-                                                                <input type="date">
-                                                            </div>
-                                                            <div class="flex-two mb-30">
-                                                                <span class="label">Time:</span>
-                                                                <div class="radio">
-                                                                    <input id="first" type="radio" name="numbers"
-                                                                           value="first" checked>
-                                                                    <label for="first">14.00</label>
-                                                                    <input id="second" type="radio" name="numbers"
-                                                                           value="second">
-                                                                    <label for="second">16.00</label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="input-wrap-sellect mb-30">
-                                                                <span class="label">Tickets:</span>
-                                                                <div class="flex-two mb-15">
-                                                                    <p>Children (0-12 years)$129.00</p>
-                                                                    <div class="nice-select" tabindex="0">
-                                                                        <span class="current">1</span>
-                                                                        <ul class="list">
-                                                                            <li data-value=""
-                                                                                class="option selected focus">1</li>
-                                                                            <li data-value="2" class="option">2</li>
-                                                                            <li data-value="3" class="option">3</li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="flex-two mb-15">
-                                                                    <p>Youth (13-17 years)$169.00</p>
-                                                                    <div class="nice-select" tabindex="0">
-                                                                        <span class="current">1</span>
-                                                                        <ul class="list">
-                                                                            <li data-value=""
-                                                                                class="option selected focus">1</li>
-                                                                            <li data-value="2" class="option">2</li>
-                                                                            <li data-value="3" class="option">3</li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="flex-two">
-                                                                    <p>Adult (18+ years)$189.00</p>
-                                                                    <div class="nice-select" tabindex="0">
-                                                                        <span class="current">1</span>
-                                                                        <ul class="list">
-                                                                            <li data-value=""
-                                                                                class="option selected focus">1</li>
-                                                                            <li data-value="2" class="option">2</li>
-                                                                            <li data-value="3" class="option">3</li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="input-wrap-checkbox mb-30">
-                                                                <span class="label">Add Extra</span>
-                                                                <div class="checkbox">
-                                                                    <input id="check" type="checkbox" name="check"
-                                                                           value="check">
-                                                                    <label for="check">Service per booking</label>
-                                                                </div>
-                                                                <div class="checkbox">
-                                                                    <input id="check1" type="checkbox" name="check"
-                                                                           value="check">
-                                                                    <label for="check1">Service per person</label>
-                                                                </div>
-                                                                <div class="extra">
-                                                                    <div class="flex-three">
-                                                                        <span class="name">Adult:</span>
-                                                                        <span class="price">$18.00</span>
-                                                                    </div>
-                                                                    <div class="flex-three">
-                                                                        <span class="name">Youth:</span>
-                                                                        <span class="price">$16.00</span>
-                                                                    </div>
-                                                                    <div class="flex-three">
-                                                                        <span class="name">Children:</span>
-                                                                        <span class="price">$16.00</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="flex-two mb-40">
-                                                                <span class="label">Total:</span>
-                                                                <span class="total text-main">$130.00</span>
-                                                            </div>
-                                                            <button type="submit">Procced Booking</button>
-
-                                                        </form>
-                                                    </div>
-                                                    <div class="sidebar-widget">
-                                                        <h6 class="block-heading">Book With Confidence</h6>
-                                                        <ul class="category-confidence">
-                                                            <li class="flex-three">
-                                                                <i class="icon-customer-service-1"></i>
-                                                                <span>Customer care available 24/7</span>
-                                                            </li>
-                                                            <li class="flex-three">
-                                                                <i class="icon-Vector-6"></i>
-                                                                <span>Hand-picked Tours & Activities</span>
-                                                            </li>
-                                                            <li class="flex-three">
-                                                                <i class="icon-insurance-1"></i>
-                                                                <span>Free Travel Insureance</span>
-                                                            </li>
-                                                            <li class="flex-three">
-                                                                <i class="icon-price-tag-1-1"></i>
-                                                                <span>No-hassle best price guarantee</span>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                    <div class="sidebar-widget">
-                                                        <h4 class="block-heading">Recent News</h4>
-                                                        <div class="recent-post-list">
-                                                            <div class="list-recent flex-three">
-                                                                <a href="blog-details.html" class="recent-image">
-                                                                    <img src="./assets/images/blog/re-blog1.jpg"
-                                                                         alt="Image">
-                                                                </a>
-                                                                <div class="recent-info">
-                                                                    <div class="start">
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                    </div>
-                                                                    <h4 class="title">
-                                                                        <a href="blog-details.html">
-                                                                            Walking the Amalfi
-                                                                            Coast
-                                                                        </a>
-                                                                    </h4>
-                                                                    <p>From <span class="text-main">$129.00</span></p>
-                                                                </div>
-                                                            </div>
-                                                            <div class="list-recent flex-three">
-                                                                <a href="blog-details.html" class="recent-image">
-                                                                    <img src="./assets/images/blog/re-blog2.jpg"
-                                                                         alt="Image">
-                                                                </a>
-                                                                <div class="recent-info">
-                                                                    <div class="start">
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                    </div>
-                                                                    <h4 class="title">
-                                                                        <a href="blog-details.html">
-                                                                            Walking the Amalfi
-                                                                            Coast
-                                                                        </a>
-                                                                    </h4>
-                                                                    <p>From <span class="text-main">$129.00</span></p>
-                                                                </div>
-                                                            </div>
-                                                            <div class="list-recent flex-three">
-                                                                <a href="blog-details.html" class="recent-image">
-                                                                    <img src="./assets/images/blog/re-blog3.jpg"
-                                                                         alt="Image">
-                                                                </a>
-                                                                <div class="recent-info">
-                                                                    <div class="start">
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                        <i class="icon-Star"></i>
-                                                                    </div>
-                                                                    <h4 class="title">
-                                                                        <a href="blog-details.html">
-                                                                            Walking the Amalfi
-                                                                            Coast
-                                                                        </a>
-                                                                    </h4>
-                                                                    <p>From <span class="text-main">$129.00</span></p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -755,4 +270,35 @@
 </body>
 
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

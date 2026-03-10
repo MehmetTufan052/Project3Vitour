@@ -1,11 +1,7 @@
 ﻿using AutoMapper;
 using MongoDB.Driver;
 using Project3Vitour.Dtos.ReviewDto;
-using Project3Vitour.Dtos.ReviewDto;
-using Project3Vitour.Dtos.ReviewDto;
-using Project3Vitour.Dtos.ReviewDto;
 using Project3Vitour.Entities;
-using Project3Vitour.Services.HuggingFaceService;
 using Project3Vitour.Settings;
 
 namespace Project3Vitour.Services.ReviewService
@@ -15,11 +11,12 @@ namespace Project3Vitour.Services.ReviewService
         private readonly IMapper _mapper;
         private readonly IMongoCollection<Review> _reviewCollection;
         private readonly HuggingFaceService.HuggingFaceService _huggingFaceService;
-        public ReviewService(IMapper mapper, IDatabaseSettings _databaseSettings, HuggingFaceService.HuggingFaceService huggingFaceService)
+
+        public ReviewService(IMapper mapper, IDatabaseSettings databaseSettings, HuggingFaceService.HuggingFaceService huggingFaceService)
         {
-            var client = new MongoClient(_databaseSettings.ConnectionString);
-            var database = client.GetDatabase(_databaseSettings.DatabaseName);
-            _reviewCollection = database.GetCollection<Review>(_databaseSettings.ReviewCollectionName);
+            var client = new MongoClient(databaseSettings.ConnectionString);
+            var database = client.GetDatabase(databaseSettings.DatabaseName);
+            _reviewCollection = database.GetCollection<Review>(databaseSettings.ReviewCollectionName);
             _mapper = mapper;
             _huggingFaceService = huggingFaceService;
         }
@@ -27,12 +24,20 @@ namespace Project3Vitour.Services.ReviewService
         public async Task CreateReviewAsync(CreateReviewDto createReviewDto)
         {
             var value = _mapper.Map<Review>(createReviewDto);
-           
+
             if (!string.IsNullOrWhiteSpace(value.Detail))
             {
-                var (label, score) = await _huggingFaceService.AnalyzeSentimentAsync(value.Detail);
-                value.SentimentLabel = label;
-                value.SentimentScore = score;
+                try
+                {
+                    var (label, score) = await _huggingFaceService.AnalyzeSentimentAsync(value.Detail);
+                    value.SentimentLabel = label;
+                    value.SentimentScore = score;
+                }
+                catch
+                {
+                    value.SentimentLabel = "Nötr";
+                    value.SentimentScore = 0;
+                }
             }
 
             await _reviewCollection.InsertOneAsync(value);
@@ -51,7 +56,7 @@ namespace Project3Vitour.Services.ReviewService
 
         public async Task<List<ResultReviewByTourIdDto>> GetAllReviewsByTourIdAsync(string id)
         {
-            var values=await _reviewCollection.Find(x=>x.TourId==id).ToListAsync();
+            var values = await _reviewCollection.Find(x => x.TourId == id).ToListAsync();
             return _mapper.Map<List<ResultReviewByTourIdDto>>(values);
         }
 
@@ -67,7 +72,6 @@ namespace Project3Vitour.Services.ReviewService
             await _reviewCollection.FindOneAndReplaceAsync(x => x.ReviewId == updateReviewDto.ReviewId, value);
         }
 
-        // Admin panel için sentiment özet
         public async Task<SentimentSummaryDto> GetSentimentSummaryAsync(string tourId)
         {
             var reviews = await _reviewCollection
@@ -81,13 +85,10 @@ namespace Project3Vitour.Services.ReviewService
                 OlumluSayi = reviews.Count(r => r.SentimentLabel == "Olumlu"),
                 OlumsuzSayi = reviews.Count(r => r.SentimentLabel == "Olumsuz"),
                 NotSayi = reviews.Count(r => r.SentimentLabel == "Nötr"),
-                OrtalamaGuven = reviews.Any()
-                    ? Math.Round(reviews.Average(r => r.SentimentScore), 2)
-                    : 0
+                OrtalamaGuven = reviews.Any() ? Math.Round(reviews.Average(r => r.SentimentScore), 2) : 0
             };
         }
 
-        // Admin panel için aylık trend
         public async Task<List<SentimentTrendDto>> GetMonthlyTrendAsync(string tourId)
         {
             var reviews = await _reviewCollection
@@ -96,7 +97,8 @@ namespace Project3Vitour.Services.ReviewService
 
             return reviews
                 .GroupBy(r => new { r.ReviewDate.Year, r.ReviewDate.Month })
-                .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
+                .OrderBy(g => g.Key.Year)
+                .ThenBy(g => g.Key.Month)
                 .Select(g => new SentimentTrendDto
                 {
                     Ay = $"{g.Key.Year}-{g.Key.Month:D2}",
@@ -108,4 +110,3 @@ namespace Project3Vitour.Services.ReviewService
         }
     }
 }
-

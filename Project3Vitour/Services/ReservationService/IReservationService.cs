@@ -8,6 +8,7 @@ namespace Project3Vitour.Services.ReservationService
         Task CreateReservationAsync(CreateReservationDto createReservationDto);
         Task UpdateReservationAsync(UpdateReservationDto updateReservationDto);
         Task DeleteReservationAsync(string id);
-        Task <GetReservationByIdDto> GetReservationByIdAsync(string id);
+        Task<GetReservationByIdDto> GetReservationByIdAsync(string id);
+        Task<bool> ExistsReservationForTourAndEmailAsync(string tourId, string email);
     }
 }

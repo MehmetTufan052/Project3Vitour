@@ -1,7 +1,8 @@
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Project3Vitour.Services.CatregoryService;
 using Project3Vitour.Services.GalleryService;
 using Project3Vitour.Services.HuggingFaceService;
+using Project3Vitour.Services.ReservationService;
 using Project3Vitour.Services.ReviewService;
 using Project3Vitour.Services.TourPlanService;
 using Project3Vitour.Services.TourServices.ITourService;
@@ -14,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ITourService, TourService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IGalleryService, GalleryService>();
 builder.Services.AddScoped<ITourPlanService, TourPlanService>();
 
@@ -21,6 +23,7 @@ builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddHttpClient<HuggingFaceService>();
 
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettingsKey"));
+builder.Services.Configure<ReviewSettings>(builder.Configuration.GetSection("ReviewSettings"));
 
 builder.Services.AddScoped<IDatabaseSettings>(sp =>
 {
@@ -51,3 +54,5 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+
