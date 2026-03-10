@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Options;
 using Project3Vitour.Services.CatregoryService;
 using Project3Vitour.Services.GalleryService;
 using Project3Vitour.Services.HuggingFaceService;
@@ -10,6 +10,9 @@ using Project3Vitour.Settings;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Optional local secrets file (kept out of git)
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
 
 // Add services to the container.
 builder.Services.AddScoped<ICategoryService, CategoryService>();

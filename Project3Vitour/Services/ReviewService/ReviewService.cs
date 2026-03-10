@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using MongoDB.Driver;
 using Project3Vitour.Dtos.ReviewDto;
 using Project3Vitour.Entities;
@@ -30,7 +30,7 @@ namespace Project3Vitour.Services.ReviewService
                 try
                 {
                     var (label, score) = await _huggingFaceService.AnalyzeSentimentAsync(value.Detail);
-                    value.SentimentLabel = label;
+                    value.SentimentLabel = NormalizeSentimentLabel(label);
                     value.SentimentScore = score;
                 }
                 catch
@@ -50,8 +50,67 @@ namespace Project3Vitour.Services.ReviewService
 
         public async Task<List<ResultReviewDto>> GetAllReviewAsync()
         {
-            var values = await _reviewCollection.Find(x => true).ToListAsync();
-            return _mapper.Map<List<ResultReviewDto>>(values);
+            var values = await _reviewCollection
+                .Find(_ => true)
+                .SortByDescending(x => x.ReviewDate)
+                .ToListAsync();
+
+            return values.Select(MapToResultReviewDto).ToList();
+        }
+
+        public async Task<List<ResultReviewDto>> AnalyzeAllReviewSentimentsAsync()
+        {
+            var reviews = await _reviewCollection
+                .Find(x => !string.IsNullOrWhiteSpace(x.Detail))
+                .ToListAsync();
+
+            foreach (var review in reviews)
+            {
+                try
+                {
+                    var (label, score) = await _huggingFaceService.AnalyzeSentimentAsync(review.Detail);
+                    review.SentimentLabel = NormalizeSentimentLabel(label);
+                    review.SentimentScore = score;
+                }
+                catch
+                {
+                    review.SentimentLabel = "Nötr";
+                    review.SentimentScore = 0;
+                }
+
+                await _reviewCollection.ReplaceOneAsync(x => x.ReviewId == review.ReviewId, review);
+            }
+
+            return (await _reviewCollection
+                .Find(_ => true)
+                .SortByDescending(x => x.ReviewDate)
+                .ToListAsync())
+                .Select(MapToResultReviewDto)
+                .ToList();
+        }
+
+        public async Task<ResultReviewDto?> AnalyzeReviewSentimentAsync(string id)
+        {
+            var review = await _reviewCollection.Find(x => x.ReviewId == id).FirstOrDefaultAsync();
+            if (review == null)
+            {
+                return null;
+            }
+
+            try
+            {
+                var (label, score) = await _huggingFaceService.AnalyzeSentimentAsync(review.Detail ?? string.Empty);
+                review.SentimentLabel = NormalizeSentimentLabel(label);
+                review.SentimentScore = score;
+            }
+            catch
+            {
+                review.SentimentLabel = "Nötr";
+                review.SentimentScore = 0;
+            }
+
+            await _reviewCollection.ReplaceOneAsync(x => x.ReviewId == review.ReviewId, review);
+            return MapToResultReviewDto(review);
         }
 
         public async Task<List<ResultReviewByTourIdDto>> GetAllReviewsByTourIdAsync(string id)
@@ -82,9 +141,9 @@ namespace Project3Vitour.Services.ReviewService
             {
                 TourId = tourId,
                 ToplamYorum = reviews.Count,
-                OlumluSayi = reviews.Count(r => r.SentimentLabel == "Olumlu"),
-                OlumsuzSayi = reviews.Count(r => r.SentimentLabel == "Olumsuz"),
-                NotSayi = reviews.Count(r => r.SentimentLabel == "Nötr"),
+                OlumluSayi = reviews.Count(r => NormalizeSentimentLabel(r.SentimentLabel) == "Olumlu"),
+                OlumsuzSayi = reviews.Count(r => NormalizeSentimentLabel(r.SentimentLabel) == "Olumsuz"),
+                NotSayi = reviews.Count(r => NormalizeSentimentLabel(r.SentimentLabel) == "Nötr"),
                 OrtalamaGuven = reviews.Any() ? Math.Round(reviews.Average(r => r.SentimentScore), 2) : 0
             };
         }
@@ -102,11 +161,44 @@ namespace Project3Vitour.Services.ReviewService
                 .Select(g => new SentimentTrendDto
                 {
                     Ay = $"{g.Key.Year}-{g.Key.Month:D2}",
-                    Olumlu = g.Count(r => r.SentimentLabel == "Olumlu"),
-                    Olumsuz = g.Count(r => r.SentimentLabel == "Olumsuz"),
-                    Notr = g.Count(r => r.SentimentLabel == "Nötr")
+                    Olumlu = g.Count(r => NormalizeSentimentLabel(r.SentimentLabel) == "Olumlu"),
+                    Olumsuz = g.Count(r => NormalizeSentimentLabel(r.SentimentLabel) == "Olumsuz"),
+                    Notr = g.Count(r => NormalizeSentimentLabel(r.SentimentLabel) == "Nötr")
                 })
                 .ToList();
+        }
+
+        private static string NormalizeSentimentLabel(string? label)
+        {
+            if (string.IsNullOrWhiteSpace(label))
+            {
+                return "Nötr";
+            }
+
+            var normalized = label.Trim().ToLowerInvariant();
+            return normalized switch
+            {
+                "olumlu" or "positive" => "Olumlu",
+                "olumsuz" or "negative" => "Olumsuz",
+                "nötr" or "notr" or "neutral" => "Nötr",
+                _ => "Nötr"
+            };
+        }
+
+        private static ResultReviewDto MapToResultReviewDto(Review x)
+        {
+            return new ResultReviewDto
+            {
+                ReviewId = x.ReviewId,
+                NameSurname = x.NameSurname,
+                Detail = x.Detail,
+                Score = x.Score,
+                ReviewDate = x.ReviewDate,
+                Status = x.Status,
+                TourId = x.TourId,
+                SentimentLabel = NormalizeSentimentLabel(x.SentimentLabel),
+                SentimentScore = x.SentimentScore
+            };
         }
     }
 }
