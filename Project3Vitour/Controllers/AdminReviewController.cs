@@ -85,8 +85,22 @@ namespace Project3Vitour.Controllers
                 text = review.Detail ?? string.Empty,
                 stars = review.Score,
                 sentiment = string.IsNullOrWhiteSpace(review.SentimentLabel) ? "Nötr" : review.SentimentLabel,
-                score = (int)Math.Round(review.SentimentScore * 100),
+                score = CalculateDisplayScore(review.SentimentLabel, review.SentimentScore),
                 status = review.Status ? "Aktif" : "Pasif"
+            };
+        }
+
+        private static int CalculateDisplayScore(string? sentimentLabel, double confidence)
+        {
+            var clampedConfidence = Math.Clamp(confidence, 0d, 1d);
+            var normalized = (sentimentLabel ?? string.Empty).Trim().ToLowerInvariant();
+
+            return normalized switch
+            {
+                "olumlu" => (int)Math.Round(65 + (clampedConfidence * 35)),
+                "olumsuz" => (int)Math.Round(Math.Max(0, 50 - (clampedConfidence * 50))),
+                "nötr" or "notr" or "neutral" => (int)Math.Round(50 + (clampedConfidence * 15)),
+                _ => (int)Math.Round(50 + (clampedConfidence * 15))
             };
         }
     }

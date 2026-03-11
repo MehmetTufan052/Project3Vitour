@@ -5,6 +5,7 @@ using Project3Vitour.Dtos.ReviewDto;
 using Project3Vitour.Services.ReservationService;
 using Project3Vitour.Services.ReviewService;
 using Project3Vitour.Settings;
+using System.Threading.Tasks;
 
 namespace Project3Vitour.Controllers
 {
@@ -77,6 +78,12 @@ namespace Project3Vitour.Controllers
         {
             var values = await _reviewService.GetAllReviewsByTourIdAsync(id);
             return View(values);
+        }
+
+        public async Task<IActionResult> DeleteReview(string id)
+        {
+            await _reviewService.GetReviewByIdAsync(id);
+            return RedirectToAction("Index");
         }
     }
 }
