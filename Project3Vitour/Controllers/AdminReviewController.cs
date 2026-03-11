@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Project3Vitour.Dtos.ReviewDto;
 using Project3Vitour.Models;
 using Project3Vitour.Services.ReviewService;
@@ -42,6 +42,17 @@ namespace Project3Vitour.Controllers
             }
 
             return Json(ToClientReview(value));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DebugCount()
+        {
+            var values = await _reviewService.GetAllReviewAsync();
+            return Json(new
+            {
+                count = values.Count,
+                sample = values.Take(3).Select(x => new { x.ReviewId, x.NameSurname, x.SentimentLabel })
+            });
         }
 
         public async Task<IActionResult> DeleteReview(string id)

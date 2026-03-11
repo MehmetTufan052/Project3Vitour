@@ -784,6 +784,10 @@
         }
 
 </style>
+<style>
+    .modal-backdrop.show { z-index: 2000; }
+    .modal { z-index: 2010; }
+</style>
 
 <!-- PAGE HEADER -->
 <div class="ph">
@@ -1123,9 +1127,19 @@
         const analyzeAllUrl = '@Url.Action("AnalyzeAll", "AdminReview")';
         const analyzeOneUrl = '@Url.Action("Analyze", "AdminReview")';
 
+        ['rapportModal', 'deleteModal'].forEach(id => {
+          const modalEl = document.getElementById(id);
+          if (modalEl && modalEl.parentElement !== document.body) {
+            document.body.appendChild(modalEl);
+          }
+        });
+
         let pendingDeleteId = null;
-        const rapportModal = new bootstrap.Modal(document.getElementById('rapportModal'));
-        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        const getModalInstance = id => {
+          const element = document.getElementById(id);
+          if (!element || !window.bootstrap?.Modal) return null;
+          return bootstrap.Modal.getOrCreateInstance(element);
+        };
 
         const renderStars = n => Array.from({length:5},(_,i) => `<span class="${i<n?'star-f':'star-e'}">${i<n?'★':'☆'}</span>`).join('');
         const renderBadge = (s, sc) => { const map = {Olumlu:'b-green',Olumsuz:'b-red','Nötr':'b-gray'}; return `<span class="badge ${map[s]||'b-gray'}"><span class="bd"></span>${s} <strong>%${sc}</strong></span>`; };
@@ -1183,7 +1197,8 @@
           const conf = r.score > 80 ? 'Yüksek' : r.score > 50 ? 'Orta' : 'Düşük';
           const confC = r.score > 80 ? '#10b981' : r.score > 50 ? '#f59e0b' : '#e5384f';
           document.getElementById('modalConfidence').innerHTML = `<span style="color:${confC};font-weight:800">${conf}</span>`;
-          rapportModal.show();
+          const modal = getModalInstance('rapportModal');
+          if (modal) modal.show();
         }
 
                 async function analyzeOne(id, btn) {
@@ -1254,13 +1269,18 @@
         }
 
 
-        function confirmDelete(id) { pendingDeleteId = id; deleteModal.show(); }
+        function confirmDelete(id) {
+          pendingDeleteId = id;
+          const modal = getModalInstance('deleteModal');
+          if (modal) modal.show();
+        }
         document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
           if (pendingDeleteId === null) return;
           const idx = reviews.findIndex(r => r.id === pendingDeleteId);
           if (idx > -1) reviews.splice(idx, 1);
           pendingDeleteId = null;
-          deleteModal.hide();
+          const modal = getModalInstance('deleteModal');
+          if (modal) modal.hide();
           renderTable();
         });
 

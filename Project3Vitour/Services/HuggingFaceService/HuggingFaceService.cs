@@ -8,40 +8,46 @@ namespace Project3Vitour.Services.HuggingFaceService
     {
         private readonly HttpClient _httpClient;
         private readonly string _apiKey;
-        private const string ModelUrl =
-            "https://api-inference.huggingface.co/models/savasy/bert-base-turkish-sentiment-cased";
+        private readonly string _modelUrl;
 
         public HuggingFaceService(HttpClient httpClient, IConfiguration config)
         {
             _httpClient = httpClient;
-            _apiKey = config["HuggingFace:ApiKey"];
+            _apiKey = config["HuggingFace:ApiKey"] ?? string.Empty;
+
+            var modelId = config["HuggingFace:ModelId"] ?? "savasy/bert-base-turkish-sentiment-cased";
+            _modelUrl = $"https://router.huggingface.co/hf-inference/models/{modelId}";
         }
 
-        public async Task<(string label, double score)> AnalyzeSentimentAsync(string text)
+        public async Task<(string label, double score, bool success)> AnalyzeSentimentAsync(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
-                return ("Nötr", 0);
+                return ("Nötr", 0, false);
 
             try
             {
-                if (!string.IsNullOrWhiteSpace(_apiKey))
-                {
-                    _httpClient.DefaultRequestHeaders.Authorization =
-                        new AuthenticationHeaderValue("Bearer", _apiKey);
-                }
+                if (string.IsNullOrWhiteSpace(_apiKey))
+                    return ("Nötr", 0, false);
 
-                var payload = new { inputs = text };
+                _httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", _apiKey);
+
+                var payload = new
+                {
+                    inputs = text,
+                    options = new { wait_for_model = true }
+                };
+
                 var json = JsonSerializer.Serialize(payload);
                 using var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync(ModelUrl, content);
+                var response = await _httpClient.PostAsync(_modelUrl, content);
+                if (!response.IsSuccessStatusCode)
+                    return ("Nötr", 0, false);
+
                 var responseString = await response.Content.ReadAsStringAsync();
                 if (string.IsNullOrWhiteSpace(responseString))
-                    return ("Nötr", 0);
-
-                var trimmed = responseString.TrimStart();
-                if (!(trimmed.StartsWith("[") || trimmed.StartsWith("{")))
-                    return ("Nötr", 0);
+                    return ("Nötr", 0, false);
 
                 using var doc = JsonDocument.Parse(responseString);
                 var root = doc.RootElement;
@@ -49,8 +55,9 @@ namespace Project3Vitour.Services.HuggingFaceService
                 if (root.ValueKind == JsonValueKind.Object)
                 {
                     if (root.TryGetProperty("error", out _))
-                        return ("Nötr", 0);
-                    return ("Nötr", 0);
+                        return ("Nötr", 0, false);
+
+                    return ("Nötr", 0, false);
                 }
 
                 JsonElement candidates;
@@ -61,7 +68,7 @@ namespace Project3Vitour.Services.HuggingFaceService
                 }
                 else
                 {
-                    return ("Nötr", 0);
+                    return ("Nötr", 0, false);
                 }
 
                 var best = candidates
@@ -71,28 +78,53 @@ namespace Project3Vitour.Services.HuggingFaceService
                     .FirstOrDefault();
 
                 if (best.ValueKind != JsonValueKind.Object)
-                    return ("Nötr", 0);
+                    return ("Nötr", 0, false);
 
                 var rawLabel = best.TryGetProperty("label", out var labelProp)
                     ? (labelProp.GetString() ?? string.Empty)
                     : string.Empty;
+
                 var score = best.TryGetProperty("score", out var scoreProp)
                     ? scoreProp.GetDouble()
                     : 0;
 
-                var label = rawLabel.ToLowerInvariant() switch
-                {
-                    "positive" => "Olumlu",
-                    "negative" => "Olumsuz",
-                    _ => "Nötr"
-                };
-
-                return (label, Math.Round(score, 4));
+                var label = NormalizeApiLabel(rawLabel);
+                return (label, Math.Round(score, 4), true);
             }
             catch
             {
-                return ("Nötr", 0);
+                return ("Nötr", 0, false);
             }
+        }
+
+        private static string NormalizeApiLabel(string rawLabel)
+        {
+            var normalized = (rawLabel ?? string.Empty).Trim().ToLowerInvariant();
+            if (string.IsNullOrWhiteSpace(normalized))
+            {
+                return "Nötr";
+            }
+
+            if (normalized == "label_1") return "Olumlu";
+            if (normalized == "label_0") return "Olumsuz";
+            if (normalized == "label_2") return "Nötr";
+
+            if (normalized.Contains("positive") || normalized.Contains("olumlu") || normalized == "pos")
+            {
+                return "Olumlu";
+            }
+
+            if (normalized.Contains("negative") || normalized.Contains("olumsuz") || normalized == "neg")
+            {
+                return "Olumsuz";
+            }
+
+            if (normalized.Contains("neutral") || normalized.Contains("notr") || normalized.Contains("nötr"))
+            {
+                return "Nötr";
+            }
+
+            return "Nötr";
         }
     }
 }
