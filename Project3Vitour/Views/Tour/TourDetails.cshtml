@@ -87,7 +87,7 @@
                                     <div class="tab-pane fade show active" id="pills-information" role="tabpanel"
                                          aria-labelledby="pills-information-tab" tabindex="0">
 
-                                        @await Component.InvokeAsync("_TourDetailInformationComponentPartial")
+                                        @await Component.InvokeAsync("_TourDetailInformationComponentPartial", new { tourId = Model.TourId })
 
                                         @await Component.InvokeAsync("_TourDetailDestinationSmallGalleryComponentPartial", new { tourId = Model.TourId })
 
@@ -213,7 +213,7 @@
     <a id="scroll-top" class="button-go"></a>
 
     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight">
-        <div class="offcanvas-header">
+        <div class="offcanvas-header">13
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
@@ -270,34 +270,6 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

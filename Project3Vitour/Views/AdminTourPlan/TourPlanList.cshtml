@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Project3Vitour.Dtos.TourPlanDto.ResultTourPlanDto>
 @{
-    ViewData["Title"] = "Tour Plans";
+    ViewData["Title"] = "Tur Planları";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 
     var list = Model?.ToList() ?? new List<Project3Vitour.Dtos.TourPlanDto.ResultTourPlanDto>();
@@ -12,8 +12,8 @@
 
 <style>
     /* ══════════════════════════════════════════════════════════
-       TOUR PLAN LIST — TIMELINE VIEW
-    ══════════════════════════════════════════════════════════ */
+           TOUR PLAN LIST — TIMELINE VIEW
+        ══════════════════════════════════════════════════════════ */
 
     /* ── STAT CARDS ────────────────────────────────────────── */
     .tpl-stats {
@@ -23,27 +23,23 @@
         margin-bottom: 20px;
         animation: tplIn .3s .04s cubic-bezier(.4,0,.2,1) both;
     }
+
     @@media (max-width: 640px) {
-        .tpl-stats
-
-    {
-        grid-template-columns: 1fr;
+        .tpl-stats {
+            grid-template-columns: 1fr;
+        }
     }
 
-    }
     @@keyframes tplIn {
-        from
+        from {
+            opacity: 0;
+            transform: translateY(8px)
+        }
 
-    {
-        opacity: 0;
-        transform: translateY(8px)
-    }
-
-    to {
-        opacity: 1;
-        transform: none
-    }
-
+        to {
+            opacity: 1;
+            transform: none
+        }
     }
 
     .tpl-stat {
@@ -526,19 +522,17 @@
         .tpl-empty-rings::after {
             animation-delay: 1.4s;
         }
+
     @@keyframes emRing {
-        0%,100%
+        0%, 100% {
+            transform: scale(1);
+            opacity: .5
+        }
 
-    {
-        transform: scale(1);
-        opacity: .5
-    }
-
-    50% {
-        transform: scale(1.2);
-        opacity: .1
-    }
-
+        50% {
+            transform: scale(1.2);
+            opacity: .1
+        }
     }
 
     .tpl-empty-ic {
@@ -622,30 +616,120 @@
         .dtbl tbody tr:last-child td {
             border-bottom: none;
         }
+
+    /* Page header */
+    .ph {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .ph-eye {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 2.2px;
+        text-transform: uppercase;
+        color: #6366f1;
+        font-family: 'DM Mono', monospace;
+        margin-bottom: 3px;
+    }
+
+    .ph-h1 {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--text-primary);
+        letter-spacing: -.6px;
+        line-height: 1.1;
+    }
+
+    .ph-desc {
+        font-size: 12.5px;
+        color: var(--text-secondary);
+        margin-top: 3px;
+    }
+
+    .ph-acts {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 9px 18px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        cursor: pointer;
+        border: none;
+        transition: all 250ms cubic-bezier(.4,0,.2,1);
+        line-height: 1;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6, #6366f1);
+        color: #fff;
+        box-shadow: 0 2px 14px rgba(99,102,241,0.38), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 22px rgba(99,102,241,0.48), inset 0 1px 0 rgba(255,255,255,0.15);
+        }
+
+    .anim {
+        animation: tplIn .3s .04s cubic-bezier(.4,0,.2,1) both;
+    }
+
+    .card {
+        background: #fff;
+        border: 1px solid rgba(226,232,240,0.8);
+        border-radius: 14px;
+        box-shadow: 0 2px 8px rgba(50,70,130,0.07), inset 0 1px 0 rgba(255,255,255,0.9);
+        overflow: hidden;
+        position: relative;
+    }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.98), transparent);
+        }
 </style>
 
-<!-- Page Header -->
+<!-- Sayfa Başlığı -->
 <div class="ph anim">
     <div>
-        <div class="ph-eye">Collections</div>
-        <h1 class="ph-h1">Tour Plans</h1>
-        <p class="ph-desc">Daily itinerary plans for all tours</p>
+        <div class="ph-eye">KoleksİYONLAR</div>
+        <h1 class="ph-h1">Tur Planları</h1>
+        <p class="ph-desc">Tüm turlar için günlük itinerary planları</p>
     </div>
     <div class="ph-acts">
         <a href="@Url.Action("CreateTourPlan", "AdminTourPlan")" class="btn btn-primary">
-            <i class="fa-solid fa-plus"></i> Add Plan
+            <i class="fa-solid fa-plus"></i> Plan Ekle
         </a>
     </div>
 </div>
 
-<!-- Stats -->
+<!-- İstatistikler -->
 <div class="tpl-stats">
     <div class="tpl-stat">
         <div class="tpl-stat-ico" style="background:#f0fdf4;color:#10b981;">
             <i class="fa-solid fa-calendar-days"></i>
         </div>
         <div>
-            <div class="tpl-stat-lbl">Total Plans</div>
+            <div class="tpl-stat-lbl">Toplam Planlar</div>
             <div class="tpl-stat-val">@total</div>
         </div>
     </div>
@@ -654,7 +738,7 @@
             <i class="fa-solid fa-map-location-dot"></i>
         </div>
         <div>
-            <div class="tpl-stat-lbl">Tours Planned</div>
+            <div class="tpl-stat-lbl">Planlanmış Turlar</div>
             <div class="tpl-stat-val">@tours</div>
         </div>
     </div>
@@ -663,7 +747,7 @@
             <i class="fa-solid fa-flag-checkered"></i>
         </div>
         <div>
-            <div class="tpl-stat-lbl">Max Day</div>
+            <div class="tpl-stat-lbl">Max Gün</div>
             <div class="tpl-stat-val">@maxDay</div>
         </div>
     </div>
@@ -675,50 +759,50 @@
         <div class="tpl-empty-rings">
             <div class="tpl-empty-ic"><i class="fa-solid fa-calendar-days"></i></div>
         </div>
-        <h3>No plans yet</h3>
-        <p>Start building tour itineraries by adding the first daily plan.</p>
+        <h3>Henüz plan yok</h3>
+        <p>İlk günlük planı ekleyerek tur itinerary'leri oluşturmaya başlayın.</p>
         <a href="@Url.Action("CreateTourPlan", "AdminTourPlan")" class="btn btn-primary">
-            <i class="fa-solid fa-plus"></i> Add First Plan
+            <i class="fa-solid fa-plus"></i> İlk Planı Ekle
         </a>
     </div>
 }
 else
 {
-    <!-- Filter bar -->
+    <!-- Filtre Çubuğu -->
     <div class="tpl-filter">
         <div class="tpl-search">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="searchInput" placeholder="Search title or description...">
+            <input type="text" id="searchInput" placeholder="Başlık veya açıklamada ara...">
         </div>
         <select class="tpl-sel" id="tourFilter">
-            <option value="">All Tours</option>
+            <option value="">Tüm Turlar</option>
             @foreach (var g in grouped)
             {
                 var firstName = list.FirstOrDefault(p => p.TourId == g.Key)?.TourId ?? g.Key;
-                <option value="@g.Key">Tour: @(g.Key?.Length > 16 ? g.Key[..16] + "…" : g.Key)</option>
+                <option value="@g.Key">Tur: @(g.Key?.Length > 16 ? g.Key[..16] + "…" : g.Key)</option>
             }
         </select>
         <select class="tpl-sel" id="dayFilter">
-            <option value="">All Days</option>
+            <option value="">Tüm Günler</option>
             @foreach (var d in list.Select(p => p.NumberOfDay).Distinct().OrderBy(x => x))
             {
-                <option value="@d">Day @d</option>
+                <option value="@d">Gün @d</option>
             }
         </select>
         <span class="tpl-count">
-            <strong id="visibleCount">@total</strong> of <strong>@total</strong> plans
+            <strong id="visibleCount">@total</strong> / <strong>@total</strong> planı görüntüleniyor
         </span>
         <div class="view-tog">
-            <button class="vt-btn on" id="btnTimeline" onclick="setView('timeline')" title="Timeline view">
+            <button class="vt-btn on" id="btnTimeline" onclick="setView('timeline')" title="Timeline görünümü">
                 <i class="fa-solid fa-timeline"></i>
             </button>
-            <button class="vt-btn" id="btnTable" onclick="setView('table')" title="Table view">
+            <button class="vt-btn" id="btnTable" onclick="setView('table')" title="Tablo görünümü">
                 <i class="fa-solid fa-table-list"></i>
             </button>
         </div>
     </div>
 
-    <!-- ── TIMELINE VIEW ────────────────────────────────── -->
+    <!-- ── TIMELINE GÖRÜNÜMÜ ────────────────────────────────────── -->
     <div class="tpl-content" id="timelineView">
         @foreach (var group in grouped)
         {
@@ -727,10 +811,10 @@ else
                 <div class="tour-group-head">
                     <div class="tgh-icon"><i class="fa-solid fa-map-location-dot"></i></div>
                     <div class="tgh-name">
-                        <span style="font-size:9.5px;font-weight:700;color:#94a3b8;font-family:'DM Mono',monospace;letter-spacing:.8px;text-transform:uppercase;display:block;margin-bottom:2px;">Tour ID</span>
+                        <span style="font-size:9.5px;font-weight:700;color:#94a3b8;font-family:'DM Mono',monospace;letter-spacing:.8px;text-transform:uppercase;display:block;margin-bottom:2px;">Tur ID</span>
                         @group.Key
                     </div>
-                    <span class="tgh-count">@groupPlans.Count day@(groupPlans.Count != 1 ? "s" : "")</span>
+                    <span class="tgh-count">@groupPlans.Count gün@(groupPlans.Count != 1 ? "ler" : "")</span>
                 </div>
 
                 <div class="timeline">
@@ -747,16 +831,16 @@ else
                             <div class="plan-card">
                                 <div class="plan-card-head">
                                     <div>
-                                        <div class="pc-day-label">Day @plan.NumberOfDay</div>
+                                        <div class="pc-day-label">Gün @plan.NumberOfDay</div>
                                         <div class="pc-day-title">@plan.DayTitle</div>
                                     </div>
                                     <div class="plan-card-actions">
                                         <a href="@Url.Action("UpdateTourPlan", "AdminTourPlan", new { id = plan.TourPlanId })"
-                                           class="pc-btn edit" title="Edit">
+                                           class="pc-btn edit" title="Düzenle">
                                             <i class="fa-solid fa-pen"></i>
                                         </a>
                                         <a href="@Url.Action("DeleteTourPlan", "AdminTourPlan", new { id = plan.TourPlanId })"
-                                           class="pc-btn delete" title="Delete"
+                                           class="pc-btn delete" title="Sil"
                                            onclick="return confirm('Bu planı silmek istediğinize emin misiniz?')">
                                             <i class="fa-solid fa-trash"></i>
                                         </a>
@@ -766,7 +850,7 @@ else
                                     <div class="pc-desc">@plan.Description</div>
                                     <div class="pc-meta">
                                         <span class="pc-meta-chip">
-                                            <i class="fa-regular fa-calendar"></i> Day @plan.NumberOfDay
+                                            <i class="fa-regular fa-calendar"></i> Gün @plan.NumberOfDay
                                         </span>
                                         <span class="pc-meta-chip" style="margin-left:auto;font-size:9.5px;color:#c4cdd9;">
                                             @(plan.TourPlanId?.Length > 10 ? plan.TourPlanId[..10] + "…" : plan.TourPlanId)
@@ -783,21 +867,21 @@ else
 
         <div class="no-results" id="noResults">
             <i class="fa-regular fa-face-frown-open"></i>
-            No plans found for this filter.
+            Bu filtreye uygun plan bulunamadı.
         </div>
     </div>
 
-    <!-- ── TABLE VIEW ───────────────────────────────────── -->
+    <!-- ── TABLO GÖRÜNÜMÜ ────────────────────────────────────── -->
     <div id="tableView">
         <div class="card" style="background:#fff;">
             <table class="dtbl">
                 <thead>
                     <tr>
-                        <th>Day</th>
-                        <th>Title</th>
-                        <th>Description</th>
-                        <th>Tour ID</th>
-                        <th>Actions</th>
+                        <th>Gün</th>
+                        <th>Başlık</th>
+                        <th>Açıklama</th>
+                        <th>Tur ID</th>
+                        <th>İşlemler</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -809,10 +893,10 @@ else
                             data-desc="@plan.Description?.ToLower()">
                             <td>
                                 <span style="display:inline-flex;align-items:center;justify-content:center;
-                                                     width:28px;height:28px;border-radius:7px;
-                                                     background:linear-gradient(135deg,#10b981,#06b6d4);
-                                                     color:#fff;font-size:11px;font-weight:800;font-family:'DM Mono',monospace;
-                                                     box-shadow:0 0 8px rgba(16,185,129,.3);">
+                                                             width:28px;height:28px;border-radius:7px;
+                                                             background:linear-gradient(135deg,#10b981,#06b6d4);
+                                                             color:#fff;font-size:11px;font-weight:800;font-family:'DM Mono',monospace;
+                                                             box-shadow:0 0 8px rgba(16,185,129,.3);">
                                     @plan.NumberOfDay
                                 </span>
                             </td>
@@ -830,11 +914,11 @@ else
                             <td>
                                 <div style="display:flex;gap:6px;">
                                     <a href="@Url.Action("UpdateTourPlan", "AdminTourPlan", new { id = plan.TourPlanId })"
-                                       class="pc-btn edit" title="Edit">
+                                       class="pc-btn edit" title="Düzenle">
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
                                     <a href="@Url.Action("DeleteTourPlan", "AdminTourPlan", new { id = plan.TourPlanId })"
-                                       class="pc-btn delete" title="Delete"
+                                       class="pc-btn delete" title="Sil"
                                        onclick="return confirm('Bu planı silmek istediğinize emin misiniz?')">
                                         <i class="fa-solid fa-trash"></i>
                                     </a>
@@ -850,7 +934,7 @@ else
 
 @section Scripts {
     <script>
-        /* ── Filter ──────────────────────────────────────────────── */
+        /* ── Filtreleme ──────────────────────────────────────────────── */
         function applyFilter() {
             const q    = document.getElementById('searchInput')?.value.toLowerCase().trim() ?? '';
             const tour = document.getElementById('tourFilter')?.value ?? '';
@@ -860,7 +944,7 @@ else
             const currentView = document.getElementById('timelineView')?.classList.contains('hidden') ? 'table' : 'timeline';
 
             if (currentView === 'timeline') {
-                // Filter timeline items
+                // Timeline öğelerini filtrele
                 document.querySelectorAll('.tl-item').forEach(item => {
                     const match = (!q    || item.dataset.title?.includes(q) || item.dataset.desc?.includes(q))
                                && (!tour || item.dataset.tour === tour)
@@ -869,7 +953,7 @@ else
                     item.style.display  = match ? '' : 'none';
                     if (match) visible++;
                 });
-                // Hide empty groups
+                // Boş grupları gizle
                 document.querySelectorAll('.tour-group').forEach(grp => {
                     const anyVisible = [...grp.querySelectorAll('.tl-item')].some(i => i.dataset.hidden !== 'true');
                     grp.dataset.hidden = anyVisible ? 'false' : 'true';
@@ -896,7 +980,7 @@ else
         document.getElementById('tourFilter')?.addEventListener('change', applyFilter);
         document.getElementById('dayFilter')?.addEventListener('change', applyFilter);
 
-        /* ── View toggle ─────────────────────────────────────────── */
+        /* ── Görünüm Değişimi ─────────────────────────────────────────── */
         function setView(v) {
             const tl   = document.getElementById('timelineView');
             const tb   = document.getElementById('tableView');
