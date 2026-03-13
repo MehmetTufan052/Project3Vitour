@@ -3,6 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Project3Vitour.Entities
 {
+    [BsonIgnoreExtraElements]
     public class TourPlan
     {
         [BsonId]
@@ -13,5 +14,6 @@ namespace Project3Vitour.Entities
         public string Description { get; set; }
 
         public string TourId { get; set; }
+        public string TourName { get; set; }
     }
 }

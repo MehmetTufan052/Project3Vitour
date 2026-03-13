@@ -1,4 +1,4 @@
-﻿@model List<ResultTourPlanDto>
+@model List<ResultTourPlanDto>
 
 <div class="tab-pane fade" id="pills-tour-planing" role="tabpanel"
      aria-labelledby="pills-tour-planing-tab" tabindex="0">
@@ -6,19 +6,28 @@
     <div class="row">
         <div class="col-lg-8">
             <div class="planing-content-tour">
-                <h3 class="title-plan">Tur Planı :</h3>
-                @foreach (var item in Model)
+                <h3 class="title-plan">Tur Plani :</h3>
+                @if (Model != null && Model.Any())
                 {
-                    <div class="tour-planing-section flex">
-                        <div class="number-box flex-five">0 @item.NumberOfDay</div>
-                        <div class="content-box">
-                            <h5 class="title">@item.DayTitle</h5>
-                            <p class="des">
-                                @Html.Raw(item.Description)
-                            </p>
+                    @foreach (var item in Model)
+                    {
+                        <div class="tour-planing-section flex">
+                            <div class="number-box flex-five">0 @item.NumberOfDay</div>
+                            <div class="content-box">
+                                <h5 class="title">@item.DayTitle</h5>
+                                <p class="des">
+                                    @Html.Raw(item.Description)
+                                </p>
+                            </div>
                         </div>
+                    }
+                }
+                else
+                {
+                    <div style="padding:24px;border:1px dashed #dbe2ea;border-radius:16px;background:#f8fbff;color:#5b6878;">
+                        Bu tur icin henuz gunluk plan bilgisi eklenmemis.
                     </div>
-                }               
+                }
             </div>
 
         </div>
@@ -51,4 +60,3 @@
     </div>
 
 </div>
-

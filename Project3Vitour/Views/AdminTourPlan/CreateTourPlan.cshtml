@@ -780,6 +780,7 @@
                                 }
                             }
                         </select>
+                        <input asp-for="TourName" type="hidden" id="TourName" />
                         <div class="tour-badge" id="tourBadge">
                             <div class="tour-badge-dot"></div>
                             <span id="tourBadgeName"></span>
@@ -917,6 +918,7 @@
             const badgeDays = document.getElementById('tourBadgeDays');
             const ppTour = document.getElementById('ppTour');
             const ppTourName = document.getElementById('ppTourName');
+            document.getElementById('TourName').value = val ? name : '';
             if (val) { badgeName.textContent = name; badgeDays.textContent = days ? days + ' gün' : ''; badge.classList.add('show'); ppTour.style.display = 'flex'; ppTourName.textContent = name; setCheck('chk-tour', true); }
             else { badge.classList.remove('show'); ppTour.style.display = 'none'; setCheck('chk-tour', false); }
         }

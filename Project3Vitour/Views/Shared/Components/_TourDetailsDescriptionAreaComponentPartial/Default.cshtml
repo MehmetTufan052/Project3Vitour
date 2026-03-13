@@ -1,11 +1,15 @@
-﻿<div class="row">
+@model GetTourByIdDto
+@using System.Text.RegularExpressions
+
+<div class="row">
     <div class="col-lg-8">
         <div class="information-content-tour">
             @{
-                var isCappadociaTour =
-                    (Model.Title?.IndexOf("Kapadokya", StringComparison.OrdinalIgnoreCase) ?? -1) >= 0 ||
-                    (Model.Title?.IndexOf("Cappadocia", StringComparison.OrdinalIgnoreCase) ?? -1) >= 0;
-                var formattedDescription = (Model.Description ?? string.Empty)
+                var descriptionContent = !string.IsNullOrWhiteSpace(Model?.LongDescription)
+                    ? Model.LongDescription
+                    : Model?.Description ?? string.Empty;
+                descriptionContent = Regex.Replace(descriptionContent, "<[^>]*$", string.Empty, RegexOptions.Singleline);
+                var formattedDescription = descriptionContent
                     .Replace("Dünyanın Başka Hiçbir Yerinde Göremeyeceğiniz Bir Sabah", "<span class=\"description\">Dünyanın Başka Hiçbir Yerinde Göremeyeceğiniz Bir Sabah</span>");
             }
             <div class="description-wrap mb-40">

@@ -3,10 +3,25 @@
 
 
 <div class="row mb-40 image-gallery-single">
-    @foreach(var item in Model)
+    @if (Model != null && Model.Any())
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col-4">
+                <img src="@item.ImageUrl" alt="image" class="w-100" style="height:200px;object-fit:cover;border-radius:8px;">
+            </div>
+        }
+    }
+    else
     {
         <div class="col-4">
-            <img src="@item.ImageUrl" alt="image" class="w-100" style="height:200px;object-fit:cover;border-radius:8px;">
+            <img src="/vitour/assets/images/gallery/gallery.jpg" alt="image" class="w-100" style="height:200px;object-fit:cover;border-radius:8px;">
+        </div>
+        <div class="col-4">
+            <img src="/vitour/assets/images/gallery/gallery2.jpg" alt="image" class="w-100" style="height:200px;object-fit:cover;border-radius:8px;">
+        </div>
+        <div class="col-4">
+            <img src="/vitour/assets/images/gallery/gallery3.jpg" alt="image" class="w-100" style="height:200px;object-fit:cover;border-radius:8px;">
         </div>
     }
 </div>
