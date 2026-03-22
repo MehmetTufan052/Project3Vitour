@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Project3Vitour.Dtos.ReviewDto;
+using Project3Vitour.Helpers;
 using Project3Vitour.Services.ReservationService;
 using Project3Vitour.Services.ReviewService;
+using Project3Vitour.Services.TranslationService;
 using Project3Vitour.Settings;
 using System.Threading.Tasks;
 
@@ -14,13 +16,15 @@ namespace Project3Vitour.Controllers
         private readonly IMapper _mapper;
         private readonly IReviewService _reviewService;
         private readonly IReservationService _reservationService;
+        private readonly ITranslationService _translationService;
         private readonly bool _requireReservationEmailMatch;
 
-        public ReviewController(IMapper mapper, IReviewService reviewService, IReservationService reservationService, IOptions<ReviewSettings> reviewSettings)
+        public ReviewController(IMapper mapper, IReviewService reviewService, IReservationService reservationService, ITranslationService translationService, IOptions<ReviewSettings> reviewSettings)
         {
             _mapper = mapper;
             _reviewService = reviewService;
             _reservationService = reservationService;
+            _translationService = translationService;
             _requireReservationEmailMatch = reviewSettings.Value.RequireReservationEmailMatch;
         }
 
@@ -77,6 +81,7 @@ namespace Project3Vitour.Controllers
         public async Task<IActionResult> GetReviewByTourId(string id)
         {
             var values = await _reviewService.GetAllReviewsByTourIdAsync(id);
+            values = await _translationService.LocalizeReviewsByTourAsync(values, RequestLanguageHelper.GetCurrentLanguage(HttpContext));
             return View(values);
         }
 

@@ -4,6 +4,7 @@ using Project3Vitour.Services.GalleryService;
 using Project3Vitour.Services.HuggingFaceService;
 using Project3Vitour.Services.ReservationService;
 using Project3Vitour.Services.ReviewService;
+using Project3Vitour.Services.TranslationService;
 using Project3Vitour.Services.TourPlanService;
 using Project3Vitour.Services.TourServices.ITourService;
 using Project3Vitour.Settings;
@@ -21,6 +22,9 @@ builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IGalleryService, GalleryService>();
 builder.Services.AddScoped<ITourPlanService, TourPlanService>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.Configure<TranslationSettings>(builder.Configuration.GetSection("Translation"));
+builder.Services.AddHttpClient<ITranslationService, TranslationService>();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddHttpClient<HuggingFaceService>();

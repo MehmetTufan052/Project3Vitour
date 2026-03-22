@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Project3Vitour.Helpers;
 using Project3Vitour.Services.TourPlanService;
 using Project3Vitour.Services.TourServices.ITourService;
+using Project3Vitour.Services.TranslationService;
 
 namespace Project3Vitour.ViewComponents.TourViewComponents
 {
@@ -8,11 +10,13 @@ namespace Project3Vitour.ViewComponents.TourViewComponents
     {
         private readonly ITourPlanService _tourPlanService;
         private readonly ITourService _tourService;
+        private readonly ITranslationService _translationService;
 
-        public _TourDetailTourPlaningComponentPartial(ITourPlanService tourPlanService, ITourService tourService)
+        public _TourDetailTourPlaningComponentPartial(ITourPlanService tourPlanService, ITourService tourService, ITranslationService translationService)
         {
             _tourPlanService = tourPlanService;
             _tourService = tourService;
+            _translationService = translationService;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(string tourId)
@@ -31,6 +35,7 @@ namespace Project3Vitour.ViewComponents.TourViewComponents
                 }
             }
 
+            filtered = await _translationService.LocalizeTourPlansAsync(filtered, RequestLanguageHelper.GetCurrentLanguage(HttpContext));
             return View(filtered);
         }
     }

@@ -10,7 +10,7 @@
                     : Model?.Description ?? string.Empty;
                 descriptionContent = Regex.Replace(descriptionContent, "<[^>]*$", string.Empty, RegexOptions.Singleline);
                 var formattedDescription = descriptionContent
-                    .Replace("Dünyanın Başka Hiçbir Yerinde Göremeyeceğiniz Bir Sabah", "<span class=\"description\">Dünyanın Başka Hiçbir Yerinde Göremeyeceğiniz Bir Sabah</span>");
+                    .Replace("DÃ¼nyanÄ±n BaÅŸka HiÃ§bir Yerinde GÃ¶remeyeceÄŸiniz Bir Sabah", "<span class=\"description\">DÃ¼nyanÄ±n BaÅŸka HiÃ§bir Yerinde GÃ¶remeyeceÄŸiniz Bir Sabah</span>");
             }
             <div class="description-wrap mb-40">
                 @Html.Raw(formattedDescription)

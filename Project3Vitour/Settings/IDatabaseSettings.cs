@@ -10,5 +10,6 @@
         public string ReservationCollectionName { get; set; }
         public string GalleryCollectionName { get; set; }
         public string TourPlanCollectionName { get; set; }
+        public string TranslationCollectionName { get; set; }
     }
 }

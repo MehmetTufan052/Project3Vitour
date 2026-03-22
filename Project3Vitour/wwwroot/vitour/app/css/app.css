@@ -4141,6 +4141,35 @@
   margin-left: 20px;
   margin-right: 21px;
 }
+.tour-single .inner-heading-wrap .inner-price {
+  flex-shrink: 0;
+  min-width: max-content;
+}
+.tour-single .inner-heading-wrap .inner-price .rating-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: nowrap;
+  width: max-content;
+  min-width: max-content;
+}
+.tour-single .inner-heading-wrap .inner-price .rating-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  min-width: max-content;
+}
+.tour-single .inner-heading-wrap .inner-price .rating-stars i {
+  display: inline-block;
+  flex: 0 0 auto;
+}
+.tour-single .inner-heading-wrap .inner-price .rating-review {
+  margin-left: 0;
+  margin-right: 0;
+  white-space: nowrap;
+}
 .tour-single .inner-heading-wrap .inner-price .price-sale {
   font-size: 24px;
   font-weight: 700;

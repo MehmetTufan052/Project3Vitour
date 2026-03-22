@@ -13,7 +13,11 @@ namespace Project3Vitour.Services.HuggingFaceService
         public HuggingFaceService(HttpClient httpClient, IConfiguration config)
         {
             _httpClient = httpClient;
-            _apiKey = config["HuggingFace:ApiKey"] ?? string.Empty;
+            _apiKey =
+                config["HuggingFace:ApiKey"] ??
+                config["HUGGINGFACE_API_KEY"] ??
+                config["HF_API_KEY"] ??
+                string.Empty;
 
             var modelId = config["HuggingFace:ModelId"] ?? "savasy/bert-base-turkish-sentiment-cased";
             _modelUrl = $"https://router.huggingface.co/hf-inference/models/{modelId}";
