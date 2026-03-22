@@ -20,7 +20,7 @@ namespace Project3Vitour.Controllers
         [HttpGet]
         public IActionResult CreateReservation()
         {
-            return View();
+            return View(); 
         }
        
         [HttpPost]
