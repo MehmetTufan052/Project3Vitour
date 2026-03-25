@@ -5325,10 +5325,21 @@
 .footer-style1 .footer-main .footer-gallery .gallery-img {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 10px;
+  gap: 10px;
+}
+.footer-style1 .footer-main .footer-gallery .gallery-img a {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  border-radius: 4px;
 }
 .footer-style1 .footer-main .footer-gallery .gallery-img img {
-  border-radius: 2px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 4px;
 }
 .footer-style1 .footer-main .footer-newsletter {
   width: 23%;

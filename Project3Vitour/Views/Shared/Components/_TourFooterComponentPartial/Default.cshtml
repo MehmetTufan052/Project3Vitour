@@ -1,4 +1,5 @@
-﻿<footer class="footer footer-style1">
+﻿@model List<ResultGalleryDto>
+<footer class="footer footer-style1">
     <div class="tf-container">
         <div class="footer-main">
             <div class="footer-logo">
@@ -47,26 +48,13 @@
             </div>
             <div class="footer-gallery">
                 <h5 class="title">Galeri</h5>
-
                 <div class="gallery-img">
-                    <a href="/vitour/assets/images/gallery/gl1.jpg" data-fancybox="gallery">
-                        <img src="/vitour/assets/images/gallery/gl1.jpg" alt="image gallery">
+                    @foreach (var item in Model.Take(6))
+                    {
+                    <a href="@item.ImageUrl" data-fancybox="gallery">
+                        <img src="@item.ImageUrl" alt="image gallery">
                     </a>
-                    <a href="/vitour/assets/images/gallery/gl2.jpg" data-fancybox="gallery">
-                        <img src="/vitour/assets/images/gallery/gl2.jpg" alt="image gallery">
-                    </a>
-                    <a href="/vitour/assets/images/gallery/gl3.jpg" data-fancybox="gallery">
-                        <img src="/vitour/assets/images/gallery/gl3.jpg" alt="image gallery">
-                    </a>
-                    <a href="/vitour/assets/images/gallery/gl4.jpg" data-fancybox="gallery">
-                        <img src="/vitour/assets/images/gallery/gl4.jpg" alt="image gallery">
-                    </a>
-                    <a href="/vitour/assets/images/gallery/gl5.jpg" data-fancybox="gallery">
-                        <img src="/vitour/assets/images/gallery/gl5.jpg" alt="image gallery">
-                    </a>
-                    <a href="/vitour/assets/images/gallery/gl6.jpg" data-fancybox="gallery">
-                        <img src="/vitour/assets/images/gallery/gl6.jpg" alt="image gallery">
-                    </a>
+                    }
                 </div>
 
             </div>
