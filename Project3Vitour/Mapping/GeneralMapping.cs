@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Project3Vitour.Dtos.CategoryDto;
 using Project3Vitour.Dtos.GalleryDto;
+using Project3Vitour.Dtos.ReservationDtos;
 using Project3Vitour.Dtos.ReviewDto;
 using Project3Vitour.Dtos.TourDtos;
 using Project3Vitour.Dtos.TourPlanDto;
@@ -36,6 +37,11 @@ namespace Project3Vitour.Mapping
                 .ForMember(d => d.Score, o => o.MapFrom(s => (int)Math.Round((s.ValueForMoneyScore + s.DestinationScore + s.AccommodationScore + s.TransportScore) / 4.0)))
                 .ForMember(d => d.ReviewDate, o => o.MapFrom(_ => DateTime.UtcNow))
                 .ForMember(d => d.Status, o => o.MapFrom(_ => true));
+
+            CreateMap<Reservation, CreateReservationDto>().ReverseMap();
+            CreateMap<Reservation, ResultReservationDto>().ReverseMap();
+            CreateMap<Reservation, UpdateReservationDto>().ReverseMap();
+            CreateMap<Reservation, GetReservationByIdDto>().ReverseMap();
 
             CreateMap<Gallery, CreateGalleryDto>().ReverseMap();
             CreateMap<Gallery, UpdateGalleryDto>().ReverseMap();

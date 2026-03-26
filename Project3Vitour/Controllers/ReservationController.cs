@@ -26,14 +26,7 @@ namespace Project3Vitour.Controllers
         [HttpPost]
         public IActionResult CreateReservation(CreateReservationDto createReservationDto)
         {
-            //    decimal tourPrice = tour.Price;
-            //    var code = await _reservationService.CreateReservationAsync(dto, tourPrice);
-
-            //    MimeMessage mimeMessage = new MimeMessage();
-
-            //    mimeMessage.From.Add(new MailboxAddress("Vitour", "tufaneser8@gmail.com"));
-            //    mimeMessage.To.Add(new MailboxAddress("User", createReservationDto.Email));
-            //    mimeMessage.Subject =$"Rezervasyonunuz Onaylandı – Kod: {code}";
+            
             return View();
         }
     }

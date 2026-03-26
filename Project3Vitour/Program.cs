@@ -2,6 +2,7 @@ using Microsoft.Extensions.Options;
 using Project3Vitour.Services.CatregoryService;
 using Project3Vitour.Services.GalleryService;
 using Project3Vitour.Services.HuggingFaceService;
+using Project3Vitour.Services.MailService;
 using Project3Vitour.Services.ReservationService;
 using Project3Vitour.Services.ReviewService;
 using Project3Vitour.Services.TranslationService;
@@ -20,6 +21,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ITourService, TourService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 builder.Services.AddScoped<IGalleryService, GalleryService>();
 builder.Services.AddScoped<ITourPlanService, TourPlanService>();
 builder.Services.AddHttpContextAccessor();
@@ -31,6 +33,7 @@ builder.Services.AddHttpClient<HuggingFaceService>();
 
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettingsKey"));
 builder.Services.Configure<ReviewSettings>(builder.Configuration.GetSection("ReviewSettings"));
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
 builder.Services.AddScoped<IDatabaseSettings>(sp =>
 {
