@@ -24,6 +24,10 @@ namespace Project3Vitour.Services.ReservationService
         public async Task CreateReservationAsync(CreateReservationDto createReservationDto)
         {
             var value = _mapper.Map<Reservation>(createReservationDto);
+            if (string.IsNullOrWhiteSpace(value.ReservationId))
+            {
+                value.ReservationId = null!;
+            }
             await _reservationCollection.InsertOneAsync(value);
         }
 
