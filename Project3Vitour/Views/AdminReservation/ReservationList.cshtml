@@ -4,7 +4,6 @@
     ViewData["Title"] = "ReservationList";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-
 @model IEnumerable<ResultReservationDto>
 
 @{
@@ -60,49 +59,155 @@
 /* Kişi sayısı badge */
 .person-badge { display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:700; color:var(--text-secondary); }
 
-/* Detay modal overlay */
+/* ── MODAL OVERLAY ── */
 .modal-ov {
     display:none; position:fixed; inset:0; z-index:500;
-    background:rgba(0,0,0,.45); backdrop-filter:blur(6px);
-    -webkit-backdrop-filter:blur(6px);
+    background:rgba(10,14,26,.55); backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
     align-items:center; justify-content:center;
+    padding:16px;
 }
-.modal-ov.open { display:flex; }
+.modal-ov.open { display:flex; animation:ovIn .2s ease both; }
+@@keyframes ovIn  { from{opacity:0} to{opacity:1} }
+@@keyframes mIn   { from{opacity:0;transform:translateY(18px) scale(.97)} to{opacity:1;transform:none} }
 
-.modal-box {
-    background:#fff; border-radius:20px;
-    width:100%; max-width:580px; max-height:90vh;
-    overflow-y:auto; box-shadow:0 32px 80px rgba(0,0,0,.22);
-    animation:mIn .28s cubic-bezier(.34,1.56,.64,1) both;
-    position:relative;
+/* ── DETAY MODAL KUTUSU ── */
+.detail-modal-box {
+    background:#fff; border-radius:22px;
+    width:100%; max-width:640px; max-height:92vh;
+    overflow:hidden; display:flex; flex-direction:column;
+    box-shadow:0 40px 100px rgba(0,0,0,.28), 0 0 0 1px rgba(255,255,255,.08);
+    animation:mIn .32s cubic-bezier(.34,1.4,.64,1) both;
 }
-@@keyframes mIn { from{opacity:0;transform:scale(.92)} to{opacity:1;transform:none} }
 
-.modal-head {
-    display:flex; align-items:center; justify-content:space-between;
-    padding:20px 24px 16px; border-bottom:1px solid #f0f4f8; position:sticky; top:0; background:#fff; z-index:1;
-    border-radius:20px 20px 0 0;
+/* Header banner */
+.dm-banner {
+    padding:24px 24px 20px;
+    background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);
+    position:relative; overflow:hidden; flex-shrink:0;
 }
-.modal-title { font-size:16px; font-weight:800; color:var(--text-primary); }
-.modal-close {
-    width:32px; height:32px; display:flex; align-items:center; justify-content:center;
-    border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc; cursor:pointer;
-    font-size:12px; color:var(--text-secondary); transition:all 150ms;
+.dm-banner::before {
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(ellipse 80% 100% at 110% 50%, rgba(99,102,241,.35) 0%, transparent 65%),
+               radial-gradient(ellipse 60% 80% at -10% 50%, rgba(59,130,246,.25) 0%, transparent 60%);
 }
-.modal-close:hover { background:#fee2e2; border-color:#fecaca; color:#dc2626; }
+.dm-banner-inner { position:relative; z-index:1; display:flex; align-items:center; gap:16px; }
+.dm-avatar {
+    width:54px; height:54px; border-radius:14px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; font-weight:800; color:#fff;
+    box-shadow:0 4px 16px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.2);
+}
+.dm-name  { font-size:17px; font-weight:800; color:#fff; letter-spacing:-.3px; line-height:1.2; }
+.dm-email { font-size:12px; color:rgba(226,232,240,.6); margin-top:2px; }
+.dm-close {
+    margin-left:auto; width:34px; height:34px; display:flex; align-items:center; justify-content:center;
+    border-radius:9px; border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.08);
+    color:rgba(226,232,240,.7); cursor:pointer; font-size:12px; transition:all 150ms; flex-shrink:0;
+}
+.dm-close:hover { background:rgba(244,63,94,.25); border-color:rgba(244,63,94,.4); color:#fb7185; }
 
-.modal-body { padding:20px 24px 24px; }
+/* Kod + durum satırı */
+.dm-meta {
+    position:relative; z-index:1;
+    display:flex; align-items:center; gap:8px; margin-top:14px; flex-wrap:wrap;
+}
+.dm-code-pill {
+    display:inline-flex; align-items:center; gap:5px;
+    font-family:'DM Mono',monospace; font-size:11.5px; font-weight:600;
+    background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.15);
+    border-radius:8px; padding:4px 10px; color:#e2e8f0;
+}
+.dm-code-pill i { font-size:10px; opacity:.7; }
 
-.detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-.detail-row.span2 { grid-column:1/-1; }
+/* Scrollable body */
+.dm-body {
+    flex:1; overflow-y:auto; padding:0;
+    scrollbar-width:thin; scrollbar-color:#e2e8f0 transparent;
+}
+.dm-body::-webkit-scrollbar { width:4px; }
+.dm-body::-webkit-scrollbar-thumb { background:#e2e8f0; border-radius:4px; }
 
-.detail-label { font-size:10px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--text-muted); font-family:'DM Mono',monospace; margin-bottom:4px; }
-.detail-value { font-size:13.5px; font-weight:600; color:var(--text-primary); }
-.detail-value.mono { font-family:'DM Mono',monospace; }
-.detail-value.price { font-size:18px; font-weight:800; color:var(--green); letter-spacing:-.4px; }
+/* Section başlıkları */
+.dm-section {
+    padding:18px 24px 4px;
+    border-top:1px solid #f0f4f8;
+}
+.dm-section:first-child { border-top:none; }
+.dm-section-title {
+    font-size:9px; font-weight:700; letter-spacing:1.8px; text-transform:uppercase;
+    color:var(--text-muted); font-family:'DM Mono',monospace; margin-bottom:12px;
+    display:flex; align-items:center; gap:6px;
+}
+.dm-section-title::after { content:''; flex:1; height:1px; background:#f0f4f8; }
 
-.detail-sep { grid-column:1/-1; height:1px; background:#f0f4f8; margin:4px 0; }
+/* Info grid */
+.dm-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 16px; padding:0 0 16px; }
+.dm-grid.cols3 { grid-template-columns:1fr 1fr 1fr; }
+.dm-field { display:flex; flex-direction:column; gap:3px; }
+.dm-field.span2 { grid-column:1/-1; }
 
+.dm-label {
+    font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+    color:var(--text-muted); font-family:'DM Mono',monospace;
+}
+.dm-val { font-size:13px; font-weight:600; color:var(--text-primary); line-height:1.3; }
+.dm-val.mono { font-family:'DM Mono',monospace; font-size:12.5px; color:var(--indigo); }
+.dm-val.phone { font-family:'DM Mono',monospace; }
+
+/* Fiyat bloğu */
+.dm-price-block {
+    margin:0 24px 18px;
+    background:linear-gradient(135deg,#f0fdf4,#dcfce7);
+    border:1px solid #bbf7d0; border-radius:14px;
+    padding:16px 20px; display:flex; align-items:center; gap:16px;
+}
+.dm-price-icon {
+    width:42px; height:42px; border-radius:11px;
+    background:linear-gradient(135deg,#10b981,#059669);
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px; color:#fff; flex-shrink:0;
+    box-shadow:0 4px 12px rgba(16,185,129,.3);
+}
+.dm-price-main  { font-size:24px; font-weight:800; color:#15803d; letter-spacing:-.6px; line-height:1; }
+.dm-price-sub   { font-size:11.5px; color:#16a34a; margin-top:3px; font-weight:500; }
+
+/* Kontenjan / kişi block */
+.dm-person-block {
+    display:flex; align-items:center; gap:10px;
+}
+.dm-person-bubbles { display:flex; gap:4px; flex-wrap:wrap; }
+.dm-pbubble {
+    width:26px; height:26px; border-radius:7px;
+    background:linear-gradient(135deg,#6366f1,#8b5cf6);
+    display:flex; align-items:center; justify-content:center;
+    font-size:10px; color:#fff; font-weight:700;
+    box-shadow:0 2px 6px rgba(99,102,241,.3);
+}
+.dm-pbubble.extra {
+    background:#f1f5f9; color:var(--text-muted); box-shadow:none;
+    font-size:9px;
+}
+
+/* Footer */
+.dm-footer {
+    padding:14px 24px; border-top:1px solid #f0f4f8;
+    background:#fafbfc; display:flex; gap:8px; flex-shrink:0;
+    border-radius:0 0 22px 22px;
+}
+
+/* ── SİLME MODALI ── */
+.del-modal-box {
+    background:#fff; border-radius:18px; width:100%; max-width:400px;
+    padding:28px 28px 24px; box-shadow:0 24px 60px rgba(0,0,0,.20);
+    animation:mIn .25s cubic-bezier(.34,1.56,.64,1) both; text-align:center;
+}
+.del-icon { width:52px; height:52px; background:#fee2e2; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:20px; color:#dc2626; margin:0 auto 14px; }
+.del-title { font-size:15px; font-weight:800; color:var(--text-primary); margin-bottom:6px; }
+.del-desc  { font-size:12.5px; color:var(--text-secondary); line-height:1.55; }
+.del-acts  { display:flex; gap:10px; justify-content:center; margin-top:20px; }
+
+/* (eski modal-acts artık dm-footer olarak kullanılıyor) */
 .modal-acts { display:flex; gap:8px; margin-top:20px; padding-top:16px; border-top:1px solid #f0f4f8; }
 
 /* Silme onay modalı */
@@ -202,7 +307,10 @@
         <div class="ph-acts">
             <button class="btn btn-ghost" onclick="exportCSV()">
                 <i class="fa-solid fa-file-csv"></i> Dışa Aktar
-            </button>           
+            </button>
+            <a href="/AdminReservation/Create" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> Yeni Rezervasyon
+            </a>
         </div>
     </div>
 
@@ -403,7 +511,7 @@
                             <!-- İşlemler -->
                             <td>
                                 <div class="acts" style="justify-content:center;">
-                                    <button class="abt v" title="Detay Görüntüle"
+                                    <button type="button" class="abt v" title="Detay Görüntüle"
                                             onclick="openDetail(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(new {
                                                 id       = item.ReservationId,
                                                 code     = item.ReservationCode,
@@ -413,9 +521,13 @@
                                                 city     = item.City,
                                                 country  = item.Country,
                                                 tour     = item.TourId,
+                                                tourName = ViewBag.TourNames != null && ((Dictionary<string,string>)ViewBag.TourNames).ContainsKey(item.TourId ?? "")
+                                                           ? ((Dictionary<string,string>)ViewBag.TourNames)[item.TourId]
+                                                           : item.TourId,
                                                 date     = item.ReservationDate.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("tr-TR")),
                                                 persons  = item.PersonCount,
                                                 price    = item.TotalPrice.ToString("N2"),
+                                                rawPrice = item.TotalPrice,
                                                 status   = statusLabel
                                             })))">
                                         <i class="fa-solid fa-eye"></i>
@@ -423,7 +535,7 @@
                                     <a href="/AdminReservation/Edit/@item.ReservationId" class="abt e" title="Düzenle">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
-                                    <button class="abt d" title="Sil"
+                                    <button type="button" class="abt d" title="Sil"
                                             onclick="confirmDelete('@item.ReservationId','@item.NameSurname','@item.ReservationCode')">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
@@ -464,32 +576,122 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════
-     DETAY MODALI
+     DETAY MODALI — Premium Tasarım
 ═══════════════════════════════════════════════ -->
 <div class="modal-ov" id="detailModal" onclick="closeModal(event,'detailModal')">
-    <div class="modal-box">
-        <div class="modal-head">
-            <div>
-                <div class="modal-title">Rezervasyon Detayı</div>
-                <div style="font-size:11px;color:var(--text-muted);margin-top:2px;" id="mdCode"></div>
-            </div>
-            <button class="modal-close" onclick="closeModalById('detailModal')">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div class="detail-grid" id="detailGrid">
-                <!-- JS ile doldurulur -->
-            </div>
-            <div class="modal-acts">
-                <button class="btn btn-ghost" onclick="closeModalById('detailModal')" style="flex:1;">
-                    <i class="fa-solid fa-xmark"></i> Kapat
+    <div class="detail-modal-box">
+
+        <!-- ── Banner (Header) ── -->
+        <div class="dm-banner">
+            <div class="dm-banner-inner">
+                <div class="dm-avatar" id="dmAvatar"></div>
+                <div>
+                    <div class="dm-name"  id="dmName">—</div>
+                    <div class="dm-email" id="dmEmail">—</div>
+                </div>
+                <button type="button" class="dm-close" onclick="closeModalById('detailModal')">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
-                <a id="mdEditLink" href="#" class="btn btn-primary" style="flex:1;">
-                    <i class="fa-solid fa-pen-to-square"></i> Düzenle
-                </a>
+            </div>
+            <div class="dm-meta">
+                <span class="dm-code-pill">
+                    <i class="fa-solid fa-hashtag"></i>
+                    <span id="dmCodePill">—</span>
+                </span>
+                <span id="dmStatusBadge"></span>
             </div>
         </div>
+
+        <!-- ── Scrollable Body ── -->
+        <div class="dm-body">
+
+            <!-- Fiyat bloğu -->
+            <div style="padding:18px 24px 0;">
+                <div class="dm-price-block">
+                    <div class="dm-price-icon"><i class="fa-solid fa-money-bill-wave"></i></div>
+                    <div>
+                        <div class="dm-price-main" id="dmPrice">₺0,00</div>
+                        <div class="dm-price-sub"  id="dmPriceSub">—</div>
+                    </div>
+                    <div style="margin-left:auto;text-align:right;">
+                        <div class="dm-person-block" id="dmPersonBubbles"></div>
+                        <div style="font-size:11px;color:#16a34a;margin-top:4px;font-weight:600;" id="dmPersonLabel"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bölüm 1: Tur & Tarih -->
+            <div class="dm-section">
+                <div class="dm-section-title"><i class="fa-solid fa-map-location-dot" style="color:var(--indigo);"></i> Tur & Rezervasyon</div>
+                <div class="dm-grid">
+                    <div class="dm-field span2">
+                        <div class="dm-label">Tur Adı</div>
+                        <div class="dm-val" id="dmTour">—</div>
+                    </div>
+                    <div class="dm-field">
+                        <div class="dm-label">Rezervasyon Tarihi</div>
+                        <div class="dm-val" id="dmDate">—</div>
+                    </div>
+                    <div class="dm-field">
+                        <div class="dm-label">Rezervasyon ID</div>
+                        <div class="dm-val mono" id="dmId">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bölüm 2: Müşteri -->
+            <div class="dm-section">
+                <div class="dm-section-title"><i class="fa-solid fa-user" style="color:var(--blue);"></i> Müşteri Bilgileri</div>
+                <div class="dm-grid">
+                    <div class="dm-field">
+                        <div class="dm-label">Ad Soyad</div>
+                        <div class="dm-val" id="dmFullName">—</div>
+                    </div>
+                    <div class="dm-field">
+                        <div class="dm-label">Telefon</div>
+                        <div class="dm-val phone" id="dmPhone">—</div>
+                    </div>
+                    <div class="dm-field span2">
+                        <div class="dm-label">E-posta</div>
+                        <div class="dm-val" id="dmEmailFull">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bölüm 3: Konum -->
+            <div class="dm-section">
+                <div class="dm-section-title"><i class="fa-solid fa-location-dot" style="color:var(--rose);"></i> Konum</div>
+                <div class="dm-grid cols3">
+                    <div class="dm-field">
+                        <div class="dm-label">Şehir</div>
+                        <div class="dm-val" id="dmCity">—</div>
+                    </div>
+                    <div class="dm-field">
+                        <div class="dm-label">Ülke</div>
+                        <div class="dm-val" id="dmCountry">—</div>
+                    </div>
+                    <div class="dm-field">
+                        <div class="dm-label">Kişi / Kişi Başı</div>
+                        <div class="dm-val" id="dmPerPerson">—</div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /dm-body -->
+
+        <!-- ── Footer ── -->
+        <div class="dm-footer">
+            <button type="button" class="btn btn-ghost" onclick="closeModalById('detailModal')" style="flex:1;">
+                <i class="fa-solid fa-xmark"></i> Kapat
+            </button>
+            <button type="button" class="btn btn-ghost" onclick="copyResCode()" style="flex:1;" id="dmCopyBtn">
+                <i class="fa-regular fa-copy"></i> Kodu Kopyala
+            </button>
+            <a id="mdEditLink" href="#" class="btn btn-primary" style="flex:1.5;">
+                <i class="fa-solid fa-pen-to-square"></i> Düzenle
+            </a>
+        </div>
+
     </div>
 </div>
 
@@ -504,7 +706,7 @@
             Bu rezervasyonu kalıcı olarak silmek istediğinizden emin misiniz?
         </div>
         <div class="del-acts">
-            <button class="btn btn-ghost" onclick="closeModalById('deleteModal')">
+            <button type="button" class="btn btn-ghost" onclick="closeModalById('deleteModal')">
                 <i class="fa-solid fa-xmark"></i> İptal
             </button>
             <a id="delConfirmBtn" href="#" class="btn"
@@ -602,54 +804,102 @@ function toggleAll(master) {
 }
 
 /* ==============================================
-   DETAY MODALI
+   DETAY MODALI — DOLDURMA
 ============================================== */
+var _currentResCode = '';
+
 function openDetail(data) {
-    document.getElementById('mdCode').textContent = 'Kod: ' + (data.code || '—');
+    _currentResCode = data.code || '';
+
+    /* ── Avatar ── */
+    var safeName = (data.name || '').trim();
+    var parts    = safeName ? safeName.split(/\s+/) : [];
+    var initials = parts.length >= 2
+        ? ((parts[0][0] || '') + (parts[parts.length-1][0] || '')).toUpperCase()
+        : ((safeName[0] || '?')).toUpperCase();
+    var avColors = [
+        'linear-gradient(135deg,#3b82f6,#6366f1)',
+        'linear-gradient(135deg,#10b981,#06b6d4)',
+        'linear-gradient(135deg,#f59e0b,#ef4444)',
+        'linear-gradient(135deg,#8b5cf6,#ec4899)',
+        'linear-gradient(135deg,#06b6d4,#3b82f6)'
+    ];
+    var ci = 0;
+    for (var x=0; x<safeName.length; x++) ci += safeName.charCodeAt(x);
+    var avColor = avColors[ci % avColors.length];
+    document.getElementById('dmAvatar').style.background = avColor;
+    document.getElementById('dmAvatar').textContent      = initials;
+
+    /* ── Header bilgileri ── */
+    document.getElementById('dmName').textContent  = data.name  || '—';
+    document.getElementById('dmEmail').textContent = data.email || '—';
+    document.getElementById('dmCodePill').textContent = data.code || '—';
+
+    /* ── Durum badge ── */
+    var statusMap = {
+        'Aktif'      : '<span class="badge b-green"><span class="bd"></span>Aktif</span>',
+        'Yakında'    : '<span class="badge b-amber"><span class="bd"></span>Yakında</span>',
+        'Bugün'      : '<span class="badge b-blue"><span class="bd"></span>Bugün</span>',
+        'Tamamlandı' : '<span class="badge b-gray"><span class="bd"></span>Tamamlandı</span>'
+    };
+    document.getElementById('dmStatusBadge').innerHTML = statusMap[data.status] || ('<span class="badge b-gray">' + escHtml(data.status||'') + '</span>');
+
+    /* ── Fiyat bloğu ── */
+    document.getElementById('dmPrice').textContent   = '₺' + (data.price || '0,00');
+    var pprice = (data.persons > 0 && data.rawPrice > 0)
+        ? '₺' + (data.rawPrice / data.persons).toLocaleString('tr-TR', {minimumFractionDigits:2}) + ' / kişi başı'
+        : 'Toplam tutar';
+    document.getElementById('dmPriceSub').textContent = pprice;
+
+    /* ── Kişi baloncukları ── */
+    var cnt = parseInt(data.persons) || 0;
+    var bubbleHtml = '<div class="dm-person-bubbles">';
+    var show = Math.min(cnt, 6);
+    for (var i=0; i<show; i++) {
+        bubbleHtml += '<div class="dm-pbubble"><i class="fa-solid fa-user" style="font-size:9px;"></i></div>';
+    }
+    if (cnt > 6) bubbleHtml += '<div class="dm-pbubble extra">+' + (cnt-6) + '</div>';
+    bubbleHtml += '</div>';
+    document.getElementById('dmPersonBubbles').innerHTML = bubbleHtml;
+    document.getElementById('dmPersonLabel').textContent = cnt + ' Kişi';
+
+    /* ── Tur & Tarih ── */
+    document.getElementById('dmTour').textContent = data.tourName || data.tour || '—';
+    document.getElementById('dmDate').textContent = data.date    || '—';
+    document.getElementById('dmId').textContent   = (data.id || '').substring(0, 16) + (data.id && data.id.length > 16 ? '…' : '');
+
+    /* ── Müşteri ── */
+    document.getElementById('dmFullName').textContent  = data.name    || '—';
+    document.getElementById('dmPhone').textContent     = data.phone   || '—';
+    document.getElementById('dmEmailFull').textContent = data.email   || '—';
+
+    /* ── Konum ── */
+    document.getElementById('dmCity').textContent    = data.city    || '—';
+    document.getElementById('dmCountry').textContent = data.country || '—';
+    document.getElementById('dmPerPerson').textContent = cnt + ' kişi';
+
+    /* ── Düzenle linki ── */
     document.getElementById('mdEditLink').href = '/AdminReservation/Edit/' + data.id;
 
-    var statusBadge = {
-        'Aktif'       : '<span class="badge b-green"><span class="bd"></span>Aktif</span>',
-        'Yakında'     : '<span class="badge b-amber"><span class="bd"></span>Yakında</span>',
-        'Bugün'       : '<span class="badge b-blue"><span class="bd"></span>Bugün</span>',
-        'Tamamlandı'  : '<span class="badge b-gray"><span class="bd"></span>Tamamlandı</span>'
-    };
+    /* ── Aç ── */
+    var modal = document.getElementById('detailModal');
+    if (modal) {
+        modal.classList.add('open');
+    }
+}
 
-    var fields = [
-        { label:'Ad Soyad',          value: data.name,    cls:'' },
-        { label:'Durum',             value: statusBadge[data.status] || data.status, cls:'', html:true },
-        { label:'Telefon',           value: data.phone,   cls:'mono' },
-        { label:'E-posta',           value: data.email,   cls:'' },
-        { label:'sep' },
-        { label:'Tur',               value: data.tour,    cls:'', span2:true },
-        { label:'Rezervasyon Tarihi',value: data.date,    cls:'' },
-        { label:'Kişi Sayısı',       value: data.persons + ' kişi', cls:'' },
-        { label:'sep' },
-        { label:'Şehir',             value: data.city,    cls:'' },
-        { label:'Ülke',              value: data.country, cls:'' },
-        { label:'sep' },
-        { label:'Toplam Tutar',      value: '₺' + data.price, cls:'price', span2:true },
-        { label:'Rezervasyon Kodu',  value: data.code,    cls:'mono', span2:true },
-    ];
-
-    var html = '';
-    fields.forEach(function(f) {
-        if (f.label === 'sep') {
-            html += '<div class="detail-sep"></div>';
-            return;
-        }
-        html += '<div class="detail-row' + (f.span2 ? ' span2' : '') + '">';
-        html += '<div class="detail-label">' + f.label + '</div>';
-        if (f.html) {
-            html += '<div class="detail-value ' + (f.cls||'') + '">' + f.value + '</div>';
-        } else {
-            html += '<div class="detail-value ' + (f.cls||'') + '">' + escHtml(f.value || '—') + '</div>';
-        }
-        html += '</div>';
+function copyResCode() {
+    if (!_currentResCode) return;
+    navigator.clipboard.writeText(_currentResCode).then(function(){
+        var btn = document.getElementById('dmCopyBtn');
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Kopyalandı!';
+        btn.style.color = 'var(--green)';
+        setTimeout(function(){
+            btn.innerHTML = '<i class="fa-regular fa-copy"></i> Kodu Kopyala';
+            btn.style.color = '';
+        }, 2000);
+        if (typeof showToast === 'function') showToast('Rezervasyon kodu kopyalandı.', 's');
     });
-
-    document.getElementById('detailGrid').innerHTML = html;
-    document.getElementById('detailModal').classList.add('open');
 }
 
 function escHtml(s) {
