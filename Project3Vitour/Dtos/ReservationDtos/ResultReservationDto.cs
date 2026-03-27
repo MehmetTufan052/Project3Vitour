@@ -17,5 +17,6 @@ namespace Project3Vitour.Dtos.ReservationDtos
         public string ReservationCode { get; set; }
 
         public string TourId { get; set; }
+        public string TourTitle { get; set; }
     }
 }

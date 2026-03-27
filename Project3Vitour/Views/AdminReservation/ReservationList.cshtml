@@ -1,0 +1,758 @@
+﻿@using Project3Vitour.Dtos.ReservationDtos
+
+@{
+    ViewData["Title"] = "ReservationList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@model IEnumerable<ResultReservationDto>
+
+@{
+    ViewData["Title"] = "Rezervasyonlar";
+
+    /* ── Demo istatistik değerleri (gerçekte ViewBag/Model'dan gelir) ── */
+    int totalCount    = Model?.Count() ?? 0;
+    int activeCount   = Model?.Count(r => r.ReservationDate >= DateTime.Today) ?? 0;
+    int todayCount    = Model?.Count(r => r.ReservationDate.Date == DateTime.Today) ?? 0;
+    decimal totalRev  = Model?.Sum(r => r.TotalPrice) ?? 0;
+}
+
+@section Styles {
+<style>
+/* ── Rezervasyon sayfasına özel stiller ── */
+
+/* Stat kartı renk varyantları */
+.s-ico.amber  { background: rgba(245,158,11,.14);  color: #f59e0b; }
+.s-ico.blue   { background: rgba(59,130,246,.14);  color: #3b82f6; }
+.s-ico.green  { background: rgba(16,185,129,.14);  color: #10b981; }
+.s-ico.violet { background: rgba(139,92,246,.14);  color: #8b5cf6; }
+
+/* Arama + filtre çubuğu input genişlikleri */
+.fi-search { min-width: 230px; }
+.fi-tour   { min-width: 160px; }
+.fi-status { min-width: 140px; }
+.fi-date   { min-width: 150px; }
+.fi-select .f-sel { padding-left: 34px; }
+.fi-select i { left: 12px; z-index: 1; }
+
+/* Tablo: avatar + isim grubu */
+.person-cell { display:flex; align-items:center; gap:10px; }
+.av-name     { font-size:13px; font-weight:700; color:var(--text-primary); line-height:1.2; }
+.av-email    { font-size:11px; color:var(--text-muted); }
+
+/* Tur hücresi */
+.tour-cell  { display:flex; flex-direction:column; gap:1px; }
+.tour-name  { font-size:12.5px; font-weight:700; color:var(--text-primary); }
+.tour-id    { font-size:10.5px; color:var(--text-muted); font-family:'DM Mono',monospace; }
+
+/* Tarih hücresi */
+.date-cell   { display:flex; flex-direction:column; gap:1px; }
+.date-main   { font-size:12.5px; font-weight:700; color:var(--text-primary); }
+.date-sub    { font-size:10.5px; color:var(--text-muted); }
+
+/* Fiyat hücresi */
+.price-cell  { font-size:13.5px; font-weight:800; color:var(--text-primary); letter-spacing:-.3px; }
+.price-pp    { font-size:10.5px; color:var(--text-muted); font-weight:500; margin-top:1px; }
+
+/* Rezervasyon kodu */
+.res-code    { font-family:'DM Mono',monospace; font-size:11.5px; font-weight:600; color:var(--indigo); background:#ede9fe; border:1px solid #ddd6fe; border-radius:6px; padding:2px 8px; display:inline-block; }
+
+/* Kişi sayısı badge */
+.person-badge { display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:700; color:var(--text-secondary); }
+
+/* Detay modal overlay */
+.modal-ov {
+    display:none; position:fixed; inset:0; z-index:500;
+    background:rgba(0,0,0,.45); backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    align-items:center; justify-content:center;
+}
+.modal-ov.open { display:flex; }
+
+.modal-box {
+    background:#fff; border-radius:20px;
+    width:100%; max-width:580px; max-height:90vh;
+    overflow-y:auto; box-shadow:0 32px 80px rgba(0,0,0,.22);
+    animation:mIn .28s cubic-bezier(.34,1.56,.64,1) both;
+    position:relative;
+}
+@@keyframes mIn { from{opacity:0;transform:scale(.92)} to{opacity:1;transform:none} }
+
+.modal-head {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 24px 16px; border-bottom:1px solid #f0f4f8; position:sticky; top:0; background:#fff; z-index:1;
+    border-radius:20px 20px 0 0;
+}
+.modal-title { font-size:16px; font-weight:800; color:var(--text-primary); }
+.modal-close {
+    width:32px; height:32px; display:flex; align-items:center; justify-content:center;
+    border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc; cursor:pointer;
+    font-size:12px; color:var(--text-secondary); transition:all 150ms;
+}
+.modal-close:hover { background:#fee2e2; border-color:#fecaca; color:#dc2626; }
+
+.modal-body { padding:20px 24px 24px; }
+
+.detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.detail-row.span2 { grid-column:1/-1; }
+
+.detail-label { font-size:10px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--text-muted); font-family:'DM Mono',monospace; margin-bottom:4px; }
+.detail-value { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+.detail-value.mono { font-family:'DM Mono',monospace; }
+.detail-value.price { font-size:18px; font-weight:800; color:var(--green); letter-spacing:-.4px; }
+
+.detail-sep { grid-column:1/-1; height:1px; background:#f0f4f8; margin:4px 0; }
+
+.modal-acts { display:flex; gap:8px; margin-top:20px; padding-top:16px; border-top:1px solid #f0f4f8; }
+
+/* Silme onay modalı */
+.del-modal-box {
+    background:#fff; border-radius:18px; width:100%; max-width:400px;
+    padding:28px 28px 24px; box-shadow:0 24px 60px rgba(0,0,0,.20);
+    animation:mIn .25s cubic-bezier(.34,1.56,.64,1) both; text-align:center;
+}
+.del-icon { width:52px; height:52px; background:#fee2e2; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:20px; color:#dc2626; margin:0 auto 14px; }
+.del-title { font-size:15px; font-weight:800; color:var(--text-primary); margin-bottom:6px; }
+.del-desc  { font-size:12.5px; color:var(--text-secondary); line-height:1.55; }
+.del-acts  { display:flex; gap:10px; justify-content:center; margin-top:20px; }
+
+/* Filtre aktif badge */
+.f-active-badge { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:3px 9px 3px 8px; border-radius:20px; background:#ede9fe; color:#6d28d9; border:1px solid #ddd6fe; cursor:pointer; transition:all 150ms; }
+.f-active-badge:hover { background:#fef3c7; color:#b45309; border-color:#fde68a; }
+
+/* Tablo satır animasyonu */
+.dtbl tbody tr { animation:fadeUp .25s both; }
+.dtbl tbody tr:nth-child(1)  { animation-delay:.03s }
+.dtbl tbody tr:nth-child(2)  { animation-delay:.06s }
+.dtbl tbody tr:nth-child(3)  { animation-delay:.09s }
+.dtbl tbody tr:nth-child(4)  { animation-delay:.12s }
+.dtbl tbody tr:nth-child(5)  { animation-delay:.15s }
+.dtbl tbody tr:nth-child(6)  { animation-delay:.18s }
+.dtbl tbody tr:nth-child(7)  { animation-delay:.21s }
+.dtbl tbody tr:nth-child(8)  { animation-delay:.24s }
+.dtbl tbody tr:nth-child(9)  { animation-delay:.27s }
+.dtbl tbody tr:nth-child(10) { animation-delay:.30s }
+</style>
+}
+
+<!-- ═══════════════════════════════════════════════
+     STAT KARTLARI
+═══════════════════════════════════════════════ -->
+<div class="s-grid">
+
+    <div class="s-card anim">
+        <div class="s-ico amber">
+            <i class="fa-solid fa-calendar-check"></i>
+        </div>
+        <div>
+            <div class="s-lbl">Toplam Rezervasyon</div>
+            <div class="s-val" id="stat-total">@totalCount</div>
+            <div class="s-delta"><span class="up"><i class="fa-solid fa-arrow-trend-up"></i> +12%</span> geçen aya göre</div>
+        </div>
+    </div>
+
+    <div class="s-card anim">
+        <div class="s-ico blue">
+            <i class="fa-solid fa-hourglass-half"></i>
+        </div>
+        <div>
+            <div class="s-lbl">Aktif / Gelecek</div>
+            <div class="s-val" id="stat-active">@activeCount</div>
+            <div class="s-delta">Bugün ve sonrası</div>
+        </div>
+    </div>
+
+    <div class="s-card anim">
+        <div class="s-ico green">
+            <i class="fa-solid fa-money-bill-wave"></i>
+        </div>
+        <div>
+            <div class="s-lbl">Toplam Gelir</div>
+            <div class="s-val" id="stat-rev">
+                ₺@totalRev.ToString("N0")
+            </div>
+            <div class="s-delta"><span class="up"><i class="fa-solid fa-arrow-trend-up"></i> +8.4%</span> bu ay</div>
+        </div>
+    </div>
+
+    <div class="s-card anim">
+        <div class="s-ico violet">
+            <i class="fa-solid fa-bolt"></i>
+        </div>
+        <div>
+            <div class="s-lbl">Bugünkü Rezervasyon</div>
+            <div class="s-val" id="stat-today">@todayCount</div>
+            <div class="s-delta">Bugün oluşturulan</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     REZERVASYON TABLOSU
+═══════════════════════════════════════════════ -->
+<div class="card anim">
+
+    <!-- Kart başlığı -->
+    <div class="c-head">
+        <div>
+            <div class="c-title">Rezervasyon Listesi</div>
+            <div class="c-sub">Tüm rezervasyonları görüntüleyin, filtreleyin ve yönetin.</div>
+        </div>
+        <div class="ph-acts">
+            <button class="btn btn-ghost" onclick="exportCSV()">
+                <i class="fa-solid fa-file-csv"></i> Dışa Aktar
+            </button>           
+        </div>
+    </div>
+
+    <!-- Filtre çubuğu -->
+    <div class="f-bar" id="filterBar">
+        <div class="fi">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="f-input fi-search" id="searchInput"
+                   placeholder="İsim, e-posta veya kod ara…"
+                   oninput="applyFilters()" />
+        </div>
+
+        <div class="fi fi-select">
+            <i class="fa-solid fa-map-location-dot"></i>
+            <select class="f-sel fi-tour" id="tourFilter" onchange="applyFilters()">
+                <option value="">Tüm Turlar</option>
+                @if (Model != null)
+                {
+                    foreach (var tour in Model.Select(r => r.TourTitle ?? r.TourId).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct())
+                    {
+                        <option value="@tour">@tour</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="fi">
+            <i class="fa-solid fa-calendar"></i>
+            <input type="date" class="f-input fi-date" id="dateFilter"
+                   style="padding-left:30px;" onchange="applyFilters()" />
+        </div>
+
+        <div class="fi fi-select">
+            <i class="fa-solid fa-users"></i>
+            <select class="f-sel fi-status" id="personFilter" onchange="applyFilters()">
+                <option value="">Tüm Kişi Sayıları</option>
+                <option value="1">1 Kişi</option>
+                <option value="2-5">2–5 Kişi</option>
+                <option value="6-10">6–10 Kişi</option>
+                <option value="10+">10+ Kişi</option>
+            </select>
+        </div>
+
+        <!-- Aktif filtre temizle -->
+        <span class="f-active-badge" id="clearBtn" style="display:none;" onclick="clearFilters()">
+            <i class="fa-solid fa-xmark"></i> Filtreleri Temizle
+        </span>
+
+        <span class="f-count" id="fCount">
+            Toplam <strong id="visibleCount">@totalCount</strong> rezervasyon
+        </span>
+    </div>
+
+    <!-- Tablo -->
+    <div style="overflow-x:auto;">
+        <table class="dtbl" id="reservationTable">
+            <thead>
+                <tr>
+                    <th style="width:40px;">
+                        <input type="checkbox" id="checkAll" title="Tümünü seç"
+                               style="width:14px;height:14px;cursor:pointer;accent-color:var(--indigo);"
+                               onchange="toggleAll(this)" />
+                    </th>
+                    <th>
+                        <span style="cursor:pointer;" onclick="sortTable('name')">
+                            Müşteri <i class="fa-solid fa-sort" style="margin-left:3px;opacity:.5;font-size:8px;"></i>
+                        </span>
+                    </th>
+                    <th>
+                        <span style="cursor:pointer;" onclick="sortTable('code')">
+                            Rezervasyon Kodu <i class="fa-solid fa-sort" style="margin-left:3px;opacity:.5;font-size:8px;"></i>
+                        </span>
+                    </th>
+                    <th>Tur</th>
+                    <th>
+                        <span style="cursor:pointer;" onclick="sortTable('date')">
+                            Tarih <i class="fa-solid fa-sort" style="margin-left:3px;opacity:.5;font-size:8px;"></i>
+                        </span>
+                    </th>
+                    <th>Kişi</th>
+                    <th>
+                        <span style="cursor:pointer;" onclick="sortTable('price')">
+                            Tutar <i class="fa-solid fa-sort" style="margin-left:3px;opacity:.5;font-size:8px;"></i>
+                        </span>
+                    </th>
+                    <th>Konum</th>
+                    <th style="text-align:center;">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        /* Baş harfler avatar için */
+                        var parts    = (item.NameSurname ?? "").Split(' ');
+                        var initials = parts.Length >= 2
+                            ? $"{parts[0][0]}{parts[^1][0]}"
+                            : (item.NameSurname?.Length > 0 ? item.NameSurname[0].ToString() : "?");
+
+                        /* Avatar renk paleti */
+                        var colors = new[] {
+                            "linear-gradient(135deg,#3b82f6,#6366f1)",
+                            "linear-gradient(135deg,#10b981,#06b6d4)",
+                            "linear-gradient(135deg,#f59e0b,#ef4444)",
+                            "linear-gradient(135deg,#8b5cf6,#ec4899)",
+                            "linear-gradient(135deg,#06b6d4,#3b82f6)"
+                        };
+                        var colorIdx = Math.Abs((item.NameSurname ?? "").GetHashCode()) % colors.Length;
+                        var avColor  = colors[colorIdx];
+
+                        /* Tarih formatı */
+                        var dateStr    = item.ReservationDate.ToString("dd MMM yyyy", new System.Globalization.CultureInfo("tr-TR"));
+                        var dayName    = item.ReservationDate.ToString("dddd", new System.Globalization.CultureInfo("tr-TR"));
+                        var isPast     = item.ReservationDate.Date < DateTime.Today;
+                        var isToday    = item.ReservationDate.Date == DateTime.Today;
+                        var isSoon     = item.ReservationDate.Date > DateTime.Today && item.ReservationDate.Date <= DateTime.Today.AddDays(7);
+
+                        /* Durum badge */
+                        string statusClass, statusLabel, statusDotStyle;
+                        if (isPast)        { statusClass = "b-gray";  statusLabel = "Tamamlandı"; statusDotStyle = ""; }
+                        else if (isToday)  { statusClass = "b-blue";  statusLabel = "Bugün";      statusDotStyle = ""; }
+                        else if (isSoon)   { statusClass = "b-amber"; statusLabel = "Yakında";    statusDotStyle = ""; }
+                        else               { statusClass = "b-green"; statusLabel = "Aktif";      statusDotStyle = ""; }
+
+                        <tr data-id="@item.ReservationId"
+                            data-name="@item.NameSurname?.ToLower()"
+                            data-email="@item.Email?.ToLower()"
+                            data-code="@item.ReservationCode?.ToLower()"
+                            data-tour="@item.TourId"
+                            data-date="@item.ReservationDate.ToString("yyyy-MM-dd")"
+                            data-persons="@item.PersonCount"
+                            data-price="@item.TotalPrice">
+
+                            <!-- Checkbox -->
+                            <td>
+                                <input type="checkbox" class="row-check"
+                                       style="width:14px;height:14px;cursor:pointer;accent-color:var(--indigo);"
+                                       value="@item.ReservationId" />
+                            </td>
+
+                            <!-- Müşteri -->
+                            <td>
+                                <div class="person-cell">
+                                    <div class="av" style="background:@avColor;">@initials.ToUpper()</div>
+                                    <div>
+                                        <div class="av-name">@item.NameSurname</div>
+                                        <div class="av-email">@item.Email</div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Rezervasyon Kodu -->
+                            <td>
+                                <span class="res-code">@item.ReservationCode</span>
+                            </td>
+
+                            <!-- Tur -->
+                            <td>
+                                <div class="tour-cell">
+                                    <div class="tour-name">@item.TourTitle</div>
+                                    <div class="tour-id">ID: @item.ReservationId?.Substring(0, Math.Min(8, item.ReservationId?.Length ?? 0))…</div>
+                                </div>
+                            </td>
+
+                            <!-- Tarih -->
+                            <td>
+                                <div class="date-cell">
+                                    <div class="date-main">@dateStr</div>
+                                    <div style="display:flex;align-items:center;gap:5px;margin-top:3px;">
+                                        <span class="badge @statusClass" style="font-size:10px;padding:2px 7px;">
+                                            <span class="bd"></span>@statusLabel
+                                        </span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Kişi sayısı -->
+                            <td>
+                                <span class="person-badge">
+                                    <i class="fa-solid fa-user-group" style="font-size:10px;color:var(--text-muted);"></i>
+                                    @item.PersonCount
+                                </span>
+                            </td>
+
+                            <!-- Tutar -->
+                            <td>
+                                <div class="price-cell">₺@item.TotalPrice.ToString("N2")</div>
+                                <div class="price-pp">₺@((item.PersonCount > 0 ? item.TotalPrice / item.PersonCount : 0).ToString("N0")) / kişi</div>
+                            </td>
+
+                            <!-- Konum -->
+                            <td>
+                                <div style="font-size:12.5px;font-weight:600;color:var(--text-primary);">@item.City</div>
+                                <div style="font-size:11px;color:var(--text-muted);">@item.Country</div>
+                            </td>
+
+                            <!-- İşlemler -->
+                            <td>
+                                <div class="acts" style="justify-content:center;">
+                                    <button class="abt v" title="Detay Görüntüle"
+                                            onclick="openDetail(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(new {
+                                                id       = item.ReservationId,
+                                                code     = item.ReservationCode,
+                                                name     = item.NameSurname,
+                                                phone    = item.Phone,
+                                                email    = item.Email,
+                                                city     = item.City,
+                                                country  = item.Country,
+                                                tour     = item.TourId,
+                                                date     = item.ReservationDate.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("tr-TR")),
+                                                persons  = item.PersonCount,
+                                                price    = item.TotalPrice.ToString("N2"),
+                                                status   = statusLabel
+                                            })))">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                    <a href="/AdminReservation/Edit/@item.ReservationId" class="abt e" title="Düzenle">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+                                    <button class="abt d" title="Sil"
+                                            onclick="confirmDelete('@item.ReservationId','@item.NameSurname','@item.ReservationCode')">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+        <!-- Boş durum -->
+        <div class="empty" id="emptyState" style="display:none;">
+            <div class="empty-ic"><i class="fa-solid fa-calendar-xmark"></i></div>
+            <h3>Rezervasyon Bulunamadı</h3>
+            <p>Arama kriterlerinizle eşleşen rezervasyon yok.</p>
+        </div>
+    </div>
+
+    <!-- Sayfalama -->
+    <div class="c-foot">
+        <div style="font-size:12px;color:var(--text-muted);">
+            Gösterilen: <strong style="color:var(--text-secondary);" id="pageInfo">1–@Math.Min(10, totalCount) / @totalCount</strong>
+        </div>
+        <div class="pag" style="padding:0;" id="pagination">
+            <button class="pg" onclick="changePage(-1)" id="prevBtn" disabled>
+                <i class="fa-solid fa-chevron-left" style="font-size:10px;"></i>
+            </button>
+            <button class="pg on" id="page1Btn">1</button>
+            <button class="pg" id="page2Btn" style="@(totalCount > 10 ? "" : "display:none;")">2</button>
+            <button class="pg" id="page3Btn" style="@(totalCount > 20 ? "" : "display:none;")">3</button>
+            <button class="pg" onclick="changePage(1)" id="nextBtn" @(totalCount <= 10 ? "disabled" : "")>
+                <i class="fa-solid fa-chevron-right" style="font-size:10px;"></i>
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     DETAY MODALI
+═══════════════════════════════════════════════ -->
+<div class="modal-ov" id="detailModal" onclick="closeModal(event,'detailModal')">
+    <div class="modal-box">
+        <div class="modal-head">
+            <div>
+                <div class="modal-title">Rezervasyon Detayı</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:2px;" id="mdCode"></div>
+            </div>
+            <button class="modal-close" onclick="closeModalById('detailModal')">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="detail-grid" id="detailGrid">
+                <!-- JS ile doldurulur -->
+            </div>
+            <div class="modal-acts">
+                <button class="btn btn-ghost" onclick="closeModalById('detailModal')" style="flex:1;">
+                    <i class="fa-solid fa-xmark"></i> Kapat
+                </button>
+                <a id="mdEditLink" href="#" class="btn btn-primary" style="flex:1;">
+                    <i class="fa-solid fa-pen-to-square"></i> Düzenle
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SİLME ONAY MODALI
+═══════════════════════════════════════════════ -->
+<div class="modal-ov" id="deleteModal" onclick="closeModal(event,'deleteModal')">
+    <div class="del-modal-box">
+        <div class="del-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        <div class="del-title">Rezervasyonu Sil?</div>
+        <div class="del-desc" id="delDesc">
+            Bu rezervasyonu kalıcı olarak silmek istediğinizden emin misiniz?
+        </div>
+        <div class="del-acts">
+            <button class="btn btn-ghost" onclick="closeModalById('deleteModal')">
+                <i class="fa-solid fa-xmark"></i> İptal
+            </button>
+            <a id="delConfirmBtn" href="#" class="btn"
+               style="background:linear-gradient(135deg,#f43f5e,#e11d48);color:#fff;box-shadow:0 2px 14px rgba(244,63,94,.35);">
+                <i class="fa-solid fa-trash"></i> Evet, Sil
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+/* ==============================================
+   FİLTRELEME
+============================================== */
+function applyFilters() {
+    var search  = document.getElementById('searchInput').value.toLowerCase().trim();
+    var tour    = document.getElementById('tourFilter').value;
+    var date    = document.getElementById('dateFilter').value;
+    var persons = document.getElementById('personFilter').value;
+
+    var rows    = document.querySelectorAll('#tableBody tr');
+    var visible = 0;
+
+    rows.forEach(function(row) {
+        var name    = row.dataset.name    || '';
+        var email   = row.dataset.email   || '';
+        var code    = row.dataset.code    || '';
+        var rowTour = row.dataset.tour    || '';
+        var rowDate = row.dataset.date    || '';
+        var cnt     = parseInt(row.dataset.persons) || 0;
+
+        var matchSearch  = !search  || name.includes(search) || email.includes(search) || code.includes(search);
+        var matchTour    = !tour    || rowTour === tour;
+        var matchDate    = !date    || rowDate === date;
+        var matchPersons = !persons || matchPersonCount(cnt, persons);
+
+        var show = matchSearch && matchTour && matchDate && matchPersons;
+        row.style.display = show ? '' : 'none';
+        if (show) visible++;
+    });
+
+    document.getElementById('visibleCount').textContent = visible;
+    document.getElementById('emptyState').style.display = visible === 0 ? 'flex' : 'none';
+
+    var hasFilter = search || tour || date || persons;
+    document.getElementById('clearBtn').style.display = hasFilter ? 'inline-flex' : 'none';
+}
+
+function matchPersonCount(cnt, filter) {
+    if (filter === '1')    return cnt === 1;
+    if (filter === '2-5')  return cnt >= 2 && cnt <= 5;
+    if (filter === '6-10') return cnt >= 6 && cnt <= 10;
+    if (filter === '10+')  return cnt > 10;
+    return true;
+}
+
+function clearFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('tourFilter').value  = '';
+    document.getElementById('dateFilter').value  = '';
+    document.getElementById('personFilter').value= '';
+    applyFilters();
+}
+
+/* ==============================================
+   SIRALAMA
+============================================== */
+var sortState = {};
+function sortTable(col) {
+    sortState[col] = !sortState[col]; /* toggle asc/desc */
+    var asc  = sortState[col];
+    var tbody = document.getElementById('tableBody');
+    var rows  = Array.from(tbody.querySelectorAll('tr'));
+
+    rows.sort(function(a, b) {
+        var va, vb;
+        if (col === 'name')  { va = a.dataset.name;  vb = b.dataset.name;  return asc ? va.localeCompare(vb) : vb.localeCompare(va); }
+        if (col === 'code')  { va = a.dataset.code;  vb = b.dataset.code;  return asc ? va.localeCompare(vb) : vb.localeCompare(va); }
+        if (col === 'date')  { va = a.dataset.date;  vb = b.dataset.date;  return asc ? va.localeCompare(vb) : vb.localeCompare(va); }
+        if (col === 'price') { va = parseFloat(a.dataset.price); vb = parseFloat(b.dataset.price); return asc ? va - vb : vb - va; }
+        return 0;
+    });
+
+    rows.forEach(function(r){ tbody.appendChild(r); });
+}
+
+/* ==============================================
+   CHECKBOX
+============================================== */
+function toggleAll(master) {
+    document.querySelectorAll('.row-check').forEach(function(cb){
+        cb.checked = master.checked;
+    });
+}
+
+/* ==============================================
+   DETAY MODALI
+============================================== */
+function openDetail(data) {
+    document.getElementById('mdCode').textContent = 'Kod: ' + (data.code || '—');
+    document.getElementById('mdEditLink').href = '/AdminReservation/Edit/' + data.id;
+
+    var statusBadge = {
+        'Aktif'       : '<span class="badge b-green"><span class="bd"></span>Aktif</span>',
+        'Yakında'     : '<span class="badge b-amber"><span class="bd"></span>Yakında</span>',
+        'Bugün'       : '<span class="badge b-blue"><span class="bd"></span>Bugün</span>',
+        'Tamamlandı'  : '<span class="badge b-gray"><span class="bd"></span>Tamamlandı</span>'
+    };
+
+    var fields = [
+        { label:'Ad Soyad',          value: data.name,    cls:'' },
+        { label:'Durum',             value: statusBadge[data.status] || data.status, cls:'', html:true },
+        { label:'Telefon',           value: data.phone,   cls:'mono' },
+        { label:'E-posta',           value: data.email,   cls:'' },
+        { label:'sep' },
+        { label:'Tur',               value: data.tour,    cls:'', span2:true },
+        { label:'Rezervasyon Tarihi',value: data.date,    cls:'' },
+        { label:'Kişi Sayısı',       value: data.persons + ' kişi', cls:'' },
+        { label:'sep' },
+        { label:'Şehir',             value: data.city,    cls:'' },
+        { label:'Ülke',              value: data.country, cls:'' },
+        { label:'sep' },
+        { label:'Toplam Tutar',      value: '₺' + data.price, cls:'price', span2:true },
+        { label:'Rezervasyon Kodu',  value: data.code,    cls:'mono', span2:true },
+    ];
+
+    var html = '';
+    fields.forEach(function(f) {
+        if (f.label === 'sep') {
+            html += '<div class="detail-sep"></div>';
+            return;
+        }
+        html += '<div class="detail-row' + (f.span2 ? ' span2' : '') + '">';
+        html += '<div class="detail-label">' + f.label + '</div>';
+        if (f.html) {
+            html += '<div class="detail-value ' + (f.cls||'') + '">' + f.value + '</div>';
+        } else {
+            html += '<div class="detail-value ' + (f.cls||'') + '">' + escHtml(f.value || '—') + '</div>';
+        }
+        html += '</div>';
+    });
+
+    document.getElementById('detailGrid').innerHTML = html;
+    document.getElementById('detailModal').classList.add('open');
+}
+
+function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ==============================================
+   SİLME MODALI
+============================================== */
+function confirmDelete(id, name, code) {
+    document.getElementById('delDesc').innerHTML =
+        '<strong>' + escHtml(name) + '</strong> adlı müşteriye ait <strong>' + escHtml(code) + '</strong> kodlu rezervasyon kalıcı olarak silinecek. Bu işlem geri alınamaz.';
+    document.getElementById('delConfirmBtn').href = '/AdminReservation/Delete/' + id;
+    document.getElementById('deleteModal').classList.add('open');
+}
+
+/* ==============================================
+   MODAL KAPAT
+============================================== */
+function closeModal(event, modalId) {
+    if (event.target === document.getElementById(modalId))
+        closeModalById(modalId);
+}
+function closeModalById(modalId) {
+    document.getElementById(modalId).classList.remove('open');
+}
+document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-ov.open').forEach(function(m){ m.classList.remove('open'); });
+    }
+});
+
+/* ==============================================
+   SAYFALAMA (basit client-side)
+============================================== */
+var curPage = 1;
+var pageSize = 10;
+
+function changePage(dir) {
+    var rows = document.querySelectorAll('#tableBody tr');
+    var total = rows.length;
+    var pages = Math.ceil(total / pageSize);
+    curPage = Math.max(1, Math.min(curPage + dir, pages));
+    renderPage();
+}
+
+function renderPage() {
+    var rows = document.querySelectorAll('#tableBody tr');
+    var total = rows.length;
+    var pages = Math.ceil(total / pageSize);
+    var start = (curPage - 1) * pageSize;
+    var end   = start + pageSize;
+
+    rows.forEach(function(r, i){ r.style.display = (i >= start && i < end) ? '' : 'none'; });
+
+    document.getElementById('prevBtn').disabled = curPage <= 1;
+    document.getElementById('nextBtn').disabled = curPage >= pages;
+    document.getElementById('pageInfo').textContent =
+        (start + 1) + '–' + Math.min(end, total) + ' / ' + total;
+
+    /* Aktif sayfa butonu */
+    ['page1Btn','page2Btn','page3Btn'].forEach(function(id, i){
+        var btn = document.getElementById(id);
+        if (btn) btn.classList.toggle('on', curPage === i + 1);
+    });
+}
+
+/* ==============================================
+   CSV EXPORT
+============================================== */
+function exportCSV() {
+    var headers = ['Ad Soyad','E-posta','Telefon','Rezervasyon Kodu','Tur','Tarih','Kişi','Tutar','Şehir','Ülke'];
+    var rows    = Array.from(document.querySelectorAll('#tableBody tr')).filter(function(r){ return r.style.display !== 'none'; });
+
+    var lines = [headers.join(',')];
+    rows.forEach(function(r) {
+        var cells = r.querySelectorAll('td');
+        var name  = (r.dataset.name  || '').replace(/,/g,'');
+        var email = (r.dataset.email || '').replace(/,/g,'');
+        var code  = (r.dataset.code  || '').replace(/,/g,'');
+        var tour  = (r.dataset.tour  || '').replace(/,/g,'');
+        var date  = (r.dataset.date  || '');
+        var pers  = (r.dataset.persons || '');
+        var price = (r.dataset.price || '');
+        var city  = '', country = '';
+        /* Konum hücresi: son meta hücresinden al */
+        var loc = cells[7];
+        if (loc) {
+            var divs = loc.querySelectorAll('div');
+            city    = divs[0] ? divs[0].textContent.trim() : '';
+            country = divs[1] ? divs[1].textContent.trim() : '';
+        }
+        lines.push([name,email,'',code,tour,date,pers,price,city,country].join(','));
+    });
+
+    var blob = new Blob(['\uFEFF' + lines.join('\n')], {type:'text/csv;charset=utf-8;'});
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href   = url; a.download = 'rezervasyonlar.csv'; a.click();
+    URL.revokeObjectURL(url);
+    if (typeof showToast === 'function') showToast('CSV dışa aktarıldı.', 's');
+}
+</script>
+}
+
+

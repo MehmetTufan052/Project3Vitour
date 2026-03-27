@@ -12,12 +12,14 @@ namespace Project3Vitour.Services.ReservationService
     {
         private readonly IMapper _mapper;
         private readonly IMongoCollection<Reservation> _reservationCollection;
+        private readonly IMongoCollection<Tour> _tourCollection;
 
         public ReservationService(IDatabaseSettings _databaseSettings, IMapper mapper)
         {
             var client = new MongoClient(_databaseSettings.ConnectionString);
             var database = client.GetDatabase(_databaseSettings.DatabaseName);
             _reservationCollection = database.GetCollection<Reservation>(_databaseSettings.ReservationCollectionName);
+            _tourCollection = database.GetCollection<Tour>(_databaseSettings.TourCollectionName);
             _mapper = mapper;
         }
 
@@ -39,7 +41,28 @@ namespace Project3Vitour.Services.ReservationService
         public async Task<List<ResultReservationDto>> GetAllReservationAsync()
         {
             var values = await _reservationCollection.Find(x => true).ToListAsync();
-            return _mapper.Map<List<ResultReservationDto>>(values);
+            var reservations = _mapper.Map<List<ResultReservationDto>>(values);
+
+            var tourIds = reservations
+                .Select(x => x.TourId)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct()
+                .ToList();
+
+            var tours = await _tourCollection
+                .Find(x => tourIds.Contains(x.TourId))
+                .ToListAsync();
+
+            var tourMap = tours.ToDictionary(x => x.TourId, x => x.Title);
+
+            foreach (var reservation in reservations)
+            {
+                reservation.TourTitle = reservation.TourId is not null && tourMap.TryGetValue(reservation.TourId, out var title)
+                    ? title
+                    : reservation.TourId;
+            }
+
+            return reservations;
         }
 
         public async Task<GetReservationByIdDto> GetReservationByIdAsync(string id)
