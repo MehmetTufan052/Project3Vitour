@@ -1073,6 +1073,9 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            position: relative;
+            z-index: 8;
+            isolation: isolate;
         }
 
         .abt {
@@ -1089,6 +1092,9 @@
             color: var(--text-secondary);
             transition: all var(--t);
             box-shadow: var(--shadow-xs);
+            position: relative;
+            z-index: 9;
+            pointer-events: auto;
         }
 
             .abt:hover {
@@ -1364,15 +1370,10 @@
                         <span class="nav-lbl">Tur Planı</span>
                     </a>
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminReservation" ? "active" : "")"
-                       href="/AdminReservation" data-a="amber" data-tip="Reservations">
+                       href="/AdminReservation/ReservationList" data-a="amber" data-tip="Reservations">
                         <div class="nav-ic"><i class="fa-solid fa-calendar-check"></i></div>
                         <span class="nav-lbl">Rezervasyonlar</span>
-                    </a>
-                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminCategory" ? "active" : "")"
-                       href="/AdminCategory/ReservationList" data-a="violet" data-tip="Categories">
-                        <div class="nav-ic"><i class="fa-solid fa-tags"></i></div>
-                        <span class="nav-lbl">Kategoriler</span>
-                    </a>                  
+                    </a> 
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminReview" ? "active" : "")"
                        href="/AdminReview/" data-a="rose" data-tip="Reviews">
                         <div class="nav-ic"><i class="fa-solid fa-star-half-stroke"></i></div>

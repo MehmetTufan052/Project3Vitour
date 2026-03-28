@@ -1,22 +1,13 @@
-﻿@using Project3Vitour.Dtos.ReservationDtos
-
-@{
-    ViewData["Title"] = "ReservationList";
-    Layout = "~/Views/Shared/_AdminLayout.cshtml";
-}
-@model IEnumerable<ResultReservationDto>
-
-@{
-    ViewData["Title"] = "Rezervasyonlar";
-
-    /* ── Demo istatistik değerleri (gerçekte ViewBag/Model'dan gelir) ── */
-    int totalCount    = Model?.Count() ?? 0;
-    int activeCount   = Model?.Count(r => r.ReservationDate >= DateTime.Today) ?? 0;
-    int todayCount    = Model?.Count(r => r.ReservationDate.Date == DateTime.Today) ?? 0;
-    decimal totalRev  = Model?.Sum(r => r.TotalPrice) ?? 0;
-}
-
-@section Styles {
+<!DOCTYPE html>
+<html lang="tr"><head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rezervasyonlar — Vitour Admin</title>
+    <link href="/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="/css/site.css" rel="stylesheet">
+    
 <style>
 /* ── Rezervasyon sayfasına özel stiller ── */
 
@@ -64,7 +55,7 @@
     color:var(--text-muted);
     white-space:nowrap;
 }
-@@media (max-width: 992px) {
+@media (max-width: 992px) {
     .f-count {
         width:100%;
         margin-left:0;
@@ -105,8 +96,8 @@
     padding:16px;
 }
 .modal-ov.open { display:flex; animation:ovIn .2s ease both; }
-@@keyframes ovIn  { from{opacity:0} to{opacity:1} }
-@@keyframes mIn   { from{opacity:0;transform:translateY(18px) scale(.97)} to{opacity:1;transform:none} }
+@keyframes ovIn  { from{opacity:0} to{opacity:1} }
+@keyframes mIn   { from{opacity:0;transform:translateY(18px) scale(.97)} to{opacity:1;transform:none} }
 
 /* ── DETAY MODAL KUTUSU ── */
 .detail-modal-box {
@@ -406,9 +397,1449 @@
     border-radius:50%; animation:spin .6s linear infinite; vertical-align:middle;
     margin-right:6px;
 }
-@@keyframes spin { to { transform:rotate(360deg) } }
+@keyframes spin { to { transform:rotate(360deg) } }
 </style>
-}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        ul, li {
+            list-style: none;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        :root {
+            --sidebar-w: 252px;
+            --topbar-h: 60px;
+            --glass-bg: rgba(255,255,255,0.055);
+            --glass-bg-hover: rgba(255,255,255,0.085);
+            --glass-border: rgba(255,255,255,0.10);
+            --glass-border-hi: rgba(255,255,255,0.20);
+            --glass-blur: saturate(180%) blur(24px);
+            --text-on-dark: #e2e8f0;
+            --text-muted-dark: rgba(226,232,240,0.45);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --blue: #3b82f6;
+            --indigo: #6366f1;
+            --green: #10b981;
+            --amber: #f59e0b;
+            --rose: #f43f5e;
+            --cyan: #06b6d4;
+            --violet: #8b5cf6;
+            --shadow-xs: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.09), 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-lg: 0 16px 48px rgba(0,0,0,0.13), 0 4px 16px rgba(0,0,0,0.06);
+            --r-sm: 10px;
+            --r-md: 14px;
+            --r-lg: 20px;
+            --t: 200ms cubic-bezier(.4,0,.2,1);
+            --t-slow: 380ms cubic-bezier(.4,0,.2,1);
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #0a0e1a;
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Â¦Â¦ AURORA BG Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦ */
+        .aurora {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse 90% 65% at 15% -5%, rgba(59,130,246,0.20) 0%, transparent 70%), radial-gradient(ellipse 70% 55% at 85% 5%, rgba(99,102,241,0.16) 0%, transparent 65%), radial-gradient(ellipse 55% 45% at 5% 85%, rgba(16,185,129,0.11) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 90% 90%, rgba(139,92,246,0.09) 0%, transparent 60%), linear-gradient(165deg, #0a0e1a 0%, #0c1323 55%, #080c18 100%);
+        }
+
+            .aurora::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.025'/%3E%3C/svg%3E");
+                opacity: .5;
+            }
+
+        /* Â¦Â¦ SHELL Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦ */
+        .shell {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Â¦Â¦ SIDEBAR Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦ */
+        .sidebar {
+            width: var(--sidebar-w);
+            min-width: var(--sidebar-w);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 100;
+            transition: width var(--t-slow), min-width var(--t-slow);
+            background: rgba(9,15,32,0.72);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-right: 1px solid var(--glass-border);
+            box-shadow: inset -1px 0 0 rgba(255,255,255,0.04), 6px 0 40px rgba(0,0,0,0.35);
+        }
+
+            /* Top accent line */
+            .sidebar::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg, transparent, rgba(99,102,241,0.55), rgba(59,130,246,0.55), transparent);
+                z-index: 1;
+            }
+
+            .sidebar.collapsed {
+                width: 70px;
+                min-width: 70px;
+            }
+
+        /* Logo */
+        .sb-logo {
+            height: var(--topbar-h);
+            display: flex;
+            align-items: center;
+            padding: 0 14px;
+            border-bottom: 1px solid var(--glass-border);
+            flex-shrink: 0;
+            gap: 10px;
+            overflow: hidden;
+        }
+
+        .logo-gem {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: linear-gradient(145deg, #3b82f6 0%, #6366f1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 800;
+            color: #fff;
+            flex-shrink: 0;
+            position: relative;
+            box-shadow: 0 0 22px rgba(99,102,241,0.45), 0 4px 10px rgba(0,0,0,0.25);
+        }
+
+            .logo-gem::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                border-radius: inherit;
+                background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, transparent 55%);
+            }
+
+        .logo-words {
+            overflow: hidden;
+            white-space: nowrap;
+            opacity: 1;
+            transition: opacity var(--t);
+        }
+
+        .sidebar.collapsed .logo-words {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .logo-name {
+            font-size: 15.5px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -.4px;
+            line-height: 1;
+        }
+
+        .logo-sub {
+            font-size: 9px;
+            font-weight: 500;
+            color: var(--text-muted-dark);
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+            font-family: 'DM Mono', monospace;
+            margin-top: 2px;
+        }
+
+        /* Nav */
+        .sb-nav {
+            flex: 1;
+            padding: 8px 7px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: none;
+        }
+
+            .sb-nav::-webkit-scrollbar {
+                display: none;
+            }
+
+        .nav-section {
+            margin-bottom: 2px;
+        }
+
+        .nav-sep {
+            font-size: 8.5px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted-dark);
+            font-family: 'DM Mono', monospace;
+            padding: 14px 9px 4px;
+            white-space: nowrap;
+            opacity: 1;
+            transition: opacity var(--t);
+        }
+
+        .sidebar.collapsed .nav-sep {
+            opacity: 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 7px 9px;
+            border-radius: var(--r-sm);
+            color: var(--text-muted-dark);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--t);
+            white-space: nowrap;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid transparent;
+        }
+
+            .nav-link:hover {
+                color: var(--text-on-dark);
+                background: var(--glass-bg-hover);
+            }
+
+            .nav-link.active {
+                color: #fff;
+                background: var(--glass-bg);
+                border-color: var(--glass-border-hi);
+                box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 2px 12px rgba(0,0,0,0.2);
+            }
+
+                .nav-link.active::before {
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    width: 3px;
+                    height: 50%;
+                    border-radius: 0 3px 3px 0;
+                    background: linear-gradient(180deg, var(--blue), var(--indigo));
+                    box-shadow: 0 0 10px rgba(99,102,241,0.7);
+                }
+
+        .nav-ic {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 7px;
+            font-size: 13px;
+            flex-shrink: 0;
+            transition: all var(--t);
+        }
+
+        /* Per-accent icon colors */
+        .nav-link[data-a="blue"]:hover .nav-ic, .nav-link[data-a="blue"].active .nav-ic {
+            color: #60a5fa;
+            background: rgba(59,130,246,0.18);
+        }
+
+        .nav-link[data-a="green"]:hover .nav-ic, .nav-link[data-a="green"].active .nav-ic {
+            color: #34d399;
+            background: rgba(16,185,129,0.18);
+        }
+
+        .nav-link[data-a="amber"]:hover .nav-ic, .nav-link[data-a="amber"].active .nav-ic {
+            color: #fbbf24;
+            background: rgba(245,158,11,0.18);
+        }
+
+        .nav-link[data-a="violet"]:hover .nav-ic, .nav-link[data-a="violet"].active .nav-ic {
+            color: #a78bfa;
+            background: rgba(139,92,246,0.18);
+        }
+
+        .nav-link[data-a="cyan"]:hover .nav-ic, .nav-link[data-a="cyan"].active .nav-ic {
+            color: #22d3ee;
+            background: rgba(6,182,212,0.18);
+        }
+
+        .nav-link[data-a="rose"]:hover .nav-ic, .nav-link[data-a="rose"].active .nav-ic {
+            color: #fb7185;
+            background: rgba(244,63,94,0.18);
+        }
+
+        .nav-lbl {
+            flex: 1;
+            opacity: 1;
+            transition: opacity var(--t);
+        }
+
+        .sidebar.collapsed .nav-lbl {
+            opacity: 0;
+        }
+
+        .nav-pill {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 20px;
+            background: rgba(244,63,94,0.22);
+            color: #fb7185;
+            border: 1px solid rgba(244,63,94,0.28);
+            font-family: 'DM Mono', monospace;
+            opacity: 1;
+            transition: opacity var(--t);
+        }
+
+        .sidebar.collapsed .nav-pill {
+            opacity: 0;
+        }
+
+        /* Collapsed tooltip */
+        .sidebar.collapsed .nav-link:hover::after {
+            content: attr(data-tip);
+            position: absolute;
+            left: 56px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(9,15,32,0.95);
+            color: #e2e8f0;
+            font-size: 11.5px;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 8px;
+            white-space: nowrap;
+            z-index: 999;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px);
+            pointer-events: none;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+        }
+
+        /* Footer */
+        .sb-foot {
+            border-top: 1px solid var(--glass-border);
+            padding: 8px 7px;
+            flex-shrink: 0;
+        }
+
+        .sb-user {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 7px 9px;
+            border-radius: var(--r-sm);
+            cursor: pointer;
+            transition: background var(--t);
+            overflow: hidden;
+        }
+
+            .sb-user:hover {
+                background: var(--glass-bg-hover);
+            }
+
+        .sb-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #6366f1, #a78bfa);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 800;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 0 14px rgba(99,102,241,0.4);
+        }
+
+        .sb-uinfo {
+            flex: 1;
+            overflow: hidden;
+            opacity: 1;
+            transition: opacity var(--t);
+        }
+
+        .sidebar.collapsed .sb-uinfo {
+            opacity: 0;
+        }
+
+        .sb-uname {
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sb-urole {
+            font-size: 9.5px;
+            color: var(--text-muted-dark);
+        }
+
+        .sb-logout {
+            color: var(--text-muted-dark);
+            font-size: 12px;
+            flex-shrink: 0;
+            transition: color var(--t), opacity var(--t);
+            opacity: 1;
+        }
+
+        .sidebar.collapsed .sb-logout {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .sb-logout:hover {
+            color: #fb7185;
+        }
+
+        /* Â¦Â¦ MAIN Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦ */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        /* Â¦Â¦ TOPBAR Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦ */
+        .topbar {
+            height: var(--topbar-h);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 10px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 50;
+            background: rgba(9,15,32,0.55);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: 0 1px 0 rgba(255,255,255,0.04), 0 4px 20px rgba(0,0,0,0.22);
+        }
+
+        .tb-btn {
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            color: var(--text-on-dark);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all var(--t);
+            flex-shrink: 0;
+        }
+
+            .tb-btn:hover {
+                background: var(--glass-bg-hover);
+                border-color: var(--glass-border-hi);
+            }
+
+        .tb-crumb {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-muted-dark);
+        }
+
+            .tb-crumb i {
+                font-size: 8px;
+                color: rgba(255,255,255,0.18);
+            }
+
+            .tb-crumb .cur {
+                color: #fff;
+                font-weight: 700;
+                font-size: 12.5px;
+            }
+
+        .tb-search {
+            flex: 1;
+            max-width: 310px;
+            margin-left: 6px;
+            position: relative;
+        }
+
+            .tb-search i {
+                position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-muted-dark);
+                font-size: 11.5px;
+                pointer-events: none;
+            }
+
+            .tb-search input {
+                width: 100%;
+                height: 34px;
+                background: var(--glass-bg);
+                border: 1px solid var(--glass-border);
+                border-radius: 9px;
+                padding: 0 12px 0 30px;
+                font-family: 'Plus Jakarta Sans', sans-serif;
+                font-size: 12.5px;
+                color: var(--text-on-dark);
+                outline: none;
+                transition: all var(--t);
+            }
+
+                .tb-search input::placeholder {
+                    color: var(--text-muted-dark);
+                }
+
+                .tb-search input:focus {
+                    border-color: rgba(99,102,241,0.5);
+                    background: var(--glass-bg-hover);
+                    box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+                }
+
+        .tb-r {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tb-notif {
+            position: relative;
+        }
+
+        .tb-notif-dot {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 7px;
+            height: 7px;
+            background: var(--rose);
+            border-radius: 50%;
+            border: 1.5px solid #0a0e1a;
+            box-shadow: 0 0 8px rgba(244,63,94,0.7);
+        }
+
+        .tb-sep {
+            width: 1px;
+            height: 18px;
+            background: var(--glass-border);
+            margin: 0 2px;
+        }
+
+        .tb-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 10px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all var(--t);
+        }
+
+            .tb-user:hover {
+                background: var(--glass-bg);
+                border-color: var(--glass-border);
+            }
+
+        .tb-ava {
+            width: 28px;
+            height: 28px;
+            border-radius: 7px;
+            background: linear-gradient(135deg, #6366f1, #a78bfa);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10.5px;
+            font-weight: 800;
+            color: #fff;
+            box-shadow: 0 0 12px rgba(99,102,241,0.35);
+        }
+
+        .tb-uinfo {
+            line-height: 1;
+        }
+
+        .tb-uname {
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .tb-urole {
+            font-size: 10px;
+            color: var(--text-muted-dark);
+            margin-top: 1px;
+        }
+
+        /* Â¦Â¦ PAGE CONTENT Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦ */
+        .page-wrap {
+            flex: 1;
+            overflow-y: auto;
+            background: #f1f4f9;
+            padding: 24px 24px 52px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.06);
+            scrollbar-width: thin;
+            scrollbar-color: #c7d2e0 transparent;
+        }
+
+            .page-wrap::-webkit-scrollbar {
+                width: 5px;
+            }
+
+            .page-wrap::-webkit-scrollbar-thumb {
+                background: #c7d2e0;
+                border-radius: 10px;
+            }
+
+        /* ========================================================
+                   SHARED COMPONENTS (used in every collection view)
+                ======================================================== */
+
+        /* Page header */
+        .ph {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .ph-eye {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 2.2px;
+            text-transform: uppercase;
+            color: var(--indigo);
+            font-family: 'DM Mono', monospace;
+            margin-bottom: 3px;
+        }
+
+        .ph-h1 {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -.6px;
+            line-height: 1.1;
+        }
+
+        .ph-desc {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            margin-top: 3px;
+        }
+
+        .ph-acts {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 18px;
+            border-radius: var(--r-sm);
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            cursor: pointer;
+            border: none;
+            transition: all var(--t);
+            line-height: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: #fff;
+            box-shadow: 0 2px 14px rgba(99,102,241,0.38), inset 0 1px 0 rgba(255,255,255,0.15);
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 5px 22px rgba(99,102,241,0.48), inset 0 1px 0 rgba(255,255,255,0.15);
+            }
+
+        .btn-ghost {
+            background: #fff;
+            color: var(--text-secondary);
+            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow-xs);
+        }
+
+            .btn-ghost:hover {
+                background: #f8fafc;
+                color: var(--text-primary);
+                border-color: #c7d2e0;
+            }
+
+        /* Stat grid */
+        .s-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+            .s-grid.cols3 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        @media (max-width: 1200px) {
+            .s-grid, .s-grid.cols3
+
+        {
+            grid-template-columns: repeat(2,1fr);
+        }
+
+        }
+        @media (max-width: 640px) {
+            .s-grid, .s-grid.cols3
+
+        {
+            grid-template-columns: 1fr;
+        }
+
+        }
+
+        .s-card {
+            background: #fff;
+            border: 1px solid rgba(226,232,240,0.8);
+            border-radius: var(--r-md);
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.9);
+            transition: transform var(--t), box-shadow var(--t);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .s-card::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.95), transparent);
+            }
+
+            .s-card:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.9);
+            }
+
+        .s-ico {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+            .s-ico::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                border-radius: inherit;
+                background: linear-gradient(180deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+            }
+
+        .s-lbl {
+            font-size: 10.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            margin-bottom: 2px;
+        }
+
+        .s-val {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -.8px;
+            line-height: 1.1;
+        }
+
+        .s-delta {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        .up {
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        .down {
+            color: var(--rose);
+            font-weight: 700;
+        }
+
+        /* Card */
+        .card {
+            background: #fff;
+            border: 1px solid rgba(226,232,240,0.8);
+            border-radius: var(--r-md);
+            box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.9);
+            overflow: hidden;
+            position: relative;
+        }
+
+            .card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.98), transparent);
+            }
+
+        .c-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            border-bottom: 1px solid #f0f4f8;
+            gap: 12px;
+        }
+
+        .c-title {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .c-sub {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+
+        .c-body {
+            padding: 20px;
+        }
+
+        .c-foot {
+            padding: 11px 20px;
+            border-top: 1px solid #f0f4f8;
+            background: #fafbfc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        /* Filter bar */
+        .f-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-bottom: 1px solid #f0f4f8;
+            flex-wrap: wrap;
+            background: #fafbfc;
+        }
+
+        .fi {
+            position: relative;
+        }
+
+            .fi i {
+                position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-muted);
+                font-size: 11px;
+                pointer-events: none;
+            }
+
+        .f-input, .f-sel {
+            height: 34px;
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            background: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 12.5px;
+            color: var(--text-primary);
+            outline: none;
+            box-shadow: var(--shadow-xs);
+            transition: border-color var(--t), box-shadow var(--t);
+        }
+
+        .f-input {
+            padding: 0 12px 0 30px;
+            min-width: 200px;
+        }
+
+        .f-sel {
+            padding: 0 28px 0 10px;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394a3b8'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-color: #fff;
+        }
+
+            .f-input:focus, .f-sel:focus {
+                border-color: #6366f1;
+                box-shadow: 0 0 0 3px rgba(99,102,241,0.10);
+            }
+
+        .f-count {
+            margin-left: auto;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'DM Mono', monospace;
+            white-space: nowrap;
+        }
+
+            .f-count strong {
+                color: var(--text-secondary);
+            }
+
+        /* Table */
+        .dtbl {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .dtbl th {
+                text-align: left;
+                font-size: 9.5px;
+                font-weight: 700;
+                letter-spacing: 1.1px;
+                text-transform: uppercase;
+                color: var(--text-muted);
+                padding: 9px 16px;
+                background: #f8fafc;
+                border-bottom: 1px solid #f0f4f8;
+                white-space: nowrap;
+                font-family: 'DM Mono', monospace;
+            }
+
+            .dtbl td {
+                padding: 12px 16px;
+                font-size: 13px;
+                color: var(--text-primary);
+                border-bottom: 1px solid #f8fafc;
+                vertical-align: middle;
+            }
+
+            .dtbl tbody tr {
+                transition: background var(--t);
+            }
+
+                .dtbl tbody tr:hover td {
+                    background: #f9fafc;
+                }
+
+            .dtbl tr:last-child td {
+                border-bottom: none;
+            }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            line-height: 1.4;
+        }
+
+        .bd {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: currentColor;
+            flex-shrink: 0;
+        }
+
+        .b-green {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .b-red {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .b-amber {
+            background: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+
+        .b-blue {
+            background: #dbeafe;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+        }
+
+        .b-gray {
+            background: #f1f5f9;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+
+        .b-violet {
+            background: #ede9fe;
+            color: #6d28d9;
+            border: 1px solid #ddd6fe;
+        }
+
+        .b-cyan {
+            background: #cffafe;
+            color: #0e7490;
+            border: 1px solid #a5f3fc;
+        }
+
+        /* Action buttons */
+        .acts {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            position: relative;
+            z-index: 8;
+            isolation: isolate;
+        }
+
+        .abt {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 11.5px;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            color: var(--text-secondary);
+            transition: all var(--t);
+            box-shadow: var(--shadow-xs);
+            position: relative;
+            z-index: 9;
+            pointer-events: auto;
+        }
+
+            .abt:hover {
+                transform: translateY(-1px);
+                box-shadow: var(--shadow-sm);
+            }
+
+            .abt.v:hover {
+                background: #f0fdf4;
+                color: #15803d;
+                border-color: #bbf7d0;
+            }
+
+            .abt.e:hover {
+                background: #eff6ff;
+                color: #1d4ed8;
+                border-color: #bfdbfe;
+            }
+
+            .abt.d:hover {
+                background: #fff1f2;
+                color: #dc2626;
+                border-color: #fecaca;
+            }
+
+        /* Avatar */
+        .av {
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 800;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+        }
+
+        /* Empty state */
+        .empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 56px 20px;
+            text-align: center;
+        }
+
+        .empty-ic {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .empty h3 {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .empty p {
+            font-size: 12.5px;
+            color: var(--text-muted);
+        }
+
+        /* Pagination */
+        .pag {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 11px 20px;
+            border-top: 1px solid #f0f4f8;
+        }
+
+        .pg {
+            min-width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--t);
+            padding: 0 8px;
+            box-shadow: var(--shadow-xs);
+        }
+
+            .pg:hover {
+                background: #f8fafc;
+                border-color: #c7d2e0;
+            }
+
+            .pg.on {
+                background: linear-gradient(135deg, #3b82f6, #6366f1);
+                color: #fff;
+                border-color: transparent;
+                box-shadow: 0 2px 10px rgba(99,102,241,0.35);
+            }
+
+            .pg:disabled {
+                opacity: .4;
+                cursor: not-allowed;
+                box-shadow: none;
+            }
+
+        /* Toast */
+        .toast-c {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 8px;
+        }
+
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 16px;
+            border-radius: 12px;
+            font-size: 12.5px;
+            font-weight: 600;
+            max-width: 320px;
+            animation: tIn .28s cubic-bezier(.34,1.56,.64,1) both;
+            background: rgba(9,15,32,0.93);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.10);
+            color: #e2e8f0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+        }
+
+            .toast.s {
+                border-left: 3px solid #10b981;
+            }
+
+            .toast.e {
+                border-left: 3px solid #f43f5e;
+            }
+
+            .toast.i {
+                border-left: 3px solid #6366f1;
+            }
+
+            .toast.s i {
+                color: #34d399;
+            }
+
+            .toast.e i {
+                color: #fb7185;
+            }
+
+            .toast.i i {
+                color: #818cf8;
+            }
+        @keyframes tIn {
+            from
+
+        {
+            opacity: 0;
+            transform: translateX(16px) scale(.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: none;
+        }
+
+        }
+
+        /* Animations */
+        .anim {
+            animation: fadeUp .3s cubic-bezier(.4,0,.2,1) both;
+        }
+
+            .anim:nth-child(1) {
+                animation-delay: .04s;
+            }
+
+            .anim:nth-child(2) {
+                animation-delay: .09s;
+            }
+
+            .anim:nth-child(3) {
+                animation-delay: .14s;
+            }
+
+        .s-card:nth-child(1) {
+            animation: fadeUp .3s .04s both;
+        }
+
+        .s-card:nth-child(2) {
+            animation: fadeUp .3s .09s both;
+        }
+
+        .s-card:nth-child(3) {
+            animation: fadeUp .3s .14s both;
+        }
+
+        .s-card:nth-child(4) {
+            animation: fadeUp .3s .19s both;
+        }
+        @keyframes fadeUp {
+            from
+
+        {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: none;
+        }
+
+        }
+    </style>
+</head>
+<body>
+
+    <div class="aurora"></div>
+
+    <div class="shell">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sb-logo">
+                <div class="logo-gem">Vi</div>
+                <div class="logo-words">
+                    <div class="logo-name">Vitour</div>
+                    <div class="logo-sub">Admin Panel</div>
+                </div>
+            </div>
+
+            <nav class="sb-nav">
+
+                <div class="nav-section">
+                    <div class="nav-sep">Main</div>
+                    <a class="nav-link " href="/AdminDashboard" data-a="blue" data-tip="Dashboard">
+                        <div class="nav-ic"><i class="fa-solid fa-chart-pie"></i></div>
+                        <span class="nav-lbl">Dashboard</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-sep">Collections</div>
+                    <a class="nav-link " href="/AdminTour" data-a="green" data-tip="Tours">
+                        <div class="nav-ic"><i class="fa-solid fa-map-location-dot"></i></div>
+                        <span class="nav-lbl">Turlar</span>
+                    </a>
+                    <a class="nav-link " href="/AdminTourPlan/TourPlanList" data-a="cyan" data-tip="TourPlan">
+                        <div class="nav-ic"><i class="fa-solid fa-earth-europe"></i></div>
+                        <span class="nav-lbl">Tur Planı</span>
+                    </a>
+                    <a class="nav-link active" href="/AdminReservation/ReservationList" data-a="amber" data-tip="Reservations">
+                        <div class="nav-ic"><i class="fa-solid fa-calendar-check"></i></div>
+                        <span class="nav-lbl">Rezervasyonlar</span>
+                    </a> 
+                    <a class="nav-link " href="/AdminReview/" data-a="rose" data-tip="Reviews">
+                        <div class="nav-ic"><i class="fa-solid fa-star-half-stroke"></i></div>
+                        <span class="nav-lbl">Yorumlar</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-sep">Analytics</div>
+                    <a class="nav-link " href="/AdminReport" data-a="blue" data-tip="Reports">
+                        <div class="nav-ic"><i class="fa-solid fa-chart-line"></i></div>
+                        <span class="nav-lbl">Reports</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-sep">System</div>
+                    <a class="nav-link " href="/AdminSetting" data-a="amber" data-tip="Settings">
+                        <div class="nav-ic"><i class="fa-solid fa-gear"></i></div>
+                        <span class="nav-lbl">Settings</span>
+                    </a>
+                </div>
+
+            </nav>
+
+            <div class="sb-foot">
+                <div class="sb-user">
+                    <div class="sb-avatar">A</div>
+                    <div class="sb-uinfo">
+                        <div class="sb-uname">Admin User</div>
+                        <div class="sb-urole">Super Admin</div>
+                    </div>
+                    <a href="/Account/Logout" class="sb-logout" title="Çıkış Yap">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <div class="main">
+
+            <header class="topbar">
+                <button class="tb-btn" id="sbToggle"><i class="fa-solid fa-bars-staggered"></i></button>
+
+                <div class="tb-crumb">
+                    <span>Vitour</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                    <span class="cur">Rezervasyonlar</span>
+                </div>
+
+                <div class="tb-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search anything...">
+                </div>
+
+                <div class="tb-r">
+                    <button class="tb-btn tb-notif" title="Bildirimler">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="tb-notif-dot"></span>
+                    </button>
+                    <button class="tb-btn" title="Mesajlar">
+                        <i class="fa-regular fa-comment-dots"></i>
+                    </button>
+                    <div class="tb-sep"></div>
+                    <div class="tb-user">
+                        <div class="tb-ava">A</div>
+                        <div class="tb-uinfo">
+                            <div class="tb-uname">Admin User</div>
+                            <div class="tb-urole">Super Admin</div>
+                        </div>
+                        <i class="fa-solid fa-chevron-down" style="font-size:9px;color:var(--text-muted-dark);margin-left:2px;"></i>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-wrap" id="pageWrap">
+                
+
+
 
 <!-- ═══════════════════════════════════════════════
      STAT KARTLARI
@@ -421,7 +1852,7 @@
         </div>
         <div>
             <div class="s-lbl">Toplam Rezervasyon</div>
-            <div class="s-val" id="stat-total">@totalCount</div>
+            <div class="s-val" id="stat-total">1</div>
             <div class="s-delta"><span class="up"><i class="fa-solid fa-arrow-trend-up"></i> +12%</span> geçen aya göre</div>
         </div>
     </div>
@@ -432,7 +1863,7 @@
         </div>
         <div>
             <div class="s-lbl">Aktif / Gelecek</div>
-            <div class="s-val" id="stat-active">@activeCount</div>
+            <div class="s-val" id="stat-active">1</div>
             <div class="s-delta">Bugün ve sonrası</div>
         </div>
     </div>
@@ -444,7 +1875,7 @@
         <div>
             <div class="s-lbl">Toplam Gelir</div>
             <div class="s-val" id="stat-rev">
-                ₺@totalRev.ToString("N0")
+                ₺19.470
             </div>
             <div class="s-delta"><span class="up"><i class="fa-solid fa-arrow-trend-up"></i> +8.4%</span> bu ay</div>
         </div>
@@ -456,7 +1887,7 @@
         </div>
         <div>
             <div class="s-lbl">Bugünkü Rezervasyon</div>
-            <div class="s-val" id="stat-today">@todayCount</div>
+            <div class="s-val" id="stat-today">0</div>
             <div class="s-delta">Bugün oluşturulan</div>
         </div>
     </div>
@@ -475,7 +1906,7 @@
             <div class="c-sub">Tüm rezervasyonları görüntüleyin, filtreleyin ve yönetin.</div>
         </div>
         <div class="ph-acts">
-            <button type="button" class="btn btn-ghost" id="exportAllBtn">
+            <button type="button" class="btn btn-ghost" onclick="exportCSV()">
                 <i class="fa-solid fa-file-csv"></i> Dışa Aktar
             </button>
             <a href="/AdminReservation/Create" class="btn btn-primary">
@@ -488,32 +1919,25 @@
     <div class="f-bar" id="filterBar">
         <div class="fi">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" class="f-input fi-search" id="searchInput"
-                   placeholder="İsim, e-posta veya kod ara…" />
+            <input type="text" class="f-input fi-search" id="searchInput" placeholder="İsim, e-posta veya kod ara…" oninput="applyFilters()">
         </div>
 
         <div class="fi">
             <i class="fa-solid fa-map-location-dot"></i>
-            <select class="f-sel fi-tour" id="tourFilter">
+            <select class="f-sel fi-tour" id="tourFilter" onchange="applyFilters()">
                 <option value="">Tüm Turlar</option>
-                @if (Model != null)
-                {
-                    foreach (var tour in Model.Select(r => r.TourId).Distinct())
-                    {
-                        <option value="@tour">@tour</option>
-                    }
-                }
+                        <option value="699deb817d8380f05f1a9d16">699deb817d8380f05f1a9d16</option>
             </select>
         </div>
 
         <div class="fi">
             <i class="fa-solid fa-calendar"></i>
-            <input type="date" class="f-input fi-date" id="dateFilter" />
+            <input type="date" class="f-input fi-date" id="dateFilter" onchange="applyFilters()">
         </div>
 
         <div class="fi">
             <i class="fa-solid fa-users"></i>
-            <select class="f-sel fi-status" id="personFilter">
+            <select class="f-sel fi-status" id="personFilter" onchange="applyFilters()">
                 <option value="">Tüm Kişi Sayıları</option>
                 <option value="1">1 Kişi</option>
                 <option value="2-5">2–5 Kişi</option>
@@ -523,12 +1947,12 @@
         </div>
 
         <!-- Aktif filtre temizle -->
-        <span class="f-active-badge" id="clearBtn" style="display:none;">
+        <span class="f-active-badge" id="clearBtn" style="display:none;" onclick="clearFilters()">
             <i class="fa-solid fa-xmark"></i> Filtreleri Temizle
         </span>
 
         <span class="f-count" id="fCount">
-            Toplam <strong id="visibleCount">@totalCount</strong> rezervasyon
+            Toplam <strong id="visibleCount">1</strong> rezervasyon
         </span>
     </div>
 
@@ -538,28 +1962,27 @@
             <thead>
                 <tr>
                     <th style="width:40px;">
-                        <input type="checkbox" id="checkAll" title="Tümünü seç"
-                               style="width:14px;height:14px;cursor:pointer;accent-color:var(--indigo);" />
+                        <input type="checkbox" id="checkAll" title="Tümünü seç" style="width:14px;height:14px;cursor:pointer;accent-color:var(--indigo);" onchange="toggleAll(this)">
                     </th>
                     <th>
-                        <span style="cursor:pointer;" data-sort="name">
+                        <span style="cursor:pointer;" onclick="sortTable('name')">
                             Müşteri <i class="fa-solid fa-sort" style="margin-left:3px;opacity:.5;font-size:8px;"></i>
                         </span>
                     </th>
                     <th>
-                        <span style="cursor:pointer;" data-sort="code">
+                        <span style="cursor:pointer;" onclick="sortTable('code')">
                             Rezervasyon Kodu <i class="fa-solid fa-sort" style="margin-left:3px;opacity:.5;font-size:8px;"></i>
                         </span>
                     </th>
                     <th>Tur</th>
                     <th>
-                        <span style="cursor:pointer;" data-sort="date">
+                        <span style="cursor:pointer;" onclick="sortTable('date')">
                             Tarih <i class="fa-solid fa-sort" style="margin-left:3px;opacity:.5;font-size:8px;"></i>
                         </span>
                     </th>
                     <th>Kişi</th>
                     <th>
-                        <span style="cursor:pointer;" data-sort="price">
+                        <span style="cursor:pointer;" onclick="sortTable('price')">
                             Tutar <i class="fa-solid fa-sort" style="margin-left:3px;opacity:.5;font-size:8px;"></i>
                         </span>
                     </th>
@@ -574,118 +1997,44 @@
                 </tr>
             </thead>
             <tbody id="tableBody">
-                @{ var rowIndex = 0; }
-                @if (Model != null && Model.Any())
-                {
-                    foreach (var item in Model)
-                    {
-                        var rowDomId = $"reservation-row-{rowIndex++}";
-                        /* Baş harfler avatar için */
-                        var parts    = (item.NameSurname ?? "").Split(' ');
-                        var initials = parts.Length >= 2
-                            ? $"{parts[0][0]}{parts[^1][0]}"
-                            : (item.NameSurname?.Length > 0 ? item.NameSurname[0].ToString() : "?");
-
-                        /* Avatar renk paleti */
-                        var colors = new[] {
-                            "linear-gradient(135deg,#3b82f6,#6366f1)",
-                            "linear-gradient(135deg,#10b981,#06b6d4)",
-                            "linear-gradient(135deg,#f59e0b,#ef4444)",
-                            "linear-gradient(135deg,#8b5cf6,#ec4899)",
-                            "linear-gradient(135deg,#06b6d4,#3b82f6)"
-                        };
-                        var colorIdx = Math.Abs((item.NameSurname ?? "").GetHashCode()) % colors.Length;
-                        var avColor  = colors[colorIdx];
-
-                        /* Tarih formatı */
-                        var dateStr    = item.ReservationDate.ToString("dd MMM yyyy", new System.Globalization.CultureInfo("tr-TR"));
-                        var dayName    = item.ReservationDate.ToString("dddd", new System.Globalization.CultureInfo("tr-TR"));
-                        var isPast     = item.ReservationDate.Date < DateTime.Today;
-                        var isToday    = item.ReservationDate.Date == DateTime.Today;
-                        var isSoon     = item.ReservationDate.Date > DateTime.Today && item.ReservationDate.Date <= DateTime.Today.AddDays(7);
-
-                        /* Durum badge */
-                        string statusClass, statusLabel, statusDotStyle;
-                        if (isPast)        { statusClass = "b-gray";  statusLabel = "Tamamlandı"; statusDotStyle = ""; }
-                        else if (isToday)  { statusClass = "b-blue";  statusLabel = "Bugün";      statusDotStyle = ""; }
-                        else if (isSoon)   { statusClass = "b-amber"; statusLabel = "Yakında";    statusDotStyle = ""; }
-                        else               { statusClass = "b-green"; statusLabel = "Aktif";      statusDotStyle = ""; }
-
-                        var tourName = !string.IsNullOrWhiteSpace(item.TourTitle)
-                                       ? item.TourTitle
-                                       : ViewBag.TourNames != null &&
-                                         ((Dictionary<string,string>)ViewBag.TourNames).ContainsKey(item.TourId ?? "")
-                                         ? ((Dictionary<string,string>)ViewBag.TourNames)[item.TourId]
-                                         : item.TourId ?? "";
-
-                        var dateFormatted = item.ReservationDate.ToString("dd MMMM yyyy",
-                                            new System.Globalization.CultureInfo("tr-TR"));
-
-                        var pprice = item.PersonCount > 0
-                            ? (item.TotalPrice / item.PersonCount).ToString("N2")
-                            : "0,00";
-
-                        <tr id="@rowDomId"
-                            data-id="@item.ReservationId"
-                            data-name="@item.NameSurname?.ToLower()"
-                            data-email="@item.Email?.ToLower()"
-                            data-code="@item.ReservationCode?.ToLower()"
-                            data-tour="@item.TourId"
-                            data-date="@item.ReservationDate.ToString("yyyy-MM-dd")"
-                            data-persons="@item.PersonCount"
-                            data-price="@item.TotalPrice"
-                            data-detail-id="@item.ReservationId"
-                            data-detail-code="@item.ReservationCode"
-                            data-detail-name="@item.NameSurname"
-                            data-detail-phone="@item.Phone"
-                            data-detail-email="@item.Email"
-                            data-detail-city="@item.City"
-                            data-detail-country="@item.Country"
-                            data-detail-tour="@tourName"
-                            data-detail-date="@dateFormatted"
-                            data-detail-persons="@item.PersonCount"
-                            data-detail-price="@item.TotalPrice.ToString("N2")"
-                            data-detail-rawprice="@item.TotalPrice"
-                            data-detail-status="@statusLabel">
+                        <tr id="reservation-row-0" data-id="69c5abd1541362ee2b82355e" data-name="yusuf çetin" data-email="tufaneser429@gmail.com" data-code="rvz-c5jv-dzru" data-tour="699deb817d8380f05f1a9d16" data-date="2026-04-01" data-persons="3" data-price="19470" data-detail-id="69c5abd1541362ee2b82355e" data-detail-code="RVZ-C5JV-DZRU" data-detail-name="Yusuf Çetin" data-detail-phone="0535555555" data-detail-email="tufaneser429@gmail.com" data-detail-city="Ordu" data-detail-country="TR" data-detail-tour="Kapadokya Masalı: Balonlu 3 Günlük Kültür Turu" data-detail-date="01 Nisan 2026" data-detail-persons="3" data-detail-price="19.470,00" data-detail-rawprice="19470" data-detail-status="Yakında">
 
                             <!-- Checkbox -->
                             <td>
-                                <input type="checkbox" class="row-check"
-                                       style="width:14px;height:14px;cursor:pointer;accent-color:var(--indigo);"
-                                       value="@item.ReservationId" />
+                                <input type="checkbox" class="row-check" style="width:14px;height:14px;cursor:pointer;accent-color:var(--indigo);" value="69c5abd1541362ee2b82355e">
                             </td>
 
                             <!-- Müşteri -->
                             <td>
                                 <div class="person-cell">
-                                    <div class="av" style="background:@avColor;">@initials.ToUpper()</div>
+                                    <div class="av" style="background:linear-gradient(135deg,#3b82f6,#6366f1);">YÇ</div>
                                     <div>
-                                        <div class="av-name">@item.NameSurname</div>
-                                        <div class="av-email">@item.Email</div>
+                                        <div class="av-name">Yusuf Çetin</div>
+                                        <div class="av-email">tufaneser429@gmail.com</div>
                                     </div>
                                 </div>
                             </td>
 
                             <!-- Rezervasyon Kodu -->
                             <td>
-                                <span class="res-code">@item.ReservationCode</span>
+                                <span class="res-code">RVZ-C5JV-DZRU</span>
                             </td>
 
                             <!-- Tur -->
                             <td>
                                 <div class="tour-cell">
-                                    <div class="tour-name">@item.TourTitle</div>
-                                    <div class="tour-id">ID: @item.ReservationId?.Substring(0, Math.Min(8, item.ReservationId?.Length ?? 0))…</div>
+                                    <div class="tour-name">Kapadokya Masalı: Balonlu 3 Günlük Kültür Turu</div>
+                                    <div class="tour-id">ID: 69c5abd1…</div>
                                 </div>
                             </td>
 
                             <!-- Tarih -->
                             <td>
                                 <div class="date-cell">
-                                    <div class="date-main">@dateStr</div>
+                                    <div class="date-main">01 Nis 2026</div>
                                     <div style="display:flex;align-items:center;gap:5px;margin-top:3px;">
-                                        <span class="badge @statusClass" style="font-size:10px;padding:2px 7px;">
-                                            <span class="bd"></span>@statusLabel
+                                        <span class="badge b-amber" style="font-size:10px;padding:2px 7px;">
+                                            <span class="bd"></span>Yakında
                                         </span>
                                     </div>
                                 </div>
@@ -695,31 +2044,29 @@
                             <td>
                                 <span class="person-badge">
                                     <i class="fa-solid fa-user-group" style="font-size:10px;color:var(--text-muted);"></i>
-                                    @item.PersonCount
+                                    3
                                 </span>
                             </td>
 
                             <!-- Tutar -->
                             <td>
-                                <div class="price-cell">₺@item.TotalPrice.ToString("N2")</div>
-                                <div class="price-pp">₺@((item.PersonCount > 0 ? item.TotalPrice / item.PersonCount : 0).ToString("N0")) / kişi</div>
+                                <div class="price-cell">₺19.470,00</div>
+                                <div class="price-pp">₺6.490 / kişi</div>
                             </td>
 
                             <!-- Konum -->
                             <td>
-                                <div style="font-size:12.5px;font-weight:600;color:var(--text-primary);">@item.City</div>
-                                <div style="font-size:11px;color:var(--text-muted);">@item.Country</div>
+                                <div style="font-size:12.5px;font-weight:600;color:var(--text-primary);">Ordu</div>
+                                <div style="font-size:11px;color:var(--text-muted);">TR</div>
                             </td>
 
                             <!-- Rapor -->
                             <td>
                                 <div class="exp-wrap">
-                                    <button type="button" class="abt-xl export-row-btn" title="Excel olarak indir"
-                                            data-format="excel">
+                                    <button type="button" class="abt-xl export-row-btn" title="Excel olarak indir" onclick="openExportModalByRowId('reservation-row-0','excel');return false;" data-format="excel">
                                         <i class="fa-solid fa-file-excel"></i>
                                     </button>
-                                    <button type="button" class="abt-pdf export-row-btn" title="PDF olarak indir"
-                                            data-format="pdf">
+                                    <button type="button" class="abt-pdf export-row-btn" title="PDF olarak indir" onclick="openExportModalByRowId('reservation-row-0','pdf');return false;" data-format="pdf">
                                         <i class="fa-solid fa-file-pdf"></i>
                                     </button>
                                 </div>
@@ -728,23 +2075,18 @@
                             <!-- İşlemler -->
                             <td>
                                 <div class="acts" style="justify-content:center;">
-                                    <button type="button" class="abt v detail-btn" title="Detay Görüntüle">
+                                    <button type="button" class="abt v detail-btn" title="Detay Görüntüle" onclick="openDetailByRowId('reservation-row-0');return false;">
                                         <i class="fa-solid fa-eye"></i>
                                     </button>
-                                    <a href="/AdminReservation/Edit/@item.ReservationId" class="abt e" title="Düzenle">
+                                    <a href="/AdminReservation/Edit/69c5abd1541362ee2b82355e" class="abt e" title="Düzenle">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
-                                    <button type="button" class="abt d delete-btn" title="Sil"
-                                            data-delete-id="@item.ReservationId"
-                                            data-delete-name="@item.NameSurname"
-                                            data-delete-code="@item.ReservationCode">
+                                    <button type="button" class="abt d" title="Sil" onclick="confirmDelete('69c5abd1541362ee2b82355e','Yusuf Çetin','RVZ-C5JV-DZRU')">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </div>
                             </td>
                         </tr>
-                    }
-                }
             </tbody>
         </table>
 
@@ -759,16 +2101,16 @@
     <!-- Sayfalama -->
     <div class="c-foot">
         <div style="font-size:12px;color:var(--text-muted);">
-            Gösterilen: <strong style="color:var(--text-secondary);" id="pageInfo">1–@Math.Min(10, totalCount) / @totalCount</strong>
+            Gösterilen: <strong style="color:var(--text-secondary);" id="pageInfo">1–1 / 1</strong>
         </div>
         <div class="pag" style="padding:0;" id="pagination">
-            <button class="pg" id="prevBtn" disabled>
+            <button class="pg" onclick="changePage(-1)" id="prevBtn" disabled="">
                 <i class="fa-solid fa-chevron-left" style="font-size:10px;"></i>
             </button>
             <button class="pg on" id="page1Btn">1</button>
-            <button class="pg" id="page2Btn" style="@(totalCount > 10 ? "" : "display:none;")">2</button>
-            <button class="pg" id="page3Btn" style="@(totalCount > 20 ? "" : "display:none;")">3</button>
-            <button class="pg" id="nextBtn" @(totalCount <= 10 ? "disabled" : "")>
+            <button class="pg" id="page2Btn" style="display:none;">2</button>
+            <button class="pg" id="page3Btn" style="display:none;">3</button>
+            <button class="pg" onclick="changePage(1)" id="nextBtn" disabled="">
                 <i class="fa-solid fa-chevron-right" style="font-size:10px;"></i>
             </button>
         </div>
@@ -779,7 +2121,7 @@
 <!-- ═══════════════════════════════════════════════
      DETAY MODALI — Premium Tasarım
 ═══════════════════════════════════════════════ -->
-<div class="modal-ov" id="detailModal" data-close-on-overlay="true">
+<div class="modal-ov" id="detailModal" onclick="closeModal(event,'detailModal')">
     <div class="detail-modal-box">
 
         <!-- ── Banner (Header) ── -->
@@ -787,10 +2129,10 @@
             <div class="dm-banner-inner">
                 <div class="dm-avatar" id="dmAvatar"></div>
                 <div>
-                    <div class="dm-name"  id="dmName">—</div>
+                    <div class="dm-name" id="dmName">—</div>
                     <div class="dm-email" id="dmEmail">—</div>
                 </div>
-                <button type="button" class="dm-close" data-close-modal="detailModal">
+                <button class="dm-close" onclick="closeModalById('detailModal')">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -812,7 +2154,7 @@
                     <div class="dm-price-icon"><i class="fa-solid fa-money-bill-wave"></i></div>
                     <div>
                         <div class="dm-price-main" id="dmPrice">₺0,00</div>
-                        <div class="dm-price-sub"  id="dmPriceSub">—</div>
+                        <div class="dm-price-sub" id="dmPriceSub">—</div>
                     </div>
                     <div style="margin-left:auto;text-align:right;">
                         <div class="dm-person-block" id="dmPersonBubbles"></div>
@@ -823,7 +2165,7 @@
 
             <!-- Bölüm 1: Tur & Tarih -->
             <div class="dm-section">
-                <div class="dm-section-title"><i class="fa-solid fa-map-location-dot" style="color:var(--indigo);"></i> Tur & Rezervasyon</div>
+                <div class="dm-section-title"><i class="fa-solid fa-map-location-dot" style="color:var(--indigo);"></i> Tur &amp; Rezervasyon</div>
                 <div class="dm-grid">
                     <div class="dm-field span2">
                         <div class="dm-label">Tur Adı</div>
@@ -882,10 +2224,10 @@
 
         <!-- ── Footer ── -->
         <div class="dm-footer">
-            <button type="button" class="btn btn-ghost" data-close-modal="detailModal" style="flex:1;">
+            <button type="button" class="btn btn-ghost" onclick="closeModalById('detailModal')" style="flex:1;">
                 <i class="fa-solid fa-xmark"></i> Kapat
             </button>
-            <button type="button" class="btn btn-ghost" style="flex:1;" id="dmCopyBtn">
+            <button type="button" class="btn btn-ghost" onclick="copyResCode()" style="flex:1;" id="dmCopyBtn">
                 <i class="fa-regular fa-copy"></i> Kodu Kopyala
             </button>
             <a id="mdEditLink" href="#" class="btn btn-primary" style="flex:1.5;">
@@ -899,7 +2241,7 @@
 <!-- ═══════════════════════════════════════════════
      SİLME ONAY MODALI
 ═══════════════════════════════════════════════ -->
-<div class="modal-ov" id="deleteModal" data-close-on-overlay="true">
+<div class="modal-ov" id="deleteModal" onclick="closeModal(event,'deleteModal')">
     <div class="del-modal-box">
         <div class="del-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
         <div class="del-title">Rezervasyonu Sil?</div>
@@ -907,11 +2249,10 @@
             Bu rezervasyonu kalıcı olarak silmek istediğinizden emin misiniz?
         </div>
         <div class="del-acts">
-            <button type="button" class="btn btn-ghost" data-close-modal="deleteModal">
+            <button type="button" class="btn btn-ghost" onclick="closeModalById('deleteModal')">
                 <i class="fa-solid fa-xmark"></i> İptal
             </button>
-            <a id="delConfirmBtn" href="#" class="btn"
-               style="background:linear-gradient(135deg,#f43f5e,#e11d48);color:#fff;box-shadow:0 2px 14px rgba(244,63,94,.35);">
+            <a id="delConfirmBtn" href="#" class="btn" style="background:linear-gradient(135deg,#f43f5e,#e11d48);color:#fff;box-shadow:0 2px 14px rgba(244,63,94,.35);">
                 <i class="fa-solid fa-trash"></i> Evet, Sil
             </a>
         </div>
@@ -921,7 +2262,7 @@
 <!-- ═══════════════════════════════════════════════
      EXPORT FORMAT SEÇIM MODALI
 ═══════════════════════════════════════════════ -->
-<div class="modal-ov" id="exportModal" data-close-on-overlay="true">
+<div class="modal-ov" id="exportModal" onclick="closeModal(event,'exportModal')">
     <div class="exp-modal-box">
 
         <div class="exp-modal-head">
@@ -982,11 +2323,10 @@
         </div>
 
         <div class="exp-modal-foot">
-            <button type="button" class="btn btn-ghost" data-close-modal="exportModal" style="flex:1;">
+            <button type="button" class="btn btn-ghost" onclick="closeModalById('exportModal')" style="flex:1;">
                 <i class="fa-solid fa-xmark"></i> İptal
             </button>
-            <button type="button" class="btn" id="expDownloadBtn"
-                    style="flex:2;background:linear-gradient(135deg,#10b981,#059669);color:#fff;box-shadow:0 2px 14px rgba(16,185,129,.35);">
+            <button type="button" class="btn" id="expDownloadBtn" style="flex:2;background:linear-gradient(135deg,#10b981,#059669);color:#fff;box-shadow:0 2px 14px rgba(16,185,129,.35);">
                 <i class="fa-solid fa-download"></i> İndir
             </button>
         </div>
@@ -994,7 +2334,34 @@
     </div>
 </div>
 
-@section Scripts {
+
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <div class="toast-c" id="toastC"></div>
+
+    <script>
+        document.getElementById('sbToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        });
+
+        window.showToast = function(msg, type='i') {
+            const ic = { s:'fa-circle-check', e:'fa-circle-xmark', i:'fa-circle-info' };
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.innerHTML = `<i class="fa-solid ${ic[type]||ic.i}"></i><span>${msg}</span>`;
+            document.getElementById('toastC').appendChild(t);
+            setTimeout(() => { t.style.cssText='opacity:0;transition:.3s'; setTimeout(()=>t.remove(),300); }, 3300);
+        };
+
+    </script>
+
+    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
 <script>
 /* ==============================================
    FİLTRELEME
@@ -1481,7 +2848,7 @@ function exportRowPdf(d) {
         '.ps{font-size:11px;color:#16a34a;margin-top:2px}',
         '.ft{border-top:1px solid #e2e8f0;padding:12px 36px;font-size:9px;color:#94a3b8;',
         '    display:flex;justify-content:space-between}',
-        '@@media print{',
+        '@media print{',
         ' body{-webkit-print-color-adjust:exact;print-color-adjust:exact}',
         ' .hd{background:#0f172a !important;-webkit-print-color-adjust:exact}',
         '}',
@@ -1523,8 +2890,8 @@ function exportRowPdf(d) {
         '  <span>Vitour Admin Panel</span>',
         '  <span>Gizlidir \u2014 Yaln\u0131zca yetkili personel</span>',
         '</div>',
-        '</body>',
-        '</html>'
+        '<script src="/_framework/aspnetcore-browser-refresh.js"></script>',
+        ''
     ].join('\n');
 
     var win = window.open('', '_blank', 'width=820,height=940,scrollbars=yes');
@@ -1645,7 +3012,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     applyFilters();
 });
-</script>
-<script src="~/js/admin-reservation-list.js" asp-append-version="true"></script>
-}
 
+
+
+
+<!-- Visual Studio Browser Link -->
+<script type="text/javascript" src="/_vs/browserLink" async="async" id="__browserLink_initializationData" data-requestid="ad09df6a87e04c0ea23d89f1c469a45a" data-requestmappingfromserver="false" data-connecturl="http://localhost:13219/b42715094176471b8534e3a200346b4f/browserLink"></script>
+<!-- End Browser Link -->
+
+
+
+
+</body></html>
