@@ -6,6 +6,54 @@ namespace Project3Vitour.Services.HuggingFaceService
 {
     public class HuggingFaceService
     {
+        private const double NeutralConfidenceThreshold = 0.60;
+        private const double NeutralMarginThreshold = 0.12;
+        private static readonly string[] NeutralCuePhrases =
+        {
+            "genel olarak",
+            "standart bir deneyim",
+            "standart düzeyde",
+            "ortalama bir deneyim",
+            "ortalama düzeyde",
+            "dengeli bir deneyim",
+            "normal seviyede",
+            "beklentimi normal",
+            "beklentimi karşıladı",
+            "çok güçlü olumlu ya da olumsuz",
+            "güçlü olumlu ya da olumsuz",
+            "ne çok etkileyici ne de kötü",
+            "ne çok iyi ne de kötü",
+            "ne iyi ne kötü",
+            "orta seviyede",
+            "olması gerektiği gibiydi",
+            "belirgin bir aksaklık yaşanmadı",
+            "ciddi bir problem yaşanmadı"
+        };
+
+        private static readonly string[] StrongPositivePhrases =
+        {
+            "harika",
+            "mükemmel",
+            "muhteşem",
+            "çok memnun",
+            "inanılmaz",
+            "mükemmeldi",
+            "şahane",
+            "çok güzeldi"
+        };
+
+        private static readonly string[] StrongNegativePhrases =
+        {
+            "berbat",
+            "kötüydü",
+            "hayal kırıklığı",
+            "memnun kalmadım",
+            "rezaletti",
+            "yetersizdi",
+            "çok kötü",
+            "pişman oldum"
+        };
+
         private readonly HttpClient _httpClient;
         private readonly string _apiKey;
         private readonly string _modelUrl;
@@ -75,11 +123,13 @@ namespace Project3Vitour.Services.HuggingFaceService
                     return ("Nötr", 0, false);
                 }
 
-                var best = candidates
+                var ranked = candidates
                     .EnumerateArray()
                     .Where(x => x.ValueKind == JsonValueKind.Object && x.TryGetProperty("score", out _))
                     .OrderByDescending(x => x.GetProperty("score").GetDouble())
-                    .FirstOrDefault();
+                    .ToList();
+
+                var best = ranked.FirstOrDefault();
 
                 if (best.ValueKind != JsonValueKind.Object)
                     return ("Nötr", 0, false);
@@ -93,12 +143,76 @@ namespace Project3Vitour.Services.HuggingFaceService
                     : 0;
 
                 var label = NormalizeApiLabel(rawLabel);
+                if (ShouldTreatAsNeutral(text, label, score, ranked))
+                {
+                    return ("Nötr", Math.Round(score, 4), true);
+                }
+
                 return (label, Math.Round(score, 4), true);
             }
             catch
             {
                 return ("Nötr", 0, false);
             }
+        }
+
+        private static bool ShouldTreatAsNeutral(string text, string label, double score, List<JsonElement> ranked)
+        {
+            if (string.Equals(label, "Nötr", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            if (HasNeutralLanguagePattern(text))
+            {
+                return true;
+            }
+
+            if (score < NeutralConfidenceThreshold)
+            {
+                return true;
+            }
+
+            if (ranked.Count < 2)
+            {
+                return false;
+            }
+
+            var secondScore = ranked[1].TryGetProperty("score", out var secondScoreProp)
+                ? secondScoreProp.GetDouble()
+                : 0;
+
+            return (score - secondScore) < NeutralMarginThreshold;
+        }
+
+        private static bool HasNeutralLanguagePattern(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return false;
+            }
+
+            var normalized = text.Trim().ToLowerInvariant();
+            var neutralHits = NeutralCuePhrases.Count(normalized.Contains);
+            var strongPositiveHits = StrongPositivePhrases.Count(normalized.Contains);
+            var strongNegativeHits = StrongNegativePhrases.Count(normalized.Contains);
+
+            if (normalized.Contains("ne çok") && normalized.Contains("ne de"))
+            {
+                return true;
+            }
+
+            if (neutralHits >= 2 && strongPositiveHits == 0 && strongNegativeHits == 0)
+            {
+                return true;
+            }
+
+            if (neutralHits >= 1 && strongPositiveHits > 0 && strongNegativeHits > 0)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private static string NormalizeApiLabel(string rawLabel)

@@ -1,0 +1,1830 @@
+﻿@using Project3Vitour.Dtos.ReservationDtos
+@model IEnumerable<ResultReservationDto>
+@{
+    ViewData["Title"] = "Reports";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+@{
+    int totalCount = Model?.Count() ?? 0;
+    int activeCount = Model?.Count(r => r.ReservationDate >= DateTime.Today) ?? 0;
+    int pastCount = Model?.Count(r => r.ReservationDate.Date < DateTime.Today) ?? 0;
+    int todayCount = Model?.Count(r => r.ReservationDate.Date == DateTime.Today) ?? 0;
+    decimal totalRev = Model?.Sum(r => r.TotalPrice) ?? 0;
+    decimal avgRev = totalCount > 0 ? totalRev / totalCount : 0;
+}
+
+@section Styles {
+    <style>
+        /* ════════════════════════════════════════════
+           REPORT PAGE — özel stiller
+        ════════════════════════════════════════════ */
+
+        /* Stat renkleri */
+        .s-ico.amber {
+            background: rgba(245,158,11,.14);
+            color: #f59e0b;
+        }
+
+        .s-ico.blue {
+            background: rgba(59,130,246,.14);
+            color: #3b82f6;
+        }
+
+        .s-ico.green {
+            background: rgba(16,185,129,.14);
+            color: #10b981;
+        }
+
+        .s-ico.violet {
+            background: rgba(139,92,246,.14);
+            color: #8b5cf6;
+        }
+
+        .s-ico.rose {
+            background: rgba(244,63,94,.14);
+            color: #f43f5e;
+        }
+
+        /* ── HERO BANNER ── */
+        .rp-hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: var(--r-lg);
+            padding: 28px 32px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-lg);
+        }
+
+            .rp-hero::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(ellipse 70% 120% at 100% 50%, rgba(99,102,241,.30) 0%, transparent 60%), radial-gradient(ellipse 50% 90% at 0% 50%, rgba(16,185,129,.18) 0%, transparent 60%);
+            }
+
+            .rp-hero::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
+                opacity: .6;
+            }
+
+        .rp-hero-inner {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .rp-hero-left h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -.6px;
+            line-height: 1.15;
+            margin-bottom: 6px;
+        }
+
+        .rp-hero-left p {
+            font-size: 13px;
+            color: rgba(226,232,240,.6);
+            max-width: 440px;
+            line-height: 1.55;
+        }
+
+        .rp-hero-chips {
+            display: flex;
+            gap: 8px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .rp-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 11px;
+            border-radius: 20px;
+            background: rgba(255,255,255,.10);
+            border: 1px solid rgba(255,255,255,.15);
+            color: rgba(226,232,240,.85);
+            font-family: 'DM Mono', monospace;
+        }
+
+        .rp-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            line-height: 1.4;
+        }
+
+        .rp-status-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: currentColor;
+            flex: 0 0 5px;
+        }
+
+            .rp-chip i {
+                font-size: 9px;
+            }
+
+        .rp-hero-right {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .rp-quick-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: var(--r-sm);
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            cursor: pointer;
+            border: none;
+            transition: all var(--t);
+            line-height: 1;
+        }
+
+            .rp-quick-btn.xl {
+                background: linear-gradient(135deg, #10b981, #059669);
+                color: #fff;
+                box-shadow: 0 2px 14px rgba(16,185,129,.35), inset 0 1px 0 rgba(255,255,255,.15);
+            }
+
+                .rp-quick-btn.xl:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 6px 22px rgba(16,185,129,.45);
+                }
+
+            .rp-quick-btn.pdf {
+                background: linear-gradient(135deg, #f43f5e, #e11d48);
+                color: #fff;
+                box-shadow: 0 2px 14px rgba(244,63,94,.35), inset 0 1px 0 rgba(255,255,255,.15);
+            }
+
+                .rp-quick-btn.pdf:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 6px 22px rgba(244,63,94,.45);
+                }
+
+        /* ── FILTER PANEL ── */
+        .rp-filter-card {
+            background: #fff;
+            border: 1px solid rgba(226,232,240,.8);
+            border-radius: var(--r-md);
+            box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,.9);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .rp-filter-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 20px;
+            border-bottom: 1px solid #f0f4f8;
+            background: #fafbfc;
+        }
+
+        .rp-filter-head-ic {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            background: #ede9fe;
+            color: #6d28d9;
+        }
+
+        .rp-filter-head h3 {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .rp-filter-head p {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+
+        .rp-filter-body {
+            padding: 18px 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
+        @@media (max-width: 1100px) {
+            .rp-filter-body
+
+        {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        }
+        @@media (max-width: 640px) {
+            .rp-filter-body
+
+        {
+            grid-template-columns: 1fr;
+        }
+
+        }
+
+        .rp-ff {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+            .rp-ff label {
+                font-size: 11px;
+                font-weight: 700;
+                color: #374151;
+                letter-spacing: .04em;
+                text-transform: uppercase;
+                font-family: 'DM Mono', monospace;
+            }
+
+            .rp-ff input,
+            .rp-ff select {
+                height: 38px;
+                border: 1px solid #d1d5db;
+                border-radius: 9px;
+                padding: 0 12px;
+                font-size: 13px;
+                font-family: 'Plus Jakarta Sans', sans-serif;
+                color: var(--text-primary);
+                background: #fafafa;
+                outline: none;
+                transition: border-color .18s, box-shadow .18s, background .18s;
+            }
+
+            .rp-ff select {
+                appearance: none;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394a3b8'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 10px center;
+                background-color: #fafafa;
+                padding-right: 28px;
+            }
+
+                .rp-ff input:focus, .rp-ff select:focus {
+                    border-color: #6366f1;
+                    background: #fff;
+                    box-shadow: 0 0 0 3px rgba(99,102,241,.10);
+                }
+
+        .rp-filter-foot {
+            padding: 13px 20px;
+            border-top: 1px solid #f0f4f8;
+            background: #fafbfc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .rp-result-info {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: 'DM Mono', monospace;
+        }
+
+            .rp-result-info strong {
+                color: var(--text-secondary);
+            }
+
+        .rp-filter-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* ── EXPORT CARDS ── */
+        .rp-export-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+        @@media (max-width: 900px) {
+            .rp-export-grid
+
+        {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        }
+        @@media (max-width: 600px) {
+            .rp-export-grid
+
+        {
+            grid-template-columns: 1fr;
+        }
+
+        }
+
+        .rp-exp-card {
+            background: #fff;
+            border: 1px solid rgba(226,232,240,.8);
+            border-radius: var(--r-md);
+            padding: 20px;
+            box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,.9);
+            position: relative;
+            overflow: hidden;
+            transition: transform var(--t), box-shadow var(--t);
+            cursor: pointer;
+        }
+
+            .rp-exp-card:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-md);
+            }
+
+            .rp-exp-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+            }
+
+            .rp-exp-card.xl::before {
+                background: linear-gradient(90deg, #10b981, #059669);
+            }
+
+            .rp-exp-card.pdf::before {
+                background: linear-gradient(90deg, #f43f5e, #dc2626);
+            }
+
+            .rp-exp-card.csv::before {
+                background: linear-gradient(90deg, #3b82f6, #6366f1);
+            }
+
+        .rp-exp-ic {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .xl .rp-exp-ic {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .pdf .rp-exp-ic {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .csv .rp-exp-ic {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .rp-exp-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .rp-exp-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.55;
+            margin-bottom: 14px;
+        }
+
+        .rp-exp-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            font-size: 12.5px;
+            font-weight: 700;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            cursor: pointer;
+            transition: all var(--t);
+        }
+
+        .xl .rp-exp-btn {
+            background: #10b981;
+            color: #fff;
+            box-shadow: 0 2px 10px rgba(16,185,129,.3);
+        }
+
+            .xl .rp-exp-btn:hover {
+                background: #059669;
+                transform: translateY(-1px);
+            }
+
+        .pdf .rp-exp-btn {
+            background: #f43f5e;
+            color: #fff;
+            box-shadow: 0 2px 10px rgba(244,63,94,.3);
+        }
+
+            .pdf .rp-exp-btn:hover {
+                background: #e11d48;
+                transform: translateY(-1px);
+            }
+
+        .csv .rp-exp-btn {
+            background: #3b82f6;
+            color: #fff;
+            box-shadow: 0 2px 10px rgba(59,130,246,.3);
+        }
+
+            .csv .rp-exp-btn:hover {
+                background: #2563eb;
+                transform: translateY(-1px);
+            }
+
+        .rp-exp-count {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-family: 'DM Mono', monospace;
+        }
+
+        .xl .rp-exp-count {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .pdf .rp-exp-count {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .csv .rp-exp-count {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        /* ── RESULTS TABLE ── */
+        .rp-table-card {
+            background: #fff;
+            border: 1px solid rgba(226,232,240,.8);
+            border-radius: var(--r-md);
+            box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,.9);
+            overflow: hidden;
+        }
+
+        .person-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .av-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .av-email {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .date-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .date-main {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .price-cell {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -.3px;
+        }
+
+        .price-pp {
+            font-size: 10.5px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 1px;
+        }
+
+        .res-code {
+            font-family: 'DM Mono',monospace;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--indigo);
+            background: #ede9fe;
+            border: 1px solid #ddd6fe;
+            border-radius: 6px;
+            padding: 2px 8px;
+            display: inline-block;
+        }
+
+        /* Row animasyonu */
+        .dtbl tbody tr {
+            animation: fadeUp .25s both;
+        }
+
+            .dtbl tbody tr:nth-child(1) {
+                animation-delay: .03s
+            }
+
+            .dtbl tbody tr:nth-child(2) {
+                animation-delay: .06s
+            }
+
+            .dtbl tbody tr:nth-child(3) {
+                animation-delay: .09s
+            }
+
+            .dtbl tbody tr:nth-child(4) {
+                animation-delay: .12s
+            }
+
+            .dtbl tbody tr:nth-child(5) {
+                animation-delay: .15s
+            }
+
+            .dtbl tbody tr:nth-child(6) {
+                animation-delay: .18s
+            }
+
+            .dtbl tbody tr:nth-child(7) {
+                animation-delay: .21s
+            }
+
+            .dtbl tbody tr:nth-child(8) {
+                animation-delay: .24s
+            }
+
+        /* ── SUMMARY SIDEBAR ── */
+        .rp-two-col {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 16px;
+            align-items: start;
+        }
+        @@media (max-width: 1100px) {
+            .rp-two-col
+
+        {
+            grid-template-columns: 1fr;
+        }
+
+        }
+
+        .rp-summary-card {
+            background: #fff;
+            border: 1px solid rgba(226,232,240,.8);
+            border-radius: var(--r-md);
+            box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,.9);
+            overflow: hidden;
+        }
+
+        .rp-summary-head {
+            padding: 14px 18px;
+            border-bottom: 1px solid #f0f4f8;
+            background: #fafbfc;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .rp-summary-head h3 {
+                font-size: 13px;
+                font-weight: 800;
+                color: var(--text-primary);
+            }
+
+        .rp-summary-body {
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .rp-stat-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-radius: 9px;
+            background: #f8fafc;
+            border: 1px solid #f0f4f8;
+        }
+
+        .rp-stat-row-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .rp-stat-row-val {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-primary);
+            font-family: 'DM Mono', monospace;
+        }
+
+            .rp-stat-row-val.green {
+                color: #15803d;
+            }
+
+            .rp-stat-row-val.blue {
+                color: #1d4ed8;
+            }
+
+            .rp-stat-row-val.violet {
+                color: #6d28d9;
+            }
+
+            .rp-stat-row-val.amber {
+                color: #b45309;
+            }
+
+        /* Progress bar */
+        .rp-prog {
+            height: 5px;
+            border-radius: 99px;
+            background: #e2e8f0;
+            overflow: hidden;
+            margin-top: 3px;
+        }
+
+        .rp-prog-fill {
+            height: 100%;
+            border-radius: 99px;
+            background: linear-gradient(90deg, #10b981, #06b6d4);
+            transition: width .6s cubic-bezier(.4,0,.2,1);
+        }
+
+        /* spinner */
+        .exp-spinner {
+            display: inline-block;
+            width: 13px;
+            height: 13px;
+            border: 2px solid rgba(255,255,255,.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .6s linear infinite;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+        @@keyframes spin {
+            to
+
+        {
+            transform: rotate(360deg)
+        }
+
+        }
+    </style>
+}
+
+<!-- ══════════════════════════════════════════
+     HERO BANNER
+══════════════════════════════════════════ -->
+<div class="rp-hero anim">
+    <div class="rp-hero-inner">
+        <div class="rp-hero-left">
+            <h1><i class="fa-solid fa-chart-line" style="margin-right:10px;color:#818cf8;"></i>Rezervasyon Raporları</h1>
+            <p>Tüm rezervasyonları filtreleyin, analiz edin ve dilediğiniz formatta dışa aktarın.</p>
+            <div class="rp-hero-chips">
+                <span class="rp-chip"><i class="fa-solid fa-database"></i> @totalCount Kayıt</span>
+                <span class="rp-chip"><i class="fa-solid fa-money-bill-wave"></i> ₺@totalRev.ToString("N0") Toplam</span>
+                <span class="rp-chip"><i class="fa-solid fa-calendar-day"></i> @DateTime.Today.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("tr-TR"))</span>
+            </div>
+        </div>
+        <div class="rp-hero-right">
+            <a class="rp-quick-btn xl" id="quickXlBtn" href="@Url.Action("ExportAllExcel", "AdminSettings")">
+                <i class="fa-solid fa-file-excel"></i> Tümünü Excel
+            </a>
+            <a class="rp-quick-btn pdf" id="quickPdfBtn" href="@Url.Action("ExportAllPdf", "AdminSettings")">
+                <i class="fa-solid fa-file-pdf"></i> Tümünü PDF
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     STAT KARTLARI
+══════════════════════════════════════════ -->
+<div class="s-grid" style="margin-bottom:20px;">
+    <div class="s-card anim">
+        <div class="s-ico amber"><i class="fa-solid fa-calendar-check"></i></div>
+        <div>
+            <div class="s-lbl">Toplam Rezervasyon</div>
+            <div class="s-val" id="statTotal">@totalCount</div>
+            <div class="s-delta">Tüm zamanlar</div>
+        </div>
+    </div>
+    <div class="s-card anim">
+        <div class="s-ico green"><i class="fa-solid fa-money-bill-wave"></i></div>
+        <div>
+            <div class="s-lbl">Toplam Gelir</div>
+            <div class="s-val" id="statRev">₺@totalRev.ToString("N0")</div>
+            <div class="s-delta"><span class="up"><i class="fa-solid fa-arrow-trend-up"></i> +8.4%</span> bu ay</div>
+        </div>
+    </div>
+    <div class="s-card anim">
+        <div class="s-ico blue"><i class="fa-solid fa-hourglass-half"></i></div>
+        <div>
+            <div class="s-lbl">Aktif / Gelecek</div>
+            <div class="s-val" id="statActive">@activeCount</div>
+            <div class="s-delta">Bugün ve sonrası</div>
+        </div>
+    </div>
+    <div class="s-card anim">
+        <div class="s-ico violet"><i class="fa-solid fa-calculator"></i></div>
+        <div>
+            <div class="s-lbl">Ortalama Tutar</div>
+            <div class="s-val">₺@avgRev.ToString("N0")</div>
+            <div class="s-delta">Rezervasyon başına</div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     EXPORT FORMAT KARTLARI
+══════════════════════════════════════════ -->
+<div class="rp-export-grid anim">
+
+    <div class="rp-exp-card xl" onclick="window.location.href='@Url.Action("ExportAllExcel", "AdminSettings")'">
+        <span class="rp-exp-count" id="expCountXl">@totalCount kayıt</span>
+        <div class="rp-exp-ic"><i class="fa-solid fa-file-excel"></i></div>
+        <div class="rp-exp-title">Excel Raporu</div>
+        <div class="rp-exp-desc">Filtrelenmiş tüm rezervasyonlar sekme ayrımlı .xlsx formatında. Pivot tablo ve sıralama desteği.</div>
+        <a class="rp-exp-btn" id="btnXl" href="@Url.Action("ExportAllExcel", "AdminSettings")">
+            <i class="fa-solid fa-download"></i> Excel İndir
+        </a>
+    </div>
+
+    <div class="rp-exp-card pdf" onclick="window.location.href='@Url.Action("ExportAllPdf", "AdminSettings")'">
+        <span class="rp-exp-count" id="expCountPdf">@totalCount kayıt</span>
+        <div class="rp-exp-ic"><i class="fa-solid fa-file-pdf"></i></div>
+        <div class="rp-exp-title">PDF Raporu</div>
+        <div class="rp-exp-desc">Yazdırılmaya hazır, kurumsal görünümlü PDF. Arşivleme ve paylaşım için idealdir.</div>
+        <a class="rp-exp-btn" id="btnPdf" href="@Url.Action("ExportAllPdf", "AdminSettings")">
+            <i class="fa-solid fa-download"></i> PDF İndir
+        </a>
+    </div>
+
+    <div class="rp-exp-card csv" onclick="exportCsv()">
+        <span class="rp-exp-count" id="expCountCsv">@totalCount kayıt</span>
+        <div class="rp-exp-ic"><i class="fa-solid fa-file-csv"></i></div>
+        <div class="rp-exp-title">CSV Dışa Aktar</div>
+        <div class="rp-exp-desc">Ham veri .csv formatında. Üçüncü taraf araçlar ve veritabanı aktarımı için uygundur.</div>
+        <button type="button" class="rp-exp-btn" id="btnCsv">
+            <i class="fa-solid fa-download"></i> CSV İndir
+        </button>
+    </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     FİLTRE PANELİ
+══════════════════════════════════════════ -->
+<div class="rp-filter-card anim">
+    <div class="rp-filter-head">
+        <div class="rp-filter-head-ic"><i class="fa-solid fa-sliders"></i></div>
+        <div>
+            <h3>Rapor Filtresi</h3>
+            <p>Raporlanacak veri aralığını daraltın.</p>
+        </div>
+        <div style="margin-left:auto;">
+            <span id="activeFilterBadge" style="display:none;"
+                  class="badge b-violet" style="font-size:11px;">
+                <span class="bd"></span><span id="activeFilterCount">0</span> aktif filtre
+            </span>
+        </div>
+    </div>
+
+    <div class="rp-filter-body">
+        <!-- Ad / Soyad / Kod -->
+        <div class="rp-ff">
+            <label><i class="fa-solid fa-magnifying-glass" style="margin-right:4px;"></i> Müşteri / Kod</label>
+            <input type="text" id="rfSearch" placeholder="İsim, e-posta, kod…" oninput="applyRpFilter()" />
+        </div>
+        <!-- Tur -->
+        <div class="rp-ff">
+            <label><i class="fa-solid fa-map-location-dot" style="margin-right:4px;"></i> Tur</label>
+            <select id="rfTour" onchange="applyRpFilter()">
+                <option value="">Tüm Turlar</option>
+                @if (Model != null)
+                {
+                    foreach (var t in Model.Select(r => r.TourId).Distinct().Where(x => x != null))
+                    {
+                        <option value="@t">@t</option>
+                    }
+                }
+            </select>
+        </div>
+        <!-- Tarih Başlangıç -->
+        <div class="rp-ff">
+            <label><i class="fa-solid fa-calendar-day" style="margin-right:4px;"></i> Başlangıç Tarihi</label>
+            <input type="date" id="rfDateFrom" onchange="applyRpFilter()" />
+        </div>
+        <!-- Tarih Bitiş -->
+        <div class="rp-ff">
+            <label><i class="fa-solid fa-calendar-check" style="margin-right:4px;"></i> Bitiş Tarihi</label>
+            <input type="date" id="rfDateTo" onchange="applyRpFilter()" />
+        </div>
+        <!-- Min Tutar -->
+        <div class="rp-ff">
+            <label><i class="fa-solid fa-turkish-lira-sign" style="margin-right:4px;"></i> Min Tutar (₺)</label>
+            <input type="number" id="rfPriceMin" placeholder="0" min="0" oninput="applyRpFilter()" />
+        </div>
+        <!-- Max Tutar -->
+        <div class="rp-ff">
+            <label><i class="fa-solid fa-turkish-lira-sign" style="margin-right:4px;"></i> Max Tutar (₺)</label>
+            <input type="number" id="rfPriceMax" placeholder="Sınırsız" min="0" oninput="applyRpFilter()" />
+        </div>
+        <!-- Kişi Sayısı -->
+        <div class="rp-ff">
+            <label><i class="fa-solid fa-users" style="margin-right:4px;"></i> Kişi Sayısı</label>
+            <select id="rfPersons" onchange="applyRpFilter()">
+                <option value="">Tümü</option>
+                <option value="1">1 Kişi</option>
+                <option value="2-5">2–5 Kişi</option>
+                <option value="6-10">6–10 Kişi</option>
+                <option value="10+">10+ Kişi</option>
+            </select>
+        </div>
+        <!-- Durum -->
+        <div class="rp-ff">
+            <label><i class="fa-solid fa-circle-half-stroke" style="margin-right:4px;"></i> Durum</label>
+            <select id="rfStatus" onchange="applyRpFilter()">
+                <option value="">Tüm Durumlar</option>
+                <option value="Aktif">Aktif</option>
+                <option value="Yakında">Yakında</option>
+                <option value="Bugün">Bugün</option>
+                <option value="Tamamlandı">Tamamlandı</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="rp-filter-foot">
+        <div class="rp-result-info">
+            <i class="fa-solid fa-table-list" style="margin-right:5px;color:var(--indigo);"></i>
+            Filtrelenmiş: <strong id="rpVisibleCount">@totalCount</strong> rezervasyon
+            &nbsp;·&nbsp;
+            Toplam: <strong id="rpFilteredRev">₺@totalRev.ToString("N0")</strong>
+        </div>
+        <div class="rp-filter-btns">
+            <button type="button" class="btn btn-ghost" onclick="clearRpFilter()">
+                <i class="fa-solid fa-xmark"></i> Temizle
+            </button>
+            <button type="button" class="btn btn-primary" onclick="exportBulkExcel()">
+                <i class="fa-solid fa-file-excel"></i> Filtrelenenleri Dışa Aktar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TABLO + ÖZET (2 kolon)
+══════════════════════════════════════════ -->
+<div class="rp-two-col anim">
+
+    <!-- Tablo -->
+    <div class="rp-table-card">
+        <div class="c-head">
+            <div>
+                <div class="c-title">Rezervasyon Listesi</div>
+                <div class="c-sub">Filtrelenmiş sonuçlar — satır bazında rapor alabilirsiniz.</div>
+            </div>
+            <div class="ph-acts">
+                <label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text-secondary);cursor:pointer;">
+                    <input type="checkbox" id="checkAll" style="accent-color:var(--indigo);width:14px;height:14px;" />
+                    Tümünü Seç
+                </label>
+                <button type="button" class="btn btn-ghost" id="selExportBtn" style="display:none;" onclick="exportSelected()">
+                    <i class="fa-solid fa-file-export"></i> Seçilenleri Aktar
+                </button>
+            </div>
+        </div>
+
+        <div style="overflow-x:auto;">
+            <table class="dtbl" id="rpTable">
+                <thead>
+                    <tr>
+                        <th style="width:36px;"></th>
+                        <th>Müşteri</th>
+                        <th>Kod</th>
+                        <th>Tur</th>
+                        <th>Tarih</th>
+                        <th>Kişi</th>
+                        <th>Tutar</th>
+                        <th style="text-align:center;">Rapor</th>
+                    </tr>
+                </thead>
+                <tbody id="rpBody">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            var parts = (item.NameSurname ?? "").Split(' ');
+                            var initials = parts.Length >= 2
+                            ? $"{parts[0][0]}{parts[^1][0]}"
+                            : (item.NameSurname?.Length > 0 ? item.NameSurname[0].ToString() : "?");
+
+                            var avColors = new[] {
+                                        "linear-gradient(135deg,#3b82f6,#6366f1)",
+                                        "linear-gradient(135deg,#10b981,#06b6d4)",
+                                        "linear-gradient(135deg,#f59e0b,#ef4444)",
+                                        "linear-gradient(135deg,#8b5cf6,#ec4899)",
+                                        "linear-gradient(135deg,#06b6d4,#3b82f6)"
+                                        };
+                            var ci = Math.Abs((item.NameSurname ?? "").GetHashCode()) % avColors.Length;
+
+                            var dateStr = item.ReservationDate.ToString("dd MMM yyyy", new System.Globalization.CultureInfo("tr-TR"));
+                            var dateFormatted = item.ReservationDate.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("tr-TR"));
+
+                            var isPast = item.ReservationDate.Date < DateTime.Today;
+                            var isToday = item.ReservationDate.Date == DateTime.Today;
+                            var isSoon = item.ReservationDate.Date > DateTime.Today && item.ReservationDate.Date <= DateTime.Today.AddDays(7);
+
+                            string statusLabel, statusClass;
+                            if (isPast) { statusLabel = "Tamamlandı"; statusClass = "b-gray"; }
+                            else if (isToday) { statusLabel = "Bugün"; statusClass = "b-blue"; }
+                            else if (isSoon) { statusLabel = "Yakında"; statusClass = "b-amber"; }
+                            else { statusLabel = "Aktif"; statusClass = "b-green"; }
+
+                            var tourName = !string.IsNullOrWhiteSpace(item.TourTitle) ? item.TourTitle : (item.TourId ?? "");
+
+                            <tr data-name="@item.NameSurname?.ToLower()"
+                                data-email="@item.Email?.ToLower()"
+                                data-code="@item.ReservationCode?.ToLower()"
+                                data-tour="@item.TourId"
+                                data-date="@item.ReservationDate.ToString("yyyy-MM-dd")"
+                                data-price="@item.TotalPrice"
+                                data-persons="@item.PersonCount"
+                                data-status="@statusLabel"
+                                data-filtered="false"
+                                data-export-name="@item.NameSurname"
+                                data-export-email="@item.Email"
+                                data-export-phone="@item.Phone"
+                                data-export-code="@(item.ReservationCode?.ToUpper())"
+                                data-export-tour="@tourName"
+                                data-export-date="@dateFormatted"
+                                data-export-persons="@item.PersonCount"
+                                data-export-price="@item.TotalPrice"
+                                data-export-city="@item.City"
+                                data-export-country="@item.Country"
+                                data-export-status="@statusLabel">
+
+                                <td>
+                                    <input type="checkbox" class="row-chk"
+                                           style="width:14px;height:14px;cursor:pointer;accent-color:var(--indigo);" />
+                                </td>
+                                <td>
+                                    <div class="person-cell">
+                                        <div class="av" style="background:@avColors[ci];">@initials.ToUpper()</div>
+                                        <div>
+                                            <div class="av-name">@item.NameSurname</div>
+                                            <div class="av-email">@item.Email</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="res-code">@item.ReservationCode</span></td>
+                                <td>
+                                    <div style="font-size:12.5px;font-weight:700;color:var(--text-primary);">@tourName</div>
+                                    <div style="font-size:10.5px;color:var(--text-muted);font-family:'DM Mono',monospace;">@item.TourId?.Substring(0, Math.Min(8, item.TourId?.Length ?? 0))…</div>
+                                </td>
+                                <td>
+                                    <div class="date-cell">
+                                        <div class="date-main">@dateStr</div>
+                                        <span class="rp-status-badge @statusClass" style="font-size:10px;padding:2px 7px;margin-top:3px;">
+                                            <span class="rp-status-dot"></span>@statusLabel
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span style="font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:4px;">
+                                        <i class="fa-solid fa-user-group" style="font-size:10px;color:var(--text-muted);"></i>
+                                        @item.PersonCount
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="price-cell">₺@item.TotalPrice.ToString("N2")</div>
+                                    <div class="price-pp">₺@((item.PersonCount > 0 ? item.TotalPrice / item.PersonCount : 0).ToString("N0")) / kişi</div>
+                                </td>
+                                <td>
+                                    <div style="display:flex;gap:5px;justify-content:center;">
+                                        <button type="button" class="abt v row-xl-btn" title="Excel">
+                                            <i class="fa-solid fa-file-excel" style="color:#16a34a;"></i>
+                                        </button>
+                                        <button type="button" class="abt d row-pdf-btn" title="PDF" style="border-color:#e2e8f0;">
+                                            <i class="fa-solid fa-file-pdf" style="color:#dc2626;"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+            <div class="empty" id="rpEmpty" style="display:none;">
+                <div class="empty-ic"><i class="fa-solid fa-filter-circle-xmark"></i></div>
+                <h3>Sonuç Bulunamadı</h3>
+                <p>Filtreleri değiştirip tekrar deneyin.</p>
+            </div>
+        </div>
+
+        <div class="c-foot">
+            <div style="font-size:12px;color:var(--text-muted);">
+                Gösterilen: <strong style="color:var(--text-secondary);" id="rpPageInfo">—</strong>
+            </div>
+            <div class="pag" style="padding:0;" id="rpPag">
+                <button class="pg" id="rpPrev" onclick="rpChangePage(-1)" disabled>
+                    <i class="fa-solid fa-chevron-left" style="font-size:10px;"></i>
+                </button>
+                <button class="pg on" id="rpPage1" onclick="rpGoPage(1)">1</button>
+                <button class="pg" id="rpPage2" onclick="rpGoPage(2)">2</button>
+                <button class="pg" id="rpPage3" onclick="rpGoPage(3)">3</button>
+                <button class="pg" id="rpNext" onclick="rpChangePage(1)">
+                    <i class="fa-solid fa-chevron-right" style="font-size:10px;"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Özet Sidebar -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="rp-summary-card">
+            <div class="rp-summary-head">
+                <i class="fa-solid fa-chart-pie" style="font-size:13px;color:var(--indigo);"></i>
+                <h3>Özet</h3>
+            </div>
+            <div class="rp-summary-body">
+                <div class="rp-stat-row">
+                    <span class="rp-stat-row-label"><i class="fa-solid fa-list" style="margin-right:5px;"></i> Toplam Kayıt</span>
+                    <span class="rp-stat-row-val" id="smTotal">@totalCount</span>
+                </div>
+                <div class="rp-stat-row">
+                    <span class="rp-stat-row-label"><i class="fa-solid fa-money-bill-wave" style="margin-right:5px;"></i> Toplam Gelir</span>
+                    <span class="rp-stat-row-val green" id="smRev">₺@totalRev.ToString("N0")</span>
+                </div>
+                <div class="rp-stat-row">
+                    <span class="rp-stat-row-label"><i class="fa-solid fa-calendar-check" style="margin-right:5px;"></i> Aktif</span>
+                    <span class="rp-stat-row-val blue" id="smActive">@activeCount</span>
+                </div>
+                <div class="rp-stat-row">
+                    <span class="rp-stat-row-label"><i class="fa-solid fa-flag-checkered" style="margin-right:5px;"></i> Tamamlanan</span>
+                    <span class="rp-stat-row-val amber" id="smPast">@pastCount</span>
+                </div>
+                <div class="rp-stat-row">
+                    <span class="rp-stat-row-label"><i class="fa-solid fa-bolt" style="margin-right:5px;"></i> Bugün</span>
+                    <span class="rp-stat-row-val violet" id="smToday">@todayCount</span>
+                </div>
+
+                <!-- Aktif oran progress -->
+                <div style="margin-top:4px;">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+                        <span style="font-size:11px;font-weight:600;color:var(--text-muted);">Aktiflik Oranı</span>
+                        <span style="font-size:11px;font-weight:700;color:#15803d;" id="smRatio">
+                            @(totalCount > 0 ? (activeCount * 100 / totalCount) : 0)%
+                        </span>
+                    </div>
+                    <div class="rp-prog">
+                        <div class="rp-prog-fill" id="smProgFill"
+                             style="width:@(totalCount > 0 ? (activeCount * 100 / totalCount) : 0)%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hızlı Export Seçenekleri -->
+        <div class="rp-summary-card">
+            <div class="rp-summary-head">
+                <i class="fa-solid fa-gear" style="font-size:13px;color:var(--text-muted);"></i>
+                <h3>Export Seçenekleri</h3>
+            </div>
+            <div class="rp-summary-body">
+                <div class="rp-ff">
+                    <label>Dahil Edilecek Alanlar</label>
+                    <select id="expFields">
+                        <option value="all">Tüm Alanlar</option>
+                        <option value="basic">Temel Bilgiler</option>
+                        <option value="financial">Mali Bilgiler</option>
+                        <option value="contact">İletişim Bilgileri</option>
+                    </select>
+                </div>
+                <div class="rp-ff">
+                    <label>Sıralama</label>
+                    <select id="expSort">
+                        <option value="date">Tarihe Göre</option>
+                        <option value="name">İsme Göre</option>
+                        <option value="price">Tutara Göre (↓)</option>
+                    </select>
+                </div>
+                <div class="rp-ff" style="margin-top:4px;">
+                    <a class="btn btn-primary" style="width:100%;justify-content:center;" href="@Url.Action("ExportAllExcel", "AdminSettings")">
+                        <i class="fa-solid fa-file-excel"></i> Excel İndir
+                    </a>
+                </div>
+                <div class="rp-ff">
+                    <a class="btn btn-ghost" style="width:100%;justify-content:center;border-color:#fecaca;color:#dc2626;" href="@Url.Action("ExportAllPdf", "AdminSettings")">
+                        <i class="fa-solid fa-file-pdf"></i> PDF İndir
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /rp-two-col -->
+@section Scripts {
+    <script>
+        /* ════════════════════════════════════════════
+           YARDIMCI FONKSİYONLAR
+        ════════════════════════════════════════════ */
+        function fmtPrice(val) {
+            var n = parseFloat(val) || 0;
+            return '₺' + n.toLocaleString('tr-TR', {minimumFractionDigits:2, maximumFractionDigits:2});
+        }
+        function he(s) {
+            return String(s||'—').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+        function downloadBlob(blob, filename) {
+            var url = URL.createObjectURL(blob);
+            var a   = document.createElement('a');
+            a.href  = url; a.download = filename;
+            document.body.appendChild(a); a.click();
+            setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 200);
+        }
+
+        /* ════════════════════════════════════════════
+           VERİ TOPLAMA — görünür satırlar
+        ════════════════════════════════════════════ */
+        function getVisibleRows() {
+            return Array.from(document.querySelectorAll('#rpBody tr'))
+                        .filter(function(r){ return r.dataset.filtered !== 'true'; });
+        }
+
+        function getSelectedRows() {
+            return Array.from(document.querySelectorAll('#rpBody tr'))
+                        .filter(function(r){ return r.dataset.filtered !== 'true' && r.querySelector('.row-chk')?.checked; });
+        }
+
+        function rowToData(r) {
+            return {
+                name    : r.getAttribute('data-export-name')    || '',
+                email   : r.getAttribute('data-export-email')   || '',
+                phone   : r.getAttribute('data-export-phone')   || '',
+                code    : r.getAttribute('data-export-code')    || '',
+                tour    : r.getAttribute('data-export-tour')    || '',
+                date    : r.getAttribute('data-export-date')    || '',
+                persons : r.getAttribute('data-export-persons') || '0',
+                price   : r.getAttribute('data-export-price')  || '0',
+                city    : r.getAttribute('data-export-city')   || '',
+                country : r.getAttribute('data-export-country')|| '',
+                status  : r.getAttribute('data-export-status') || ''
+            };
+        }
+
+        /* ════════════════════════════════════════════
+           FİLTRELEME
+        ════════════════════════════════════════════ */
+        var rpCurPage = 1;
+        var rpPageSize = 10;
+
+        function applyRpFilter() {
+            var search   = (document.getElementById('rfSearch').value   || '').toLowerCase().trim();
+            var tour     = (document.getElementById('rfTour').value     || '');
+            var dateFrom = (document.getElementById('rfDateFrom').value || '');
+            var dateTo   = (document.getElementById('rfDateTo').value   || '');
+            var priceMin = parseFloat(document.getElementById('rfPriceMin').value) || 0;
+            var priceMax = parseFloat(document.getElementById('rfPriceMax').value) || Infinity;
+            var persons  = (document.getElementById('rfPersons').value  || '');
+            var status   = (document.getElementById('rfStatus').value   || '');
+
+            var rows     = Array.from(document.querySelectorAll('#rpBody tr'));
+            var visible  = 0;
+            var totalFilRev = 0;
+            var activeF  = 0; var pastF = 0; var todayF = 0;
+
+            // aktif filtre sayısı
+            var activeCnt = [search, tour, dateFrom, dateTo, persons, status].filter(Boolean).length;
+            if (priceMin > 0) activeCnt++;
+            if (priceMax < Infinity && !isNaN(priceMax)) activeCnt++;
+
+            rows.forEach(function(row) {
+                var rName    = (row.dataset.name   || '');
+                var rEmail   = (row.dataset.email  || '');
+                var rCode    = (row.dataset.code   || '');
+                var rTour    = (row.dataset.tour   || '');
+                var rDate    = (row.dataset.date   || '');
+                var rPrice   = parseFloat(row.dataset.price)   || 0;
+                var rPersons = parseInt(row.dataset.persons)   || 0;
+                var rStatus  = (row.dataset.status || '');
+
+                var ms = !search  || rName.includes(search)  || rEmail.includes(search) || rCode.includes(search);
+                var mt = !tour    || rTour === tour;
+                var md1= !dateFrom || rDate >= dateFrom;
+                var md2= !dateTo   || rDate <= dateTo;
+                var mp1= rPrice >= priceMin;
+                var mp2= rPrice <= priceMax;
+                var mpc= !persons || matchPerson(rPersons, persons);
+                var mst= !status  || rStatus === status;
+
+                var show = ms && mt && md1 && md2 && mp1 && mp2 && mpc && mst;
+                row.dataset.filtered = show ? 'false' : 'true';
+                row.style.display    = show ? '' : 'none';
+
+                if (show) {
+                    visible++;
+                    totalFilRev += rPrice;
+                    var d = row.dataset.date;
+                    var today = new Date().toISOString().slice(0,10);
+                    if (d < today)  pastF++;
+                    else if (d === today) todayF++;
+                    else activeF++;
+                }
+            });
+
+            // Sonuç bilgisi
+            document.getElementById('rpVisibleCount').textContent = visible;
+            document.getElementById('rpFilteredRev').textContent  = fmtPrice(String(totalFilRev));
+            document.getElementById('rpEmpty').style.display      = visible === 0 ? 'flex' : 'none';
+
+            // Export card sayaçları
+            ['expCountXl','expCountPdf','expCountCsv'].forEach(function(id){
+                document.getElementById(id).textContent = visible + ' kayıt';
+            });
+
+            // Sidebar özet güncelle
+            document.getElementById('smTotal').textContent  = visible;
+            document.getElementById('smRev').textContent    = fmtPrice(String(totalFilRev));
+            document.getElementById('smActive').textContent = activeF;
+            document.getElementById('smPast').textContent   = pastF;
+            document.getElementById('smToday').textContent  = todayF;
+            var ratio = visible > 0 ? Math.round(activeF * 100 / visible) : 0;
+            document.getElementById('smRatio').textContent    = ratio + '%';
+            document.getElementById('smProgFill').style.width = ratio + '%';
+
+            // Aktif filtre badge
+            var badge = document.getElementById('activeFilterBadge');
+            badge.style.display = activeCnt > 0 ? 'inline-flex' : 'none';
+            document.getElementById('activeFilterCount').textContent = activeCnt;
+
+            rpCurPage = 1;
+            rpRenderPage();
+        }
+
+        function matchPerson(cnt, f) {
+            if (f === '1')    return cnt === 1;
+            if (f === '2-5')  return cnt >= 2 && cnt <= 5;
+            if (f === '6-10') return cnt >= 6 && cnt <= 10;
+            if (f === '10+')  return cnt > 10;
+            return true;
+        }
+
+        function clearRpFilter() {
+            ['rfSearch','rfDateFrom','rfDateTo','rfPriceMin','rfPriceMax'].forEach(function(id){
+                document.getElementById(id).value = '';
+            });
+            ['rfTour','rfPersons','rfStatus'].forEach(function(id){
+                document.getElementById(id).value = '';
+            });
+            applyRpFilter();
+        }
+
+        /* ════════════════════════════════════════════
+           SAYFALAMA
+        ════════════════════════════════════════════ */
+        function rpRenderPage() {
+            var visRows = getVisibleRows();
+            var total   = visRows.length;
+            var pages   = Math.max(1, Math.ceil(total / rpPageSize));
+            rpCurPage   = Math.min(Math.max(1, rpCurPage), pages);
+            var start   = (rpCurPage - 1) * rpPageSize;
+            var end     = start + rpPageSize;
+
+            // Hepsini gizle sonra aç
+            Array.from(document.querySelectorAll('#rpBody tr')).forEach(function(r){
+                if (r.dataset.filtered === 'true') { r.style.display = 'none'; return; }
+                r.style.display = 'none';
+            });
+            visRows.forEach(function(r, i){
+                r.style.display = (i >= start && i < end) ? '' : 'none';
+            });
+
+            document.getElementById('rpPrev').disabled = rpCurPage <= 1;
+            document.getElementById('rpNext').disabled = rpCurPage >= pages;
+            document.getElementById('rpPageInfo').textContent =
+                total === 0 ? '0 / 0' : (start+1) + '–' + Math.min(end,total) + ' / ' + total;
+
+            ['rpPage1','rpPage2','rpPage3'].forEach(function(id, i){
+                var btn = document.getElementById(id);
+                btn.classList.toggle('on', rpCurPage === i+1);
+                btn.style.display = (i+1 <= pages) ? '' : 'none';
+            });
+        }
+
+        function rpChangePage(dir) {
+            rpCurPage += dir;
+            rpRenderPage();
+        }
+        function rpGoPage(p) {
+            rpCurPage = p;
+            rpRenderPage();
+        }
+
+        /* ════════════════════════════════════════════
+           CHECKBOX
+        ════════════════════════════════════════════ */
+        function updateSelExportBtn() {
+            var selCount = getSelectedRows().length;
+            var btn = document.getElementById('selExportBtn');
+            btn.style.display = selCount > 0 ? '' : 'none';
+            if (selCount > 0) btn.innerHTML = '<i class="fa-solid fa-file-export"></i> ' + selCount + ' Seçiliyi Aktar';
+        }
+
+        /* ════════════════════════════════════════════
+           EXCEL EXPORT — SheetJS (.xlsx)
+        ════════════════════════════════════════════ */
+
+        /* SheetJS CDN'den yükle (sayfa açılışında bir kez) */
+        (function loadSheetJS() {
+            if (window.XLSX) return;
+            var s = document.createElement('script');
+            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+            s.async = true;
+            document.head.appendChild(s);
+        })();
+
+        function waitForXLSX(cb) {
+            if (window.XLSX) { cb(); return; }
+            var t = setInterval(function() {
+                if (window.XLSX) { clearInterval(t); cb(); }
+            }, 80);
+        }
+
+        /* Sütun seçimi */
+        function getActiveCols(fields) {
+            var allCols = [
+                { label: 'Rezervasyon Kodu', key: 'code'    },
+                { label: 'Ad Soyad',         key: 'name'    },
+                { label: 'E-posta',          key: 'email'   },
+                { label: 'Telefon',          key: 'phone'   },
+                { label: 'Tur',              key: 'tour'    },
+                { label: 'Tarih',            key: 'date'    },
+                { label: 'Kişi Sayısı',      key: 'persons' },
+                { label: 'Toplam Tutar (₺)', key: 'price'   },
+                { label: 'Şehir',            key: 'city'    },
+                { label: 'Ülke',             key: 'country' },
+                { label: 'Durum',            key: 'status'  }
+            ];
+            var basicKeys     = ['code','name','tour','date','persons','status'];
+            var financialKeys = ['code','name','tour','price','persons'];
+            var contactKeys   = ['name','email','phone','city','country'];
+            if (fields === 'basic')     return allCols.filter(function(c){ return basicKeys.indexOf(c.key)     > -1; });
+            if (fields === 'financial') return allCols.filter(function(c){ return financialKeys.indexOf(c.key) > -1; });
+            if (fields === 'contact')   return allCols.filter(function(c){ return contactKeys.indexOf(c.key)   > -1; });
+            return allCols;
+        }
+
+        /* Veri dizisinden XLSX workbook üret */
+        function buildXlsx(dataArr, sheetTitle) {
+            var fields = document.getElementById('expFields').value;
+            var sortBy = document.getElementById('expSort').value;
+            var cols   = getActiveCols(fields);
+
+            /* Sırala */
+            dataArr.sort(function(a, b) {
+                if (sortBy === 'name')  return (a.name||'').localeCompare(b.name||'', 'tr');
+                if (sortBy === 'price') return parseFloat(b.price||0) - parseFloat(a.price||0);
+                return (a.date||'').localeCompare(b.date||'');
+            });
+
+            var XLSX = window.XLSX;
+            var wb   = XLSX.utils.book_new();
+            var now  = new Date().toLocaleDateString('tr-TR');
+
+            /* ── Veri sayfası ── */
+            var wsData = [];
+
+            /* Başlık satırları */
+            wsData.push(['VİTOUR REZERVASYON RAPORU', '', 'Oluşturma: ' + now]);
+            wsData.push(['Toplam Kayıt:', dataArr.length, '']);
+            wsData.push([]);   /* boş satır */
+
+            /* Kolon başlıkları */
+            wsData.push(cols.map(function(c){ return c.label; }));
+
+            /* Veri satırları */
+            var totalPrice = 0;
+            dataArr.forEach(function(d) {
+                var p = parseFloat(d.price) || 0;
+                totalPrice += p;
+                wsData.push(cols.map(function(c) {
+                    if (c.key === 'price')   return p;             /* sayı olarak */
+                    if (c.key === 'persons') return parseInt(d.persons) || 0;
+                    return d[c.key] || '';
+                }));
+            });
+
+            /* Toplam satırı */
+            wsData.push([]);
+            var totRow = new Array(cols.length).fill('');
+            totRow[0]  = 'GENEL TOPLAM';
+            var priceIdx = cols.findIndex(function(c){ return c.key === 'price'; });
+            if (priceIdx > -1) totRow[priceIdx] = totalPrice;
+            wsData.push(totRow);
+
+            var ws = XLSX.utils.aoa_to_sheet(wsData);
+
+            /* Sütun genişlikleri */
+            var colWidths = cols.map(function(c) {
+                var maxLen = c.label.length;
+                dataArr.forEach(function(d) {
+                    var val = String(d[c.key] || '');
+                    if (val.length > maxLen) maxLen = val.length;
+                });
+                return { wch: Math.min(maxLen + 4, 45) };
+            });
+            ws['!cols'] = colWidths;
+
+            /* Tutar sütunu sayı formatı */
+            if (priceIdx > -1) {
+                var colLetter = XLSX.utils.encode_col(priceIdx);
+                for (var ri = 4; ri < wsData.length; ri++) {
+                    var cellAddr = colLetter + (ri + 1);
+                    if (ws[cellAddr] && typeof ws[cellAddr].v === 'number') {
+                        ws[cellAddr].t = 'n';
+                        ws[cellAddr].z = '#,##0.00" ₺"';
+                    }
+                }
+            }
+
+            XLSX.utils.book_append_sheet(wb, ws, sheetTitle || 'Rezervasyonlar');
+
+            /* ── Özet sayfası ── */
+            var summaryData = [
+                ['VİTOUR — ÖZET RAPORU', ''],
+                ['Oluşturma Tarihi', now],
+                [''],
+                ['Metrik', 'Değer'],
+                ['Toplam Rezervasyon', dataArr.length],
+                ['Toplam Gelir (₺)',   totalPrice],
+                ['Ortalama Tutar (₺)', dataArr.length > 0 ? (totalPrice / dataArr.length) : 0],
+                [''],
+                ['Durum Dağılımı', ''],
+                ['Aktif',      dataArr.filter(function(d){ return d.status === 'Aktif'; }).length],
+                ['Yakında',    dataArr.filter(function(d){ return d.status === 'Yakında'; }).length],
+                ['Bugün',      dataArr.filter(function(d){ return d.status === 'Bugün'; }).length],
+                ['Tamamlandı', dataArr.filter(function(d){ return d.status === 'Tamamlandı'; }).length]
+            ];
+            var wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+            wsSummary['!cols'] = [{wch:28},{wch:20}];
+            XLSX.utils.book_append_sheet(wb, wsSummary, 'Özet');
+
+            return wb;
+        }
+
+        function exportBulkExcel() {
+            setExportLoading('btnXl', true);
+            waitForXLSX(function() {
+                try {
+                    var rows = getVisibleRows();
+                    var data = rows.map(rowToData);
+                    var wb   = buildXlsx(data, 'Rezervasyonlar');
+                    var now  = new Date().toISOString().slice(0,10);
+                    window.XLSX.writeFile(wb, 'Vitour_Rezervasyon_Raporu_' + now + '.xlsx');
+                    if (typeof showToast === 'function') showToast('Excel raporu indirildi (' + rows.length + ' kayıt).', 's');
+                } catch(e) {
+                    console.error(e);
+                    if (typeof showToast === 'function') showToast('Excel oluşturulurken hata oluştu.', 'e');
+                }
+                setExportLoading('btnXl', false);
+            });
+        }
+
+        /* ════════════════════════════════════════════
+           PDF EXPORT (bulk — print window)
+        ════════════════════════════════════════════ */
+        function exportBulkPdf() {
+            setExportLoading('btnPdf', true);
+            var rows  = getVisibleRows();
+            var data  = rows.map(rowToData);
+            var fields = document.getElementById('expFields').value;
+            var sortBy = document.getElementById('expSort').value;
+
+            data.sort(function(a,b){
+                if (sortBy === 'name')  return (a.name||'').localeCompare(b.name||'');
+                if (sortBy === 'price') return parseFloat(b.price||0) - parseFloat(a.price||0);
+                return (a.date||'').localeCompare(b.date||'');
+            });
+
+            var totalPrice = data.reduce(function(s,d){ return s + (parseFloat(d.price)||0); }, 0);
+            var now        = new Date();
+            var nowStr     = now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
+
+            // Tablo satırları
+            var theadCols = [
+                {label:'Rezervasyon Kodu', key:'code'},
+                {label:'Ad Soyad',         key:'name'},
+                {label:'Tur',              key:'tour'},
+                {label:'Tarih',            key:'date'},
+                {label:'Kişi',             key:'persons'},
+                {label:'Tutar',            key:'price'},
+                {label:'Durum',            key:'status'}
+            ];
+            if (fields === 'contact') {
+                theadCols = [
+                    {label:'Ad Soyad',  key:'name'},
+                    {label:'E-posta',   key:'email'},
+                    {label:'Telefon',   key:'phone'},
+                    {label:'Şehir',     key:'city'},
+                    {label:'Ülke',      key:'country'}
+                ];
+            }
+            if (fields === 'financial') {
+                theadCols = [
+                    {label:'Kod',    key:'code'},
+                    {label:'Ad Soyad', key:'name'},
+                    {label:'Tur',    key:'tour'},
+                    {label:'Tutar',  key:'price'},
+                    {label:'Kişi',   key:'persons'}
+                ];
+            }
+
+            var scMap = {
+                'Aktif'      : 'background:#dcfce7;color:#15803d',
+                'Yakında'    : 'background:#fef3c7;color:#b45309',
+                'Bugün'      : 'background:#dbeafe;color:#1d4ed8',
+                'Tamamlandı' : 'background:#f1f5f9;color:#64748b'
+            };
+
+            var trHtml = data.map(function(d, i) {
+                var cells = theadCols.map(function(c) {
+                    var val = d[c.key] || '—';
+                    if (c.key === 'price')  return '<td>' + he(fmtPrice(d.price)) + '</td>';
+                    if (c.key === 'status') {
+                        var sc = scMap[val] || scMap['Tamamlandı'];
+                        return '<td><span style="' + sc + ';border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700;">' + he(val) + '</span></td>';
+                    }
+                    return '<td>' + he(val) + '</td>';
+                }).join('');
+                var bg = i % 2 === 1 ? 'background:#f8fafc;' : '';
+                return '<tr style="' + bg + '">' + cells + '</tr>';
+            }).join('');
+
+            var html = [
+                '<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8">',
+                '<title>Rezervasyon Raporu — Vitour</title>',
+                '<style>',
+                '*{box-sizing:border-box;margin:0;padding:0}',
+                'body{font-family:Arial,Helvetica,sans-serif;color:#1e293b;background:#fff;font-size:11px}',
+                '.hd{background:#0f172a;color:#fff;padding:22px 28px 18px}',
+                '.hd h1{font-size:17px;font-weight:800;margin-bottom:3px}',
+                '.hd .sub{font-size:11px;opacity:.55}',
+                '.hd .ts{font-size:9px;opacity:.4;margin-top:10px}',
+                '.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-bottom:1px solid #e2e8f0}',
+                '.stat{padding:12px 18px;border-right:1px solid #e2e8f0}',
+                '.stat:last-child{border-right:none}',
+                '.stat-label{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;margin-bottom:3px}',
+                '.stat-val{font-size:16px;font-weight:800;color:#1e293b}',
+                '.bd{padding:18px 28px}',
+                'table{width:100%;border-collapse:collapse;font-size:10.5px}',
+                'th{text-align:left;font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;',
+                '   padding:7px 10px;background:#f8fafc;border-bottom:1px solid #e2e8f0;}',
+                'td{padding:8px 10px;border-bottom:1px solid #f0f4f8;color:#374151;vertical-align:middle}',
+                '.ft{border-top:2px solid #e2e8f0;padding:10px 28px;font-size:9px;color:#94a3b8;',
+                '    display:flex;justify-content:space-between;margin-top:20px}',
+                '.total-row{background:#f0fdf4!important;font-weight:800;color:#15803d}',
+                '@@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}',
+                ' .hd{background:#0f172a!important;-webkit-print-color-adjust:exact}}',
+                '</style></head><body>',
+                '<div class="hd">',
+                '  <h1><i>Vitour</i> — Rezervasyon Raporu</h1>',
+                '  <div class="sub">Tüm filtrelenmiş rezervasyonlar</div>',
+                '  <div class="ts">Oluşturma: ' + he(nowStr) + ' &nbsp;·&nbsp; ' + data.length + ' kayıt</div>',
+                '</div>',
+                '<div class="stats">',
+                '  <div class="stat"><div class="stat-label">Toplam Kayıt</div><div class="stat-val">' + data.length + '</div></div>',
+                '  <div class="stat"><div class="stat-label">Toplam Gelir</div><div class="stat-val">' + he(fmtPrice(String(totalPrice))) + '</div></div>',
+                '  <div class="stat"><div class="stat-label">Ortalama</div><div class="stat-val">' + he(fmtPrice(String(data.length > 0 ? totalPrice/data.length : 0))) + '</div></div>',
+                '  <div class="stat"><div class="stat-label">Tarih</div><div class="stat-val" style="font-size:11px">' + he(now.toLocaleDateString('tr-TR')) + '</div></div>',
+                '</div>',
+                '<div class="bd">',
+                '<table>',
+                '<thead><tr>' + theadCols.map(function(c){ return '<th>' + he(c.label) + '</th>'; }).join('') + '</tr></thead>',
+                '<tbody>' + trHtml + '</tbody>',
+                '</table>',
+                '</div>',
+                '<div class="ft">',
+                '  <span>Vitour Admin Panel — Gizlidir</span>',
+                '  <span>Toplam: ' + he(fmtPrice(String(totalPrice))) + '</span>',
+                '</div>',
+                '</body></html>'
+            ].join('\n');
+
+            var win = window.open('', '_blank', 'width=940,height=980,scrollbars=yes');
+            if (!win) {
+                alert('Pop-up engellendi. Lütfen bu site için pop-up\'lara izin verin.');
+                setExportLoading('btnPdf', false);
+                return;
+            }
+            win.document.open();
+            win.document.write(html);
+            win.document.close();
+            setTimeout(function(){ win.focus(); win.print(); }, 450);
+            setExportLoading('btnPdf', false);
+            if (typeof showToast === 'function') showToast('PDF raporu hazırlandı (' + data.length + ' kayıt).', 's');
+        }
+
+        /* ════════════════════════════════════════════
+           CSV EXPORT
+        ════════════════════════════════════════════ */
+        function exportCsv() {
+            setExportLoading('btnCsv', true);
+            var rows = getVisibleRows();
+            var headers = ['Rezervasyon Kodu','Ad Soyad','E-posta','Telefon','Tur','Tarih','Kişi','Tutar','Şehir','Ülke','Durum'];
+            var lines   = [headers.join(',')];
+            rows.forEach(function(row) {
+                var d = rowToData(row);
+                lines.push([
+                    d.code, d.name, d.email, d.phone,
+                    d.tour, d.date, d.persons,
+                    fmtPrice(d.price).replace(',','.'),
+                    d.city, d.country, d.status
+                ].map(function(v){ return '"' + String(v||'').replace(/"/g,'""') + '"'; }).join(','));
+            });
+            var blob = new Blob(['\uFEFF' + lines.join('\n')], {type:'text/csv;charset=utf-8;'});
+            var now  = new Date().toISOString().slice(0,10);
+            downloadBlob(blob, 'Vitour_Rezervasyonlar_' + now + '.csv');
+            setExportLoading('btnCsv', false);
+            if (typeof showToast === 'function') showToast('CSV dışa aktarıldı (' + rows.length + ' kayıt).', 's');
+        }
+
+        /* ════════════════════════════════════════════
+           SEÇİLENLERİ AKTAR
+        ════════════════════════════════════════════ */
+        function exportSelected() {
+            var rows = getSelectedRows();
+            if (!rows.length) return;
+            waitForXLSX(function() {
+                try {
+                    var data = rows.map(rowToData);
+                    var wb   = buildXlsx(data, 'Seçilen Rezervasyonlar');
+                    window.XLSX.writeFile(wb, 'Vitour_Secilen_Rezervasyonlar.xlsx');
+                    if (typeof showToast === 'function') showToast(rows.length + ' rezervasyon dışa aktarıldı.', 's');
+                } catch(e) {
+                    console.error(e);
+                    if (typeof showToast === 'function') showToast('Excel oluşturulurken hata oluştu.', 'e');
+                }
+            });
+        }
+
+        /* ════════════════════════════════════════════
+           SATIR BAZLI EXPORT
+        ════════════════════════════════════════════ */
+        function exportSingleRow(row, fmt) {
+            var d = rowToData(row);
+            if (fmt === 'excel') {
+                waitForXLSX(function() {
+                    try {
+                        var wb = buildXlsx([d], 'Rezervasyon');
+                        window.XLSX.writeFile(wb, 'Rezervasyon_' + (d.code||'rapor') + '.xlsx');
+                        if (typeof showToast === 'function') showToast('Excel raporu indirildi.', 's');
+                    } catch(e) {
+                        console.error(e);
+                        if (typeof showToast === 'function') showToast('Excel oluşturulurken hata oluştu.', 'e');
+                    }
+                });
+            } else {
+                // tek satır PDF — basit
+                var win = window.open('', '_blank', 'width=820,height:900,scrollbars=yes');
+                if (!win) return;
+                var pprice = (parseInt(d.persons) > 0 && parseFloat(d.price) > 0)
+                    ? fmtPrice(String(parseFloat(d.price)/parseInt(d.persons))) + ' / kişi başı' : '—';
+                var scMap  = {'Aktif':'background:#dcfce7;color:#15803d','Yakında':'background:#fef3c7;color:#b45309','Bugün':'background:#dbeafe;color:#1d4ed8','Tamamlandı':'background:#f1f5f9;color:#64748b'};
+                var sc     = scMap[d.status] || scMap['Tamamlandı'];
+                var now    = new Date();
+                var nowStr = now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
+                var html = '<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><title>Rezervasyon - '+he(d.code)+'</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,Helvetica,sans-serif;color:#1e293b;background:#fff}.hd{background:#0f172a;color:#fff;padding:24px 30px 20px}.hd h1{font-size:18px;font-weight:800;margin-bottom:3px}.hd .sub{font-size:11px;opacity:.55}.hd .ts{font-size:9px;opacity:.4;margin-top:10px}.bd{padding:24px 30px}.sec{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#94a3b8;border-bottom:1px solid #e2e8f0;padding-bottom:4px;margin:16px 0 10px}.gr{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px}.fl{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;margin-bottom:3px}.fv{font-size:12.5px;font-weight:600;color:#1e293b}.pricebox{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px 18px;margin:12px 0;display:flex;align-items:center;gap:14px}.pv{font-size:22px;font-weight:800;color:#15803d}.ps{font-size:11px;color:#16a34a;margin-top:2px}.ft{border-top:1px solid #e2e8f0;padding:10px 30px;font-size:9px;color:#94a3b8;display:flex;justify-content:space-between}@@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}.hd{background:#0f172a!important;-webkit-print-color-adjust:exact}}</style></head><body><div class="hd"><h1>Rezervasyon Raporu</h1><div class="sub">'+he(d.tour)+'</div><div class="ts">'+he(nowStr)+'</div></div><div class="bd"><div class="sec">Genel</div><div class="gr"><div><div class="fl">Rezervasyon Kodu</div><div class="fv">'+he(d.code)+'</div></div><div><div class="fl">Durum</div><div class="fv"><span style="'+sc+';border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700;">'+he(d.status)+'</span></div></div><div><div class="fl">Tur</div><div class="fv">'+he(d.tour)+'</div></div><div><div class="fl">Tarih</div><div class="fv">'+he(d.date)+'</div></div></div><div class="pricebox"><div><div class="pv">'+he(fmtPrice(d.price))+'</div><div class="ps">'+he(d.persons)+' kişi &nbsp;·&nbsp; '+he(pprice)+'</div></div></div><div class="sec">Müşteri</div><div class="gr"><div><div class="fl">Ad Soyad</div><div class="fv">'+he(d.name)+'</div></div><div><div class="fl">Telefon</div><div class="fv">'+he(d.phone)+'</div></div><div style="grid-column:1/-1"><div class="fl">E-posta</div><div class="fv">'+he(d.email)+'</div></div></div><div class="sec">Konum</div><div class="gr"><div><div class="fl">Şehir</div><div class="fv">'+he(d.city)+'</div></div><div><div class="fl">Ülke</div><div class="fv">'+he(d.country)+'</div></div></div></div><div class="ft"><span>Vitour Admin Panel</span><span>Gizlidir</span></div></body></html>';
+                win.document.open(); win.document.write(html); win.document.close();
+                setTimeout(function(){ win.focus(); win.print(); }, 400);
+                if (typeof showToast === 'function') showToast('PDF raporu hazırlandı.', 's');
+            }
+        }
+
+        /* ════════════════════════════════════════════
+           LOADING STATE
+        ════════════════════════════════════════════ */
+        var _expOriginals = {};
+        function setExportLoading(btnId, loading) {
+            var btn = document.getElementById(btnId);
+            if (!btn) return;
+            if (loading) {
+                _expOriginals[btnId] = btn.innerHTML;
+                btn.innerHTML = '<span class="exp-spinner"></span> Hazırlanıyor…';
+                btn.disabled  = true;
+            } else {
+                btn.innerHTML = _expOriginals[btnId] || btn.innerHTML;
+                btn.disabled  = false;
+            }
+        }
+
+        /* ════════════════════════════════════════════
+           DOM READY
+        ════════════════════════════════════════════ */
+        document.addEventListener('DOMContentLoaded', function() {
+            // Satır bazlı butonlar
+            document.querySelectorAll('.row-xl-btn').forEach(function(btn){
+                btn.addEventListener('click', function(e){
+                    e.stopPropagation();
+                    exportSingleRow(btn.closest('tr'), 'excel');
+                });
+            });
+            document.querySelectorAll('.row-pdf-btn').forEach(function(btn){
+                btn.addEventListener('click', function(e){
+                    e.stopPropagation();
+                    exportSingleRow(btn.closest('tr'), 'pdf');
+                });
+            });
+
+            // Checkbox — tümü
+            document.getElementById('checkAll').addEventListener('change', function(){
+                document.querySelectorAll('.row-chk').forEach(function(cb){
+                    cb.checked = document.getElementById('checkAll').checked;
+                });
+                updateSelExportBtn();
+            });
+            document.querySelectorAll('.row-chk').forEach(function(cb){
+                cb.addEventListener('change', updateSelExportBtn);
+            });
+
+            // Hero hızlı butonlar
+            document.getElementById('quickXlBtn').addEventListener('click', exportBulkExcel);
+            document.getElementById('quickPdfBtn').addEventListener('click', exportBulkPdf);
+
+            // Export kart tıklama event (buton zaten onclick'li, kart tıklamasını önle)
+            document.querySelectorAll('.rp-exp-card').forEach(function(card){
+                card.addEventListener('click', function(e){
+                    if (e.target.closest('.rp-exp-btn')) return;
+                });
+            });
+
+            // Global expose
+            window.applyRpFilter  = applyRpFilter;
+            window.clearRpFilter  = clearRpFilter;
+            window.exportBulkExcel= exportBulkExcel;
+            window.exportBulkPdf  = exportBulkPdf;
+            window.exportCsv      = exportCsv;
+            window.exportSelected = exportSelected;
+            window.rpChangePage   = rpChangePage;
+            window.rpGoPage       = rpGoPage;
+
+            // İlk render
+            Array.from(document.querySelectorAll('#rpBody tr')).forEach(function(r){
+                r.dataset.filtered = 'false';
+            });
+            applyRpFilter();
+        });
+    </script>
+}

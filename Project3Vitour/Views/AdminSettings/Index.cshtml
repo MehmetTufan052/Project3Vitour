@@ -1,0 +1,989 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+    /* ── Settings Layout ─────────────────────────────────── */
+    .set-shell {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 20px;
+        width: min(100%, 1380px);
+        margin: 0 auto;
+        animation: fadeUp .35s cubic-bezier(.4,0,.2,1) both;
+    }
+
+    /* ── Left Nav ────────────────────────────────────────── */
+    .set-nav {
+        position: sticky;
+        top: 0;
+        align-self: start;
+    }
+
+    .set-nav-inner {
+        background: #fff;
+        border: 1px solid rgba(226,232,240,0.8);
+        border-radius: var(--r-md);
+        box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.9);
+        overflow: hidden;
+    }
+
+    .sn-header {
+        padding: 14px 16px 10px;
+        border-bottom: 1px solid #f0f4f8;
+    }
+
+    .sn-title {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        font-family: 'DM Mono', monospace;
+    }
+
+    .sn-list {
+        padding: 6px;
+    }
+
+    .sn-item {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 8px 10px;
+        border-radius: 9px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all var(--t);
+        border: 1px solid transparent;
+        text-decoration: none;
+    }
+
+        .sn-item i {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 7px;
+            font-size: 12px;
+            background: #f1f5f9;
+            color: var(--text-muted);
+            flex-shrink: 0;
+            transition: all var(--t);
+        }
+
+        .sn-item:hover {
+            background: #f8fafc;
+            color: var(--text-primary);
+        }
+
+            .sn-item:hover i {
+                background: #e2e8f0;
+                color: var(--text-secondary);
+            }
+
+        .sn-item.active {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border-color: #bfdbfe;
+        }
+
+            .sn-item.active i {
+                background: #dbeafe;
+                color: #2563eb;
+            }
+
+    .sn-sep {
+        height: 1px;
+        background: #f0f4f8;
+        margin: 4px 0;
+    }
+
+    /* ── Panels ──────────────────────────────────────────── */
+    .set-panels {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .set-panel {
+        display: none;
+        flex-direction: column;
+        gap: 16px;
+        animation: fadeUp .25s cubic-bezier(.4,0,.2,1) both;
+    }
+
+        .set-panel.active {
+            display: flex;
+        }
+
+    /* ── Panel Card ──────────────────────────────────────── */
+    .sp-card {
+        background: #fff;
+        border: 1px solid rgba(226,232,240,0.8);
+        border-radius: var(--r-md);
+        box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.9);
+        overflow: hidden;
+        position: relative;
+    }
+
+        .sp-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.98), transparent);
+        }
+
+    .sp-head {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 18px 22px 16px;
+        border-bottom: 1px solid #f0f4f8;
+    }
+
+    .sp-head-ic {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+
+        .sp-head-ic.blue {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .sp-head-ic.green {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .sp-head-ic.amber {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .sp-head-ic.violet {
+            background: #ede9fe;
+            color: #6d28d9;
+        }
+
+        .sp-head-ic.rose {
+            background: #ffe4e6;
+            color: #be123c;
+        }
+
+        .sp-head-ic.cyan {
+            background: #cffafe;
+            color: #0e7490;
+        }
+
+    .sp-head-info h3 {
+        font-size: 14px;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 2px;
+        letter-spacing: -.3px;
+    }
+
+    .sp-head-info p {
+        font-size: 11.5px;
+        color: var(--text-muted);
+    }
+
+    .sp-body {
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .sp-foot {
+        padding: 13px 22px;
+        border-top: 1px solid #f0f4f8;
+        background: #fafbfc;
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+    /* ── Form Fields ─────────────────────────────────────── */
+    .sg-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+        .sg-row.full {
+            grid-template-columns: 1fr;
+        }
+
+    .sf {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+        .sf label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #374151;
+            letter-spacing: .01em;
+        }
+
+            .sf label .req {
+                color: #e53935;
+                margin-left: 2px;
+            }
+
+        .sf input,
+        .sf select,
+        .sf textarea {
+            height: 38px;
+            border: 1px solid #d1d5db;
+            border-radius: 9px;
+            padding: 0 13px;
+            font-size: 13px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-primary);
+            background: #fafafa;
+            outline: none;
+            transition: border-color .18s, box-shadow .18s, background .18s;
+        }
+
+        .sf textarea {
+            height: auto;
+            min-height: 90px;
+            padding: 10px 13px;
+            resize: vertical;
+        }
+
+            .sf input:focus,
+            .sf select:focus,
+            .sf textarea:focus {
+                border-color: #6366f1;
+                background: #fff;
+                box-shadow: 0 0 0 3px rgba(99,102,241,0.11);
+            }
+
+        .sf .hint {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+    /* ── Toggle Switch ───────────────────────────────────── */
+    .toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        border: 1px solid #f0f4f8;
+        border-radius: 10px;
+        background: #fafbfc;
+        transition: background var(--t);
+    }
+
+        .toggle-row:hover {
+            background: #f3f6f9;
+        }
+
+    .tr-info h4 {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 2px;
+    }
+
+    .tr-info p {
+        font-size: 11.5px;
+        color: var(--text-muted);
+    }
+
+    .toggle {
+        position: relative;
+        flex-shrink: 0;
+    }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+    .toggle-track {
+        display: block;
+        width: 42px;
+        height: 24px;
+        background: #e2e8f0;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: background .2s;
+        position: relative;
+    }
+
+        .toggle-track::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+            transition: left .2s cubic-bezier(.4,0,.2,1);
+        }
+
+    .toggle input:checked + .toggle-track {
+        background: linear-gradient(135deg, #3b82f6, #6366f1);
+    }
+
+        .toggle input:checked + .toggle-track::after {
+            left: 21px;
+        }
+
+    /* ── Danger Zone ─────────────────────────────────────── */
+    .danger-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        border: 1px solid #fee2e2;
+        border-radius: 10px;
+        background: #fff5f5;
+        gap: 16px;
+    }
+
+    .di-info h4 {
+        font-size: 13px;
+        font-weight: 700;
+        color: #991b1b;
+        margin-bottom: 2px;
+    }
+
+    .di-info p {
+        font-size: 11.5px;
+        color: #b91c1c;
+        opacity: 0.8;
+    }
+
+    .btn-danger {
+        padding: 7px 16px;
+        border-radius: 8px;
+        border: 1px solid #fecaca;
+        background: #fee2e2;
+        color: #dc2626;
+        font-size: 12px;
+        font-weight: 700;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        cursor: pointer;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: all var(--t);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            color: #fff;
+            border-color: #dc2626;
+        }
+
+    /* ── Avatar Upload ───────────────────────────────────── */
+    .avatar-upload {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .au-preview {
+        width: 72px;
+        height: 72px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #6366f1, #a78bfa);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        font-weight: 800;
+        color: #fff;
+        flex-shrink: 0;
+        box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .au-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            inset: 0;
+            display: none;
+        }
+
+    .au-info h4 {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+    }
+
+    .au-info p {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+    }
+
+    .au-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 600;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        cursor: pointer;
+        transition: all var(--t);
+        box-shadow: var(--shadow-xs);
+    }
+
+        .au-btn:hover {
+            background: #f8fafc;
+            border-color: #c7d2e0;
+            color: var(--text-primary);
+        }
+
+    /* ── Color Swatch ────────────────────────────────────── */
+    .color-swatches {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .swatch {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all .18s;
+        position: relative;
+    }
+
+        .swatch:hover {
+            transform: scale(1.12);
+        }
+
+        .swatch.picked {
+            border-color: #0f172a;
+            box-shadow: 0 0 0 3px rgba(15,23,42,0.15);
+        }
+
+            .swatch.picked::after {
+                content: '✓';
+                position: absolute;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+                font-weight: 800;
+                color: #fff;
+            }
+
+    /* ── Page Header ─────────────────────────────────────── */
+    .set-header {
+        width: min(100%, 1380px);
+        margin: 0 auto 20px;
+        margin-bottom: 20px;
+    }
+
+        .set-header .ph-eye {
+            margin-bottom: 3px;
+        }
+
+    .set-header .ph-h1 {
+        font-size: 24px;
+    }
+
+    @@media (max-width: 1200px) {
+        .set-shell,
+        .set-header {
+            width: 100%;
+        }
+    }
+
+    @@media (max-width: 980px) {
+        .set-shell {
+            grid-template-columns: 1fr;
+        }
+
+        .set-nav {
+            position: static;
+        }
+    }
+</style>
+
+<!-- Page Header -->
+<div class="set-header">
+    <div class="ph-eye">System</div>
+    <h1 class="ph-h1">Ayarlar</h1>
+    <p class="ph-desc">Panel genelindeki yapılandırma ve tercihler.</p>
+</div>
+
+<div class="set-shell">
+
+    <!-- ── Left Navigation ── -->
+    <nav class="set-nav">
+        <div class="set-nav-inner">
+            <div class="sn-header">
+                <div class="sn-title">Kategoriler</div>
+            </div>
+            <div class="sn-list">
+                <a class="sn-item active" onclick="switchPanel('profile', this)">
+                    <i class="fa-solid fa-user"></i>
+                    Profil
+                </a>
+                <a class="sn-item" onclick="switchPanel('site', this)">
+                    <i class="fa-solid fa-globe"></i>
+                    Site Genel
+                </a>
+                <a class="sn-item" onclick="switchPanel('notifications', this)">
+                    <i class="fa-solid fa-bell"></i>
+                    Bildirimler
+                </a>
+                <a class="sn-item" onclick="switchPanel('appearance', this)">
+                    <i class="fa-solid fa-palette"></i>
+                    Görünüm
+                </a>
+                <div class="sn-sep"></div>
+                <a class="sn-item" onclick="switchPanel('security', this)">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Güvenlik
+                </a>
+                <a class="sn-item" onclick="switchPanel('danger', this)">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    Tehlikeli Alan
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ── Right Panels ── -->
+    <div class="set-panels">
+
+        <!-- ── PROFILE ── -->
+        <div class="set-panel active" id="panel-profile">
+            <div class="sp-card">
+                <div class="sp-head">
+                    <div class="sp-head-ic blue"><i class="fa-solid fa-user-circle"></i></div>
+                    <div class="sp-head-info">
+                        <h3>Profil Bilgileri</h3>
+                        <p>Adınızı, iletişim bilgilerinizi ve avatarınızı düzenleyin.</p>
+                    </div>
+                </div>
+                <div class="sp-body">
+                    <!-- Avatar -->
+                    <div class="avatar-upload">
+                        <div class="au-preview" id="auPreview">
+                            A
+                            <img id="auImg" src="" alt="avatar" />
+                        </div>
+                        <div class="au-info">
+                            <h4>Profil Fotoğrafı</h4>
+                            <p>PNG veya JPG, maks. 2 MB</p>
+                            <label class="au-btn" for="auFile">
+                                <i class="fa-solid fa-upload"></i> Yükle
+                            </label>
+                            <input type="file" id="auFile" accept="image/*" style="display:none" onchange="previewAvatar(event)">
+                        </div>
+                    </div>
+
+                    <div class="sg-row">
+                        <div class="sf">
+                            <label>Ad <span class="req">*</span></label>
+                            <input type="text" value="Admin" placeholder="Adınız" />
+                        </div>
+                        <div class="sf">
+                            <label>Soyad <span class="req">*</span></label>
+                            <input type="text" value="User" placeholder="Soyadınız" />
+                        </div>
+                    </div>
+                    <div class="sg-row">
+                        <div class="sf">
+                            <label>E-posta <span class="req">*</span></label>
+                            <input type="email" value="admin@vitour.com" />
+                        </div>
+                        <div class="sf">
+                            <label>Telefon</label>
+                            <input type="tel" placeholder="+90 5xx xxx xx xx" />
+                        </div>
+                    </div>
+                    <div class="sg-row full">
+                        <div class="sf">
+                            <label>Biyografi</label>
+                            <textarea placeholder="Kendinizden kısaca bahsedin..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="sp-foot">
+                    <button class="btn btn-ghost" onclick="showToast('Değişiklikler iptal edildi.','i')">İptal</button>
+                    <button class="btn btn-primary" onclick="showToast('Profil kaydedildi!','s')">
+                        <i class="fa-solid fa-floppy-disk"></i> Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── SITE ── -->
+        <div class="set-panel" id="panel-site">
+            <div class="sp-card">
+                <div class="sp-head">
+                    <div class="sp-head-ic green"><i class="fa-solid fa-globe"></i></div>
+                    <div class="sp-head-info">
+                        <h3>Site Genel Ayarları</h3>
+                        <p>Site başlığı, açıklaması ve iletişim bilgilerini düzenleyin.</p>
+                    </div>
+                </div>
+                <div class="sp-body">
+                    <div class="sg-row full">
+                        <div class="sf">
+                            <label>Site Adı <span class="req">*</span></label>
+                            <input type="text" value="Vitour" />
+                        </div>
+                    </div>
+                    <div class="sg-row full">
+                        <div class="sf">
+                            <label>Slogan</label>
+                            <input type="text" placeholder="Kısa bir slogan..." />
+                        </div>
+                    </div>
+                    <div class="sg-row full">
+                        <div class="sf">
+                            <label>Site Açıklaması</label>
+                            <textarea placeholder="SEO açıklaması..."></textarea>
+                            <span class="hint">Meta description için kullanılır (max 160 karakter önerilir).</span>
+                        </div>
+                    </div>
+                    <div class="sg-row">
+                        <div class="sf">
+                            <label>İletişim E-postası</label>
+                            <input type="email" placeholder="info@vitour.com" />
+                        </div>
+                        <div class="sf">
+                            <label>Telefon</label>
+                            <input type="tel" placeholder="+90 xxx xxx xx xx" />
+                        </div>
+                    </div>
+                    <div class="sg-row full">
+                        <div class="sf">
+                            <label>Adres</label>
+                            <textarea style="min-height:64px" placeholder="Şirket adresi..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="sp-foot">
+                    <button class="btn btn-ghost">İptal</button>
+                    <button class="btn btn-primary" onclick="showToast('Site ayarları kaydedildi!','s')">
+                        <i class="fa-solid fa-floppy-disk"></i> Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── NOTIFICATIONS ── -->
+        <div class="set-panel" id="panel-notifications">
+            <div class="sp-card">
+                <div class="sp-head">
+                    <div class="sp-head-ic amber"><i class="fa-solid fa-bell"></i></div>
+                    <div class="sp-head-info">
+                        <h3>Bildirim Tercihleri</h3>
+                        <p>Hangi olaylarda bildirim almak istediğinizi seçin.</p>
+                    </div>
+                </div>
+                <div class="sp-body">
+                    <div class="toggle-row">
+                        <div class="tr-info">
+                            <h4>Yeni Rezervasyon</h4>
+                            <p>Yeni bir rezervasyon oluşturulduğunda bildirim al.</p>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" checked>
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-row">
+                        <div class="tr-info">
+                            <h4>Yeni Yorum</h4>
+                            <p>Tura yeni bir yorum eklendiğinde bildirim al.</p>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" checked>
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-row">
+                        <div class="tr-info">
+                            <h4>İptal Bildirimi</h4>
+                            <p>Rezervasyon iptal edildiğinde e-posta gönderilsin.</p>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox">
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-row">
+                        <div class="tr-info">
+                            <h4>Haftalık Rapor</h4>
+                            <p>Her pazartesi özet raporu e-posta ile al.</p>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" checked>
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-row">
+                        <div class="tr-info">
+                            <h4>Sistem Uyarıları</h4>
+                            <p>Kritik sistem olaylarında anında bildirim.</p>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" checked>
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="sp-foot">
+                    <button class="btn btn-primary" onclick="showToast('Bildirim tercihleri kaydedildi!','s')">
+                        <i class="fa-solid fa-floppy-disk"></i> Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── APPEARANCE ── -->
+        <div class="set-panel" id="panel-appearance">
+            <div class="sp-card">
+                <div class="sp-head">
+                    <div class="sp-head-ic violet"><i class="fa-solid fa-palette"></i></div>
+                    <div class="sp-head-info">
+                        <h3>Görünüm</h3>
+                        <p>Panel rengi ve tema tercihlerinizi özelleştirin.</p>
+                    </div>
+                </div>
+                <div class="sp-body">
+                    <div class="sf">
+                        <label>Tema Rengi</label>
+                        <div class="color-swatches" id="swatches">
+                            <div class="swatch picked" style="background:linear-gradient(135deg,#3b82f6,#6366f1)" data-val="blue-indigo" onclick="pickSwatch(this)"></div>
+                            <div class="swatch" style="background:linear-gradient(135deg,#10b981,#06b6d4)" data-val="green-cyan" onclick="pickSwatch(this)"></div>
+                            <div class="swatch" style="background:linear-gradient(135deg,#f59e0b,#ef4444)" data-val="amber-red" onclick="pickSwatch(this)"></div>
+                            <div class="swatch" style="background:linear-gradient(135deg,#8b5cf6,#ec4899)" data-val="violet-pink" onclick="pickSwatch(this)"></div>
+                            <div class="swatch" style="background:linear-gradient(135deg,#0ea5e9,#6366f1)" data-val="sky-indigo" onclick="pickSwatch(this)"></div>
+                            <div class="swatch" style="background:linear-gradient(135deg,#f43f5e,#fb923c)" data-val="rose-orange" onclick="pickSwatch(this)"></div>
+                        </div>
+                        <span class="hint">Sidebar ve butonlarda uygulanır.</span>
+                    </div>
+
+                    <div class="sf">
+                        <label>Sidebar Modu</label>
+                        <select>
+                            <option selected>Genişletilmiş (Default)</option>
+                            <option>Daraltılmış</option>
+                        </select>
+                    </div>
+
+                    <div class="sg-row">
+                        <div class="sf">
+                            <label>Dil</label>
+                            <select>
+                                <option selected>Türkçe</option>
+                                <option>English</option>
+                                <option>Deutsch</option>
+                            </select>
+                        </div>
+                        <div class="sf">
+                            <label>Saat Dilimi</label>
+                            <select>
+                                <option selected>UTC+3 (İstanbul)</option>
+                                <option>UTC+0 (London)</option>
+                                <option>UTC-5 (New York)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="sp-foot">
+                    <button class="btn btn-primary" onclick="showToast('Görünüm ayarları kaydedildi!','s')">
+                        <i class="fa-solid fa-floppy-disk"></i> Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── SECURITY ── -->
+        <div class="set-panel" id="panel-security">
+            <div class="sp-card">
+                <div class="sp-head">
+                    <div class="sp-head-ic cyan"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="sp-head-info">
+                        <h3>Güvenlik</h3>
+                        <p>Şifrenizi değiştirin ve oturum ayarlarını yönetin.</p>
+                    </div>
+                </div>
+                <div class="sp-body">
+                    <div class="sg-row full">
+                        <div class="sf">
+                            <label>Mevcut Şifre <span class="req">*</span></label>
+                            <input type="password" placeholder="••••••••" />
+                        </div>
+                    </div>
+                    <div class="sg-row">
+                        <div class="sf">
+                            <label>Yeni Şifre <span class="req">*</span></label>
+                            <input type="password" placeholder="••••••••" />
+                        </div>
+                        <div class="sf">
+                            <label>Yeni Şifre (Tekrar) <span class="req">*</span></label>
+                            <input type="password" placeholder="••••••••" />
+                        </div>
+                    </div>
+
+                    <!-- Strength bar -->
+                    <div class="sf">
+                        <label>Şifre Gücü</label>
+                        <div style="display:flex;gap:5px;margin-top:2px">
+                            <div style="flex:1;height:4px;border-radius:4px;background:#e2e8f0"></div>
+                            <div style="flex:1;height:4px;border-radius:4px;background:#e2e8f0"></div>
+                            <div style="flex:1;height:4px;border-radius:4px;background:#e2e8f0"></div>
+                            <div style="flex:1;height:4px;border-radius:4px;background:#e2e8f0"></div>
+                        </div>
+                        <span class="hint">En az 8 karakter, büyük harf ve rakam içermeli.</span>
+                    </div>
+
+                    <div class="toggle-row">
+                        <div class="tr-info">
+                            <h4>İki Faktörlü Doğrulama (2FA)</h4>
+                            <p>Giriş sırasında ek doğrulama kodu iste.</p>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox">
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-row">
+                        <div class="tr-info">
+                            <h4>Oturum Zaman Aşımı</h4>
+                            <p>30 dakika hareketsizlikte otomatik çıkış yap.</p>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" checked>
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="sp-foot">
+                    <button class="btn btn-ghost">İptal</button>
+                    <button class="btn btn-primary" onclick="showToast('Şifre güncellendi!','s')">
+                        <i class="fa-solid fa-lock"></i> Şifreyi Güncelle
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── DANGER ZONE ── -->
+        <div class="set-panel" id="panel-danger">
+            <div class="sp-card">
+                <div class="sp-head">
+                    <div class="sp-head-ic rose"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div class="sp-head-info">
+                        <h3>Tehlikeli Alan</h3>
+                        <p>Bu işlemler geri alınamaz. Dikkatli olun.</p>
+                    </div>
+                </div>
+                <div class="sp-body">
+                    <div class="danger-item">
+                        <div class="di-info">
+                            <h4>Önbelleği Temizle</h4>
+                            <p>Tüm sistem önbelleği sıfırlanır. Performansı geçici olarak etkileyebilir.</p>
+                        </div>
+                        <button class="btn-danger" onclick="showToast('Önbellek temizlendi.','i')">
+                            <i class="fa-solid fa-broom"></i> Temizle
+                        </button>
+                    </div>
+                    <div class="danger-item">
+                        <div class="di-info">
+                            <h4>Tüm Oturumları Kapat</h4>
+                            <p>Bu cihaz dışında açık tüm admin oturumları kapatılır.</p>
+                        </div>
+                        <button class="btn-danger" onclick="showToast('Tüm oturumlar kapatıldı.','e')">
+                            <i class="fa-solid fa-right-from-bracket"></i> Kapat
+                        </button>
+                    </div>
+                    <div class="danger-item">
+                        <div class="di-info">
+                            <h4>Demo Verilerini Sıfırla</h4>
+                            <p>Tüm örnek veriler silinir. Gerçek veriler etkilenmez.</p>
+                        </div>
+                        <button class="btn-danger" onclick="showToast('Demo verileri sıfırlandı.','e')">
+                            <i class="fa-solid fa-rotate-left"></i> Sıfırla
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /set-panels -->
+</div><!-- /set-shell -->
+
+<script>
+    function switchPanel(id, el) {
+        // nav items
+        document.querySelectorAll('.sn-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+        // panels
+        document.querySelectorAll('.set-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('panel-' + id).classList.add('active');
+    }
+
+    function previewAvatar(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            const img = document.getElementById('auImg');
+            img.src = ev.target.result;
+            img.style.display = 'block';
+            document.getElementById('auPreview').style.fontSize = '0';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function pickSwatch(el) {
+        document.querySelectorAll('.swatch').forEach(s => s.classList.remove('picked'));
+        el.classList.add('picked');
+        showToast('Tema rengi önizlemesi seçildi.', 'i');
+    }
+</script>
+
+

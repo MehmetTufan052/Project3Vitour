@@ -134,7 +134,7 @@ namespace Project3Vitour.Services.TranslationService
             }
 
             tour.Title = await TranslateAsync("Tour", tour.TourId, "Title", tour.Title, languageCode, cancellationToken: cancellationToken);
-            tour.Description = await TranslateAsync("Tour", tour.TourId, "Description", tour.Description, languageCode, cancellationToken: cancellationToken);
+            tour.Description = await TranslateAsync("Tour", tour.TourId, "Description", tour.Description, languageCode, true, cancellationToken);
             tour.LongDescription = await TranslateAsync("Tour", tour.TourId, "LongDescription", tour.LongDescription, languageCode, true, cancellationToken);
             tour.Badge = await TranslateAsync("Tour", tour.TourId, "Badge", tour.Badge, languageCode, cancellationToken: cancellationToken);
             tour.LocationPageTitle = await TranslateAsync("Tour", tour.TourId, "LocationPageTitle", tour.LocationPageTitle, languageCode, cancellationToken: cancellationToken);

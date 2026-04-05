@@ -34,6 +34,10 @@ namespace Project3Vitour.Mapping
             CreateMap<CreateReviewFormDto, CreateReviewDto>()
                 .ForMember(d => d.NameSurname, o => o.MapFrom(s => string.IsNullOrWhiteSpace(s.NameSurname) ? s.NameSurname : s.NameSurname.Trim()))
                 .ForMember(d => d.Detail, o => o.MapFrom(s => string.IsNullOrWhiteSpace(s.Detail) ? s.Detail : s.Detail.Trim()))
+                .ForMember(d => d.ValueForMoneyScore, o => o.MapFrom(s => s.ValueForMoneyScore))
+                .ForMember(d => d.DestinationScore, o => o.MapFrom(s => s.DestinationScore))
+                .ForMember(d => d.AccommodationScore, o => o.MapFrom(s => s.AccommodationScore))
+                .ForMember(d => d.TransportScore, o => o.MapFrom(s => s.TransportScore))
                 .ForMember(d => d.Score, o => o.MapFrom(s => (int)Math.Round((s.ValueForMoneyScore + s.DestinationScore + s.AccommodationScore + s.TransportScore) / 4.0)))
                 .ForMember(d => d.ReviewDate, o => o.MapFrom(_ => DateTime.UtcNow))
                 .ForMember(d => d.Status, o => o.MapFrom(_ => true));

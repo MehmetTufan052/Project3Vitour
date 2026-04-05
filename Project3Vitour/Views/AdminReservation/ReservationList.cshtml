@@ -96,6 +96,26 @@
 /* Kişi sayısı badge */
 .person-badge { display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:700; color:var(--text-secondary); }
 
+/* Rezervasyon durum badge'i */
+.status-badge {
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-size:11px;
+    font-weight:700;
+    padding:3px 10px;
+    border-radius:20px;
+    line-height:1.4;
+}
+
+.status-dot {
+    width:5px;
+    height:5px;
+    border-radius:50%;
+    background:currentColor;
+    flex:0 0 5px;
+}
+
 /* ── MODAL OVERLAY ── */
 .modal-ov {
     display:none; position:fixed; inset:0; z-index:500;
@@ -684,8 +704,8 @@
                                 <div class="date-cell">
                                     <div class="date-main">@dateStr</div>
                                     <div style="display:flex;align-items:center;gap:5px;margin-top:3px;">
-                                        <span class="badge @statusClass" style="font-size:10px;padding:2px 7px;">
-                                            <span class="bd"></span>@statusLabel
+                                        <span class="status-badge @statusClass" style="font-size:10px;padding:2px 7px;">
+                                            <span class="status-dot"></span>@statusLabel
                                         </span>
                                     </div>
                                 </div>
@@ -1147,12 +1167,12 @@ function openDetail(data) {
 
     /* ── Durum badge ── */
     var statusMap = {
-        'Aktif'      : '<span class="badge b-green"><span class="bd"></span>Aktif</span>',
-        'Yakında'    : '<span class="badge b-amber"><span class="bd"></span>Yakında</span>',
-        'Bugün'      : '<span class="badge b-blue"><span class="bd"></span>Bugün</span>',
-        'Tamamlandı' : '<span class="badge b-gray"><span class="bd"></span>Tamamlandı</span>'
+        'Aktif'      : '<span class="status-badge b-green"><span class="status-dot"></span>Aktif</span>',
+        'Yakında'    : '<span class="status-badge b-amber"><span class="status-dot"></span>Yakında</span>',
+        'Bugün'      : '<span class="status-badge b-blue"><span class="status-dot"></span>Bugün</span>',
+        'Tamamlandı' : '<span class="status-badge b-gray"><span class="status-dot"></span>Tamamlandı</span>'
     };
-    document.getElementById('dmStatusBadge').innerHTML = statusMap[data.status] || ('<span class="badge b-gray">' + escHtml(data.status||'') + '</span>');
+    document.getElementById('dmStatusBadge').innerHTML = statusMap[data.status] || ('<span class="status-badge b-gray"><span class="status-dot"></span>' + escHtml(data.status||'') + '</span>');
 
     /* ── Fiyat bloğu ── */
     document.getElementById('dmPrice').textContent   = '₺' + (data.price || '0,00');
@@ -1219,7 +1239,7 @@ function escHtml(s) {
 function confirmDelete(id, name, code) {
     document.getElementById('delDesc').innerHTML =
         '<strong>' + escHtml(name) + '</strong> adlı müşteriye ait <strong>' + escHtml(code) + '</strong> kodlu rezervasyon kalıcı olarak silinecek. Bu işlem geri alınamaz.';
-    document.getElementById('delConfirmBtn').href = '/AdminReservation/Delete/' + id;
+            document.getElementById('delConfirmBtn').href = '/AdminReservation/DeleteReservation/' + id;
     document.getElementById('deleteModal').classList.add('open');
 }
 

@@ -17,5 +17,16 @@ namespace Project3Vitour.Controllers
             var reservationList= await _reservationService.GetAllReservationAsync();
             return View(reservationList);
         }
+        public async Task<IActionResult> DeleteReservation(string id)
+        {
+            await _reservationService.DeleteReservationAsync(id);
+            return RedirectToAction(nameof(ReservationList));
+        }
+
+        public async Task<IActionResult> Delete(string id)
+        {
+            await _reservationService.DeleteReservationAsync(id);
+            return RedirectToAction(nameof(ReservationList));
+        }
     }
 }

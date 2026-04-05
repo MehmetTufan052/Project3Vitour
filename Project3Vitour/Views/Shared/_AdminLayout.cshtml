@@ -1348,19 +1348,11 @@
 
             <nav class="sb-nav">
 
-                <div class="nav-section">
-                    <div class="nav-sep">Main</div>
-                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminDashboard" ? "active" : "")"
-                       href="/AdminDashboard" data-a="blue" data-tip="Dashboard">
-                        <div class="nav-ic"><i class="fa-solid fa-chart-pie"></i></div>
-                        <span class="nav-lbl">Dashboard</span>
-                    </a>
-                </div>
 
                 <div class="nav-section">
                     <div class="nav-sep">Collections</div>
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminTour" ? "active" : "")"
-                       href="/AdminTour" data-a="green" data-tip="Tours">
+                       href="/AdminTour/TourList/" data-a="green" data-tip="Tours">
                         <div class="nav-ic"><i class="fa-solid fa-map-location-dot"></i></div>
                         <span class="nav-lbl">Turlar</span>
                     </a>
@@ -1368,6 +1360,11 @@
                        href="/AdminTourPlan/TourPlanList" data-a="cyan" data-tip="TourPlan">
                         <div class="nav-ic"><i class="fa-solid fa-earth-europe"></i></div>
                         <span class="nav-lbl">Tur Planı</span>
+                    </a>
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminTourPlan" ? "active" : "")"
+                       href="/AdminGallery/CreateGallery" data-a="cyan" data-tip="Galleries">
+                        <div class="nav-ic"><i class="fa-solid fa-image"></i></i></div>
+                        <span class="nav-lbl">Galeri</span>
                     </a>
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminReservation" ? "active" : "")"
                        href="/AdminReservation/ReservationList" data-a="amber" data-tip="Reservations">
@@ -1384,18 +1381,18 @@
                 <div class="nav-section">
                     <div class="nav-sep">Analytics</div>
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminReport" ? "active" : "")"
-                       href="/AdminReport" data-a="blue" data-tip="Reports">
+                       href="/AdminSettings/Reports" data-a="blue" data-tip="Reports">
                         <div class="nav-ic"><i class="fa-solid fa-chart-line"></i></div>
-                        <span class="nav-lbl">Reports</span>
+                        <span class="nav-lbl">Raporlar</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
                     <div class="nav-sep">System</div>
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminSetting" ? "active" : "")"
-                       href="/AdminSetting" data-a="amber" data-tip="Settings">
+                       href="/AdminSettings/Index" data-a="amber" data-tip="Settings">
                         <div class="nav-ic"><i class="fa-solid fa-gear"></i></div>
-                        <span class="nav-lbl">Settings</span>
+                        <span class="nav-lbl">Ayarlar</span>
                     </a>
                 </div>
 

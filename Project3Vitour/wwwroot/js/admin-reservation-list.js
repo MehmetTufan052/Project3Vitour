@@ -287,7 +287,7 @@
                 "<strong>" + escHtml(name) + "</strong> adli musterinin <strong>" + escHtml(code) + "</strong> kodlu rezervasyonu kalici olarak silinecek. Bu islem geri alinamaz.";
         }
         if (qs("delConfirmBtn")) {
-            qs("delConfirmBtn").href = "/AdminReservation/Delete/" + id;
+            qs("delConfirmBtn").href = "/AdminReservation/DeleteReservation/" + id;
         }
         if (qs("deleteModal")) {
             qs("deleteModal").classList.add("open");

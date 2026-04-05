@@ -1,9 +1,10 @@
-﻿@model GetTourByIdDto
+@model Project3Vitour.Models.TourDetailsViewModel
 @{
     Layout = null;
-    var coverImageUrl = string.IsNullOrWhiteSpace(Model?.CoverImageUrl)
+    var tour = Model?.Tour;
+    var coverImageUrl = string.IsNullOrWhiteSpace(tour?.CoverImageUrl)
         ? "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=2400&q=80"
-        : Model.CoverImageUrl;
+        : tour.CoverImageUrl;
 }
 
 
@@ -36,7 +37,7 @@
                     <div class="tf-container full">
                         <div class="row">
                             <div class="col-md-12">
-                                <img src="@coverImageUrl" alt="@Model.Title" style="width:100%;height:431px;object-fit:cover;display:block;">
+                                <img src="@coverImageUrl" alt="@tour?.Title" style="width:100%;height:431px;object-fit:cover;display:block;">
                             </div>
                         </div>
                     </div>
@@ -90,24 +91,24 @@
                                     <div class="tab-pane fade show active" id="pills-information" role="tabpanel"
                                          aria-labelledby="pills-information-tab" tabindex="0">
 
-                                        @await Component.InvokeAsync("_TourDetailInformationComponentPartial", new { tourId = Model.TourId })
+                                        @await Html.PartialAsync("~/Views/Shared/Components/_TourDetailInformationComponentPartial/Default.cshtml", tour)
 
-                                        @await Component.InvokeAsync("_TourDetailDestinationSmallGalleryComponentPartial", new { tourId = Model.TourId })
+                                        @await Component.InvokeAsync("_TourDetailDestinationSmallGalleryComponentPartial", new { tourId = tour?.TourId })
 
-                                        @await Component.InvokeAsync("_TourDetailsDescriptionAreaComponentPartial", new { tourId = Model.TourId })
+                                        @await Html.PartialAsync("~/Views/Shared/Components/_TourDetailsDescriptionAreaComponentPartial/Default.cshtml", tour)
 
 
                                     </div>
 
-                                    @await Component.InvokeAsync("_TourDetailTourPlaningComponentPartial", new { tourId = Model.TourId })
+                                    @await Html.PartialAsync("~/Views/Shared/Components/_TourDetailTourPlaningComponentPartial/Default.cshtml", Model?.TourPlans ?? new List<Project3Vitour.Dtos.TourPlanDto.ResultTourPlanDto>())
 
 
-                                    @await Component.InvokeAsync("_TourDetailLocationShareComponentPartial", new { tourId = Model.TourId })
+                                    @await Html.PartialAsync("~/Views/Shared/Components/_TourDetailLocationShareComponentPartial/Default.cshtml", tour)
 
                                     <div class="tab-pane fade" id="pills-reviews" role="tabpanel"
                                          aria-labelledby="pills-reviews-tab" tabindex="0">
                                         <div class="row">
-                                            @await Component.InvokeAsync("_TourDetailReviewsComponentPartial", new { tourId = Model.TourId })
+                                            @await Component.InvokeAsync("_TourDetailReviewsComponentPartial", new { tourId = tour?.TourId })
 
                                             <div class="col-lg-4">
                                                 <div class="side-bar-right">
@@ -132,7 +133,7 @@
                                                             </li>
                                                         </ul>
                                                         <a href="/Reservation/CreateReservation" class="btn-main" style="margin-top: 24px; width: 100%; text-align: center;">Randevu Al</a>
-                                                    </div>                                                    
+                                                    </div>
                                                     @await Component.InvokeAsync("_TourDetailLast3TourComponentPartial")
                                                 </div>
                                             </div>
@@ -143,7 +144,7 @@
                                          aria-labelledby="pills-shot-gallery-tab" tabindex="0">
                                         <div class="row">
                                             <div class="col-lg-8">
-                                                @await Component.InvokeAsync("_TourDetailShotGalleryComponentPartial", new { tourId = Model.TourId })
+                                                @await Component.InvokeAsync("_TourDetailShotGalleryComponentPartial", new { tourId = tour?.TourId })
                                             </div>
                                             <div class="col-lg-4">
                                                 <div class="side-bar-right">
@@ -169,7 +170,7 @@
                                                         </ul>
                                                         <a href="/Reservation/CreateReservation" class="btn-main" style="margin-top: 24px; width: 100%; text-align: center;">Randevu Al</a>
                                                     </div>
-                                                    @await Component.InvokeAsync("_TourDetailLast3TourComponentPartial", new { tourId = Model.TourId })
+                                                    @await Component.InvokeAsync("_TourDetailLast3TourComponentPartial", new { tourId = tour?.TourId })
                                                 </div>
                                             </div>
                                         </div>
@@ -314,7 +315,3 @@
 </body>
 
 </html>
-
-
-
-
